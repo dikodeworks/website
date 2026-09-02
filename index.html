@@ -59,6 +59,7 @@
     }
 
     .nav {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -141,15 +142,79 @@
     .nav-links a:hover::after { transform: scaleX(1); }
 
     .nav-links .nav-subscribe {
-      color: #c02020;
-      animation: nav-glow 2.6s ease-in-out infinite;
+      color: var(--muted);
     }
 
-    .nav-links .nav-subscribe:hover { color: #c02020; }
+    .nav-links .nav-subscribe:hover { color: var(--ink); }
 
-    @keyframes nav-glow {
-      0%, 100% { text-shadow: 0 0 4px rgba(192, 32, 32, 0.25); }
-      50% { text-shadow: 0 0 14px rgba(192, 32, 32, 0.85), 0 0 28px rgba(192, 32, 32, 0.4); }
+    .dino-track {
+      position: relative;
+      flex: 1;
+      height: 100%;
+      margin: 0 12px;
+      overflow: hidden;
+    }
+
+    .ground {
+      position: absolute;
+      bottom: 5px;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background-image: repeating-linear-gradient(90deg, #c9c9c9 0 6px, transparent 6px 14px);
+      animation: ground-scroll 0.5s linear infinite;
+    }
+
+    .cactus {
+      position: absolute;
+      bottom: 6px;
+      left: 100%;
+      width: 2px;
+      height: 2px;
+      background: #8a8a8a;
+      box-shadow: 6px 0px 0 #8a8a8a, 8px 0px 0 #8a8a8a, 6px 2px 0 #8a8a8a, 8px 2px 0 #8a8a8a, 4px 4px 0 #8a8a8a, 6px 4px 0 #8a8a8a, 8px 4px 0 #8a8a8a, 10px 4px 0 #8a8a8a, 6px 6px 0 #8a8a8a, 8px 6px 0 #8a8a8a, 6px 8px 0 #8a8a8a, 8px 8px 0 #8a8a8a, 4px 10px 0 #8a8a8a, 6px 10px 0 #8a8a8a, 8px 10px 0 #8a8a8a, 10px 10px 0 #8a8a8a, 6px 12px 0 #8a8a8a, 8px 12px 0 #8a8a8a, 6px 14px 0 #8a8a8a, 8px 14px 0 #8a8a8a, 4px 16px 0 #8a8a8a, 6px 16px 0 #8a8a8a, 8px 16px 0 #8a8a8a, 10px 16px 0 #8a8a8a;
+      animation: cactus-move 2.8s linear infinite;
+    }
+
+    .dino {
+      position: absolute;
+      left: 12px;
+      bottom: 6px;
+      height: 28px;
+      z-index: 0;
+      animation: dino-jump 2.8s ease-in-out infinite;
+    }
+
+    .dino img {
+      display: block;
+      height: 100%;
+      width: auto;
+      animation: dino-hop 0.45s ease-in-out infinite;
+    }
+
+    .nav-right, .brand { position: relative; z-index: 1; }
+
+    @keyframes dino-jump {
+      0%, 84% { transform: translateY(0); }
+      88% { transform: translateY(-24px); }
+      93% { transform: translateY(-24px); }
+      97% { transform: translateY(0); }
+      100% { transform: translateY(0); }
+    }
+
+    @keyframes dino-hop {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes cactus-move {
+      from { left: 100%; }
+      to { left: -24px; }
+    }
+
+    @keyframes ground-scroll {
+      from { background-position: 0 0; }
+      to { background-position: -14px 0; }
     }
 
     /* Hero */
@@ -484,6 +549,11 @@
       <a class="brand" href="#">
         <span class="brand-name">DikodeWorks<span class="dot">.</span></span>
       </a>
+      <div class="dino-track" aria-hidden="true">
+        <span class="ground"></span>
+        <span class="cactus"></span>
+        <span class="dino"><img src="dino/dino.png" alt=""></span>
+      </div>
       <div class="nav-right">
         <nav class="nav-links">
           <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?usp=sharing" target="_blank" rel="noopener">Training</a>
@@ -538,9 +608,6 @@
                 <span class="name">Cyber Security</span>
               </div>
               <div class="specialty-item">
-                <span class="name">Webinar &amp; Workshop Activity</span>
-              </div>
-              <div class="specialty-item">
                 <span class="name">Network Infrastructure</span>
               </div>
               <div class="specialty-item">
@@ -554,9 +621,6 @@
               </div>
               <div class="specialty-item">
                 <span class="name">Cyber Security</span>
-              </div>
-              <div class="specialty-item">
-                <span class="name">Webinar &amp; Workshop Activity</span>
               </div>
             </div>
           </div>
