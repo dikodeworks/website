@@ -355,6 +355,7 @@
     }
 
     .hero-sub {
+      position: relative;
       margin-top: 24px;
       display: inline-block;
       padding: 12px 20px;
@@ -365,12 +366,33 @@
       font-weight: 500;
       letter-spacing: -0.01em;
       color: var(--muted);
-      animation: hero-glow 2.6s ease-in-out infinite;
     }
 
-    @keyframes hero-glow {
-      0%, 100% { box-shadow: 0 0 6px rgba(192, 32, 32, 0.15); }
-      50% { box-shadow: 0 0 22px rgba(192, 32, 32, 0.5), 0 0 44px rgba(192, 32, 32, 0.22); }
+    .hero-sub::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #c02020;
+      transform: translate(-50%, -50%);
+      animation: orbit 20s ease-in-out infinite, pulse 2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 3px 1px rgba(192, 32, 32, 0.35); }
+      50%      { box-shadow: 0 0 10px 5px rgba(192, 32, 32, 0.85); }
+    }
+
+    @keyframes orbit {
+      0%   { top: 0;     left: 0;     animation-timing-function: ease-in-out; }
+      48%  { top: 0;     left: 100%;  animation-timing-function: ease-in-out; }
+      50%  { top: 100%;  left: 100%;  animation-timing-function: ease-in-out; }
+      98%  { top: 100%;  left: 0;     animation-timing-function: ease-in-out; }
+      100% { top: 0;     left: 0;     }
     }
 
     .hero-actions {
