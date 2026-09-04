@@ -630,6 +630,19 @@
       border: 0;
     }
 
+    #subscribe-modal .modal-dialog {
+      width: min(660px, 94vw);
+    }
+
+    #subscribe-modal .subscribe-body {
+      padding: 0;
+      background: var(--surface);
+    }
+
+    #subscribe-modal .subscribe-body iframe {
+      height: min(720px, 80vh);
+    }
+
     #about-modal .modal-dialog {
       width: min(1200px, 92vw);
     }
@@ -1174,7 +1187,8 @@
       </div>
       <div class="nav-right">
         <nav class="nav-links">
-          <a href="#" id="training-open">Training</a>
+          <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?usp=sharing" target="_blank" rel="noopener">Training</a>
+          <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?usp=sharing" target="_blank" rel="noopener">Schedule</a>
           <a href="#" id="subscribe-open" class="nav-subscribe">Subscription</a>
         </nav>
         <div class="socials">
@@ -1392,8 +1406,8 @@
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <div class="modal-body">
-        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdqwbF_LRSNrvRUQARW0BAX_PphsfLoSk3suiofKTfwB4NPxQ/viewform?embedded=true" width="640" height="640" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+      <div class="modal-body subscribe-body">
+        <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdqwbF_LRSNrvRUQARW0BAX_PphsfLoSk3suiofKTfwB4NPxQ/viewform?embedded=true" title="Subscription form" frameborder="0" marginheight="0" marginwidth="0">Loading&#8230;</iframe>
       </div>
     </div>
   </div>
