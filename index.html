@@ -620,6 +620,116 @@
       border: 0;
     }
 
+    #about-modal .modal-dialog {
+      width: min(1200px, 92vw);
+    }
+
+    #about-modal .modal-body {
+      padding: 24px;
+    }
+
+    .about-slider {
+      position: relative;
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    .about-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 12px;
+    }
+
+    .about-track::-webkit-scrollbar { display: none; }
+
+    .about-slide {
+      flex: 0 0 100%;
+      min-width: 0;
+      scroll-snap-align: center;
+    }
+
+    .about-slide img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .about-nav {
+      width: 42px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--line-strong);
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    .about-nav:hover { background: var(--line); }
+
+    .about-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    .about-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .about-dots .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--line-strong);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .about-dots .dot.active {
+      background: var(--ink);
+    }
+
+    #contact-modal .contact-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+      padding: 40px 24px;
+    }
+
+    #contact-modal .contact-body h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      margin: 0;
+    }
+
+    #contact-modal .contact-qr {
+      width: min(240px, 80%);
+      border-radius: 12px;
+    }
+
+    #contact-modal .contact-email {
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    #contact-modal .contact-email:hover { color: var(--accent); }
+
     @media (max-width: 900px) {
       .nav-right { gap: 18px; }
       .nav-links { gap: 22px; }
@@ -678,7 +788,6 @@
       .eyebrow { margin-bottom: 24px; }
       h2 { margin-bottom: 24px; }
       .modal { padding: 12px; }
-      .modal-body iframe { height: 72vh; }
       .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
     }
   </style>
@@ -728,8 +837,8 @@
           <h1>Building resilient <span class="accent">tech talent</span> &amp; secure digital ecosystems<span class="red">.</span></h1>
           <p class="hero-sub">IT Professional Training, Delivered by Active Practitioners</p>
           <div class="hero-actions">
-            <a href="https://docs.google.com/presentation/d/1N1DjxPFYV65VUxl94YVnA1ohwTRHIbsKh9jUWr8uHpI/edit?slide=id.p#slide=id.p" class="btn btn-ghost" target="_blank" rel="noopener">About</a>
-            <a href="mailto:contact@dikodeworks.id" class="btn btn-primary">Contact</a>
+            <a href="#" class="btn btn-ghost" id="about-open">About</a>
+            <a href="#" class="btn btn-primary" id="contact-open">Contact</a>
           </div>
         </div>
         <div class="hero-right" id="specialties">
@@ -788,6 +897,52 @@
     </div>
   </div>
 
+  <div class="modal" id="contact-modal" role="dialog" aria-modal="true" aria-label="Contact">
+    <div class="modal-backdrop" id="contact-backdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">Contact</span>
+        <button class="modal-close" id="contact-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body contact-body">
+        <h3>We Love To Talk, Ask Anything</h3>
+        <img src="contact/qr-code.png" alt="QR Code" class="contact-qr">
+        <a href="mailto:contact@dikodeworks.id" class="contact-email">contact@dikodeworks.id</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="about-modal" role="dialog" aria-modal="true" aria-label="About">
+    <div class="modal-backdrop" id="about-backdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">About</span>
+        <button class="modal-close" id="about-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body about-body">
+        <div class="about-slider">
+          <div class="about-track">
+            <div class="about-slide"><img src="about/about-1.png" alt="About 1"></div>
+            <div class="about-slide"><img src="about/about-2.png" alt="About 2"></div>
+          </div>
+          <div class="about-controls">
+            <button class="about-nav about-prev" aria-label="Previous">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="about-dots"></div>
+            <button class="about-nav about-next" aria-label="Next">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer>
     <div class="wrap footer-inner">
       <p>&copy; <span id="year"></span> DikodeWorks. All rights reserved.</p>
@@ -808,6 +963,62 @@
     });
     closeBtn.addEventListener('click', () => modal.classList.remove('open'));
     backdrop.addEventListener('click', () => modal.classList.remove('open'));
+
+    const aboutModal = document.getElementById('about-modal');
+    const aboutOpenBtn = document.getElementById('about-open');
+    const aboutCloseBtn = document.getElementById('about-close');
+    const aboutBackdrop = document.getElementById('about-backdrop');
+
+    aboutOpenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      aboutModal.classList.add('open');
+    });
+    aboutCloseBtn.addEventListener('click', () => aboutModal.classList.remove('open'));
+    aboutBackdrop.addEventListener('click', () => aboutModal.classList.remove('open'));
+
+    const contactModal = document.getElementById('contact-modal');
+    const contactOpenBtn = document.getElementById('contact-open');
+    const contactCloseBtn = document.getElementById('contact-close');
+    const contactBackdrop = document.getElementById('contact-backdrop');
+
+    contactOpenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      contactModal.classList.add('open');
+    });
+    contactCloseBtn.addEventListener('click', () => contactModal.classList.remove('open'));
+    contactBackdrop.addEventListener('click', () => contactModal.classList.remove('open'));
+
+    const aboutTrack = document.querySelector('.about-track');
+    const aboutSlides = document.querySelectorAll('.about-slide');
+    const aboutDots = document.querySelector('.about-dots');
+    let aboutIndex = 0;
+
+    aboutSlides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => goToAbout(i));
+      aboutDots.appendChild(dot);
+    });
+
+    function goToAbout(i) {
+      aboutIndex = (i + aboutSlides.length) % aboutSlides.length;
+      const slide = aboutSlides[aboutIndex];
+      aboutTrack.scrollTo({ left: slide.offsetLeft - aboutTrack.offsetLeft, behavior: 'smooth' });
+      aboutDots.querySelectorAll('.dot').forEach((d, j) =>
+        d.classList.toggle('active', j === aboutIndex)
+      );
+    }
+
+    document.querySelector('.about-prev').addEventListener('click', () => goToAbout(aboutIndex - 1));
+    document.querySelector('.about-next').addEventListener('click', () => goToAbout(aboutIndex + 1));
+
+    aboutTrack.addEventListener('scroll', () => {
+      const idx = Math.round(aboutTrack.scrollLeft / aboutTrack.clientWidth);
+      aboutDots.querySelectorAll('.dot').forEach((d, j) =>
+        d.classList.toggle('active', j === idx)
+      );
+      aboutIndex = idx;
+    });
 
     const navToggle = document.getElementById('nav-toggle');
     const nav = document.querySelector('.nav');
