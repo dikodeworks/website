@@ -542,6 +542,10 @@
     }
 
     /* Modal */
+    body.modal-open {
+      overflow: hidden;
+    }
+
     .modal {
       display: none;
       position: fixed;
@@ -611,6 +615,12 @@
 
     .modal-close:hover { color: #c02020; background: var(--line); }
 
+    .modal-close:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+      color: var(--ink);
+    }
+
     .modal-body { flex: 1; overflow: auto; }
 
     .modal-body iframe {
@@ -624,38 +634,360 @@
       width: min(1200px, 92vw);
     }
 
-    #registration-modal .modal-dialog {
-      width: min(720px, 94vw);
-      height: 90vh;
-    }
-
-    #registration-modal .modal-body {
-      padding: 0;
-      overflow: hidden;
-    }
-
-    #registration-modal .modal-body iframe {
-      display: block;
-      width: 100%;
-      height: calc(90vh - 57px);
-      border: 0;
-    }
-
     #training-modal .modal-dialog {
       width: min(1100px, 94vw);
+      transition: width .3s ease;
+    }
+
+    /* Widened once the registration form pane is revealed. */
+    #training-modal .modal-dialog.with-form {
+      width: min(1500px, 96vw);
       height: 90vh;
     }
 
     #training-modal .modal-body {
-      padding: 0;
+      padding: 20px 24px;
+      overflow: auto;
+    }
+
+    /* Two-pane layout: course list on the left, form on the right. */
+    #training-modal .training-body.split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 24px;
+      align-items: stretch;
       overflow: hidden;
     }
 
-    #training-modal .modal-body iframe {
+    #training-modal .training-body.split .training-groups {
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .training-form {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+      border-left: 1px solid var(--line);
+      padding-left: 24px;
+    }
+
+    .training-form[hidden] {
+      display: none;
+    }
+
+    .training-form-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .training-form-heading {
+      min-width: 0;
+    }
+
+    .training-form-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .training-form-course {
+      margin: 2px 0 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .training-form-close {
+      flex: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: color .2s ease, background .2s ease;
+    }
+
+    .training-form-close:hover {
+      color: #c02020;
+      background: var(--line);
+    }
+
+    .training-form-close:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+      color: var(--ink);
+    }
+
+    .training-form-body {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .training-form-body iframe {
       display: block;
       width: 100%;
-      height: calc(90vh - 57px);
+      height: 100%;
       border: 0;
+    }
+
+    /* Highlight the course whose form is currently shown. */
+    .training-group .sub-item[aria-current="true"] {
+      background: var(--line);
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* Not enough room for two columns: stack the form below the list. */
+    @media (max-width: 900px) {
+      #training-modal .modal-dialog.with-form {
+        width: min(1100px, 94vw);
+      }
+
+      #training-modal .training-body.split {
+        display: block;
+        overflow: auto;
+      }
+
+      #training-modal .training-body.split .training-groups {
+        overflow: visible;
+        min-height: 0;
+        padding-right: 0;
+      }
+
+      .training-form {
+        border-left: none;
+        border-top: 1px solid var(--line);
+        padding-left: 0;
+        padding-top: 16px;
+        margin-top: 20px;
+      }
+
+      .training-form-body iframe {
+        height: 70vh;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #training-modal .modal-dialog {
+        transition: none;
+      }
+    }
+
+    .training-groups > .training-group {
+      margin-bottom: 8px;
+    }
+
+    .training-group {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .training-group .group-title {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 12px 16px;
+      background: var(--line);
+    }
+
+    .training-group ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .training-group li {
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .training-group > ul > li:last-child {
+      border-bottom: none;
+    }
+
+    .training-group > ul > li:not(.sub) {
+      padding: 10px 16px;
+    }
+
+    .training-group > ul > li:not(.sub)::before {
+      content: "";
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--muted);
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    .training-group > ul > li:not(.sub):hover {
+      background: var(--line);
+      color: var(--ink);
+    }
+
+    .training-group .sub-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 16px;
+      border: none;
+      background: none;
+      font-family: inherit;
+      font-size: 0.92rem;
+      line-height: inherit;
+      text-align: left;
+      color: var(--ink-soft);
+      cursor: pointer;
+    }
+
+    .training-group .sub-item::before {
+      content: "";
+      flex: none;
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--muted);
+      margin-right: 10px;
+    }
+
+    .training-group .sub-item:hover {
+      background: var(--line);
+      color: var(--ink);
+    }
+
+    .training-group .sub-item:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: -2px;
+    }
+
+    .training-group .sub-name {
+      margin-right: auto;
+    }
+
+    .training-group .sub-caret {
+      flex: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--line);
+      color: var(--ink);
+      font-size: 1.05rem;
+      line-height: 1;
+      transition: transform .25s ease;
+    }
+
+    .training-group .sub-item[aria-expanded="true"] .sub-caret {
+      transform: rotate(45deg);
+    }
+
+    .training-group .sub-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      visibility: hidden;
+      transition: grid-template-rows .28s ease, visibility .28s ease;
+      background: var(--white);
+      border-left: 3px solid var(--line-strong);
+      overflow: hidden;
+    }
+
+    .training-group .sub-panel.open {
+      grid-template-rows: 1fr;
+      visibility: visible;
+    }
+
+    .training-group .sub-panel .sub-panel-inner {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .training-group .sub-panel .sub-curriculum-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      margin: 0;
+      padding: 8px 16px;
+      color: var(--ink);
+    }
+
+    .training-group .sub-panel .sub-curriculum {
+      list-style: none;
+      padding: 0 16px;
+      margin: 0;
+    }
+
+    .training-group .sub-panel .sub-curriculum li {
+      padding: 5px 0;
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      border: none;
+    }
+
+    .training-group .sub-panel .sub-curriculum li::before {
+      content: "\2022";
+      margin-right: 8px;
+      color: var(--muted);
+    }
+
+    .training-group .sub-panel .sub-cost {
+      padding: 8px 16px;
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--ink);
+    }
+
+    .training-group .sub-panel .sub-register {
+      display: block;
+      width: 100%;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .training-group .sub-panel .sub-register:hover {
+      background: #c02020;
+    }
+
+    .training-group .sub-panel .sub-register:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .training-group .sub-panel,
+      .training-group .sub-caret {
+        transition: none;
+      }
     }
 
     #about-modal .modal-body {
@@ -843,7 +1175,6 @@
       <div class="nav-right">
         <nav class="nav-links">
           <a href="#" id="training-open">Training</a>
-          <a href="#" id="registration-open">Registration</a>
           <a href="#" id="subscribe-open" class="nav-subscribe">Subscription</a>
         </nav>
         <div class="socials">
@@ -916,21 +1247,6 @@
     </section>
   </main>
 
-  <div class="modal" id="registration-modal" role="dialog" aria-modal="true" aria-label="Registration">
-    <div class="modal-backdrop" id="registration-backdrop"></div>
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <span class="modal-title">Registration</span>
-        <button class="modal-close" id="registration-close" aria-label="Close">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-      <div class="modal-body registration-body">
-        <iframe data-src="https://docs.google.com/forms/d/e/1FAIpQLSdcmynwN2W7-4pGxbTg9I3ZLnh6MeuTC5PoSJfOBNBc_l0Yww/viewform?embedded=true" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-      </div>
-    </div>
-  </div>
-
   <div class="modal" id="training-modal" role="dialog" aria-modal="true" aria-label="Training">
     <div class="modal-backdrop" id="training-backdrop"></div>
     <div class="modal-dialog">
@@ -941,7 +1257,128 @@
         </button>
       </div>
       <div class="modal-body training-body">
-        <iframe data-src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRr_ezDxhLdq8z5PPDf_m-_uiQ-tDv18PL9DtDMAt2QwDtgKqZp-ofdZJQhWSdX-QsNq8uzQXMLhLkC/pubhtml?widget=true&amp;headers=false" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+        <div class="training-groups" id="training-list">
+          <div class="training-group">
+            <h4 class="group-title">Network Infrastructure</h4>
+            <ul>
+              <li class="sub">
+                <button type="button" class="sub-item" id="net-fundamentals-btn" aria-expanded="false" aria-controls="net-fundamentals">
+                  <span class="sub-name">Network Fundamentals</span>
+                  <span class="sub-caret" aria-hidden="true">+</span>
+                </button>
+                <div class="sub-panel" id="net-fundamentals" role="region" aria-labelledby="net-fundamentals-btn">
+                  <div class="sub-panel-inner">
+                    <h5 class="sub-curriculum-title">Curriculum</h5>
+                    <ul class="sub-curriculum">
+                      <li>OSI &amp; TCP/IP Model</li>
+                      <li>IP Addressing &amp; Subnetting</li>
+                      <li>Ethernet, Switching &amp; VLAN Basics</li>
+                      <li>Routing Fundamentals &amp; NAT</li>
+                      <li>Network Addressing, DNS &amp; DHCP</li>
+                    </ul>
+                    <p class="sub-cost">Fee: <strong>Rp 2.500.000</strong></p>
+                    <button type="button" class="sub-register">Register Now</button>
+                  </div>
+                </div>
+              </li>
+              <li class="sub">
+                <button type="button" class="sub-item" id="net-routing-btn" aria-expanded="false" aria-controls="net-routing">
+                  <span class="sub-name">Switching &amp; Routing (CCNA)</span>
+                  <span class="sub-caret" aria-hidden="true">+</span>
+                </button>
+                <div class="sub-panel" id="net-routing" role="region" aria-labelledby="net-routing-btn">
+                  <div class="sub-panel-inner">
+                    <h5 class="sub-curriculum-title">Curriculum</h5>
+                    <ul class="sub-curriculum">
+                      <li>Cisco IOS Basics &amp; CLI</li>
+                      <li>VLANs, Trunking &amp; STP</li>
+                      <li>Static &amp; Dynamic Routing (OSPF)</li>
+                      <li>Access Control Lists (ACL)</li>
+                      <li>Network Address Translation (NAT)</li>
+                    </ul>
+                    <p class="sub-cost">Fee: <strong>Rp 6.500.000</strong></p>
+                    <button type="button" class="sub-register">Register Now</button>
+                  </div>
+                </div>
+              </li>
+              <li class="sub">
+                <button type="button" class="sub-item" id="net-mikrotik-btn" aria-expanded="false" aria-controls="net-mikrotik">
+                  <span class="sub-name">MikroTik Administration</span>
+                  <span class="sub-caret" aria-hidden="true">+</span>
+                </button>
+                <div class="sub-panel" id="net-mikrotik" role="region" aria-labelledby="net-mikrotik-btn">
+                  <div class="sub-panel-inner">
+                    <h5 class="sub-curriculum-title">Curriculum</h5>
+                    <ul class="sub-curriculum">
+                      <li>RouterOS &amp; Winbox/WebFig Setup</li>
+                      <li>Interfaces &amp; Bridge Configuration</li>
+                      <li>DHCP, DNS &amp; IP Services</li>
+                      <li>Firewall (Filter Rules &amp; Address Lists)</li>
+                      <li>Wireless &amp; Hotspot Configuration</li>
+                    </ul>
+                    <p class="sub-cost">Fee: <strong>Rp 4.500.000</strong></p>
+                    <button type="button" class="sub-register">Register Now</button>
+                  </div>
+                </div>
+              </li>
+              <li class="sub">
+                <button type="button" class="sub-item" id="net-wifi-btn" aria-expanded="false" aria-controls="net-wifi">
+                  <span class="sub-name">Wireless &amp; Wi-Fi Engineering</span>
+                  <span class="sub-caret" aria-hidden="true">+</span>
+                </button>
+                <div class="sub-panel" id="net-wifi" role="region" aria-labelledby="net-wifi-btn">
+                  <div class="sub-panel-inner">
+                    <h5 class="sub-curriculum-title">Curriculum</h5>
+                    <ul class="sub-curriculum">
+                      <li>RF Fundamentals &amp; Radio Spectrum</li>
+                      <li>Wi-Fi Standards (802.11 a/b/g/n/ac/ax)</li>
+                      <li>Access Point Design &amp; Placement</li>
+                      <li>WPA2/WPA3 &amp; Enterprise Security</li>
+                      <li>Site Survey &amp; Troubleshooting</li>
+                    </ul>
+                    <p class="sub-cost">Fee: <strong>Rp 5.500.000</strong></p>
+                    <button type="button" class="sub-register">Register Now</button>
+                  </div>
+                </div>
+              </li>
+              <li class="sub">
+                <button type="button" class="sub-item" id="net-monitor-btn" aria-expanded="false" aria-controls="net-monitor">
+                  <span class="sub-name">Network Monitoring &amp; Troubleshooting</span>
+                  <span class="sub-caret" aria-hidden="true">+</span>
+                </button>
+                <div class="sub-panel" id="net-monitor" role="region" aria-labelledby="net-monitor-btn">
+                  <div class="sub-panel-inner">
+                    <h5 class="sub-curriculum-title">Curriculum</h5>
+                    <ul class="sub-curriculum">
+                      <li>SNMP &amp; Network Monitoring Tools</li>
+                      <li>Packet Analysis with Wireshark</li>
+                      <li>Latency, Throughput &amp; Packet Loss</li>
+                      <li>Logging, Alerting &amp; Dashboards</li>
+                      <li>Diagnosing Common Network Faults</li>
+                    </ul>
+                    <p class="sub-cost">Fee: <strong>Rp 3.500.000</strong></p>
+                    <button type="button" class="sub-register">Register Now</button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <aside class="training-form" id="training-form" hidden aria-labelledby="training-form-title">
+          <div class="training-form-header">
+            <div class="training-form-heading">
+              <h4 class="training-form-title" id="training-form-title">Registration</h4>
+              <p class="training-form-course" id="training-form-course"></p>
+            </div>
+            <button type="button" class="training-form-close" id="training-form-close" aria-label="Close registration form">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="training-form-body">
+            <iframe id="training-form-frame" title="Course registration form" data-src="https://docs.google.com/forms/d/e/1FAIpQLSdcmynwN2W7-4pGxbTg9I3ZLnh6MeuTC5PoSJfOBNBc_l0Yww/viewform?embedded=true" frameborder="0" marginheight="0" marginwidth="0">Loading&#8230;</iframe>
+          </div>
+        </aside>
       </div>
     </div>
   </div>
@@ -1016,72 +1453,177 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    const modal = document.getElementById('subscribe-modal');
-    const openBtn = document.getElementById('subscribe-open');
-    const closeBtn = document.getElementById('subscribe-close');
-    const backdrop = document.getElementById('subscribe-backdrop');
+    /* ---------- Shared modal controller ---------- */
+    const modals = Array.from(document.querySelectorAll('.modal'));
+    let lastFocused = null;
 
-    openBtn.addEventListener('click', (e) => {
-      e.preventDefault();
+    const isTabbable = (el) =>
+      typeof el.checkVisibility === 'function'
+        ? el.checkVisibility({ visibilityProperty: true, contentVisibilityAuto: true })
+        : el.offsetParent !== null && getComputedStyle(el).visibility !== 'hidden';
+
+    const focusablesIn = (modal) =>
+      Array.from(
+        modal.querySelectorAll('a[href], button:not([disabled]), iframe, input, select, textarea, [tabindex]:not([tabindex="-1"])')
+      ).filter(isTabbable);
+
+    const syncScrollLock = () => {
+      document.body.classList.toggle('modal-open', modals.some((m) => m.classList.contains('open')));
+    };
+
+    function openModal(modal, trigger) {
+      /* Lazily load embedded forms on first open, but never one that sits
+         inside a collapsed pane -- that pane loads it when revealed. */
+      const frame = modal.querySelector('iframe[data-src]');
+      if (frame && !frame.closest('[hidden]') && frame.getAttribute('src') !== frame.dataset.src) {
+        frame.setAttribute('src', frame.dataset.src);
+      }
+      if (trigger && !trigger.closest('.modal')) lastFocused = trigger;
       modal.classList.add('open');
+      syncScrollLock();
+      const target = modal.querySelector('.modal-close') || modal;
+      target.focus({ preventScroll: true });
+    }
+
+    function closeModal(modal) {
+      modal.classList.remove('open');
+      syncScrollLock();
+      if (modals.some((m) => m.classList.contains('open'))) return;
+      if (lastFocused && document.contains(lastFocused) && isTabbable(lastFocused)) {
+        lastFocused.focus({ preventScroll: true });
+      }
+      lastFocused = null;
+    }
+
+    /* Wire up every modal from a single declaration. */
+    [
+      ['subscribe-modal', 'subscribe-open', 'subscribe-close', 'subscribe-backdrop'],
+      ['about-modal', 'about-open', 'about-close', 'about-backdrop'],
+      ['contact-modal', 'contact-open', 'contact-close', 'contact-backdrop'],
+      ['training-modal', 'training-open', 'training-close', 'training-backdrop'],
+    ].forEach(([modalId, openId, closeId, backdropId]) => {
+      const modal = document.getElementById(modalId);
+      if (!modal) return;
+      const openBtn = openId ? document.getElementById(openId) : null;
+      const closeBtn = document.getElementById(closeId);
+      const backdrop = document.getElementById(backdropId);
+
+      if (openBtn) {
+        openBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          openModal(modal, openBtn);
+        });
+      }
+      if (closeBtn) closeBtn.addEventListener('click', () => closeModal(modal));
+      if (backdrop) backdrop.addEventListener('click', () => closeModal(modal));
     });
-    closeBtn.addEventListener('click', () => modal.classList.remove('open'));
-    backdrop.addEventListener('click', () => modal.classList.remove('open'));
 
-    const aboutModal = document.getElementById('about-modal');
-    const aboutOpenBtn = document.getElementById('about-open');
-    const aboutCloseBtn = document.getElementById('about-close');
-    const aboutBackdrop = document.getElementById('about-backdrop');
+    /* Escape closes the topmost modal; Tab is trapped inside it. */
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' && e.key !== 'Tab') return;
+      const open = modals.filter((m) => m.classList.contains('open'));
+      if (!open.length) return;
+      const modal = open[open.length - 1];
 
-    aboutOpenBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      aboutModal.classList.add('open');
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        /* Progressive disclosure: peel off the form pane before the modal. */
+        if (modal === trainingModal && hideRegistrationForm()) return;
+        closeModal(modal);
+        return;
+      }
+
+      const items = focusablesIn(modal);
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     });
-    aboutCloseBtn.addEventListener('click', () => aboutModal.classList.remove('open'));
-    aboutBackdrop.addEventListener('click', () => aboutModal.classList.remove('open'));
 
-    const contactModal = document.getElementById('contact-modal');
-    const contactOpenBtn = document.getElementById('contact-open');
-    const contactCloseBtn = document.getElementById('contact-close');
-    const contactBackdrop = document.getElementById('contact-backdrop');
-
-    contactOpenBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      contactModal.classList.add('open');
-    });
-    contactCloseBtn.addEventListener('click', () => contactModal.classList.remove('open'));
-    contactBackdrop.addEventListener('click', () => contactModal.classList.remove('open'));
-
-    const registrationModal = document.getElementById('registration-modal');
-    const registrationOpenBtn = document.getElementById('registration-open');
-    const registrationCloseBtn = document.getElementById('registration-close');
-    const registrationBackdrop = document.getElementById('registration-backdrop');
-
-    registrationOpenBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const frame = registrationModal.querySelector('iframe');
-      const src = frame.getAttribute('data-src');
-      if (frame.getAttribute('src') !== src) frame.setAttribute('src', src);
-      registrationModal.classList.add('open');
-    });
-    registrationCloseBtn.addEventListener('click', () => registrationModal.classList.remove('open'));
-    registrationBackdrop.addEventListener('click', () => registrationModal.classList.remove('open'));
-
+    /* ---------- Training accordion ---------- */
     const trainingModal = document.getElementById('training-modal');
-    const trainingOpenBtn = document.getElementById('training-open');
-    const trainingCloseBtn = document.getElementById('training-close');
-    const trainingBackdrop = document.getElementById('training-backdrop');
 
-    trainingOpenBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const frame = trainingModal.querySelector('iframe');
-      const src = frame.getAttribute('data-src');
-      if (frame.getAttribute('src') !== src) frame.setAttribute('src', src);
-      trainingModal.classList.add('open');
+    document.querySelectorAll('.training-group .sub-item').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const panel = btn.parentElement.querySelector('.sub-panel');
+        if (!panel) return;
+        const willOpen = !panel.classList.contains('open');
+        panel.classList.toggle('open', willOpen);
+        btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      });
     });
-    trainingCloseBtn.addEventListener('click', () => trainingModal.classList.remove('open'));
-    trainingBackdrop.addEventListener('click', () => trainingModal.classList.remove('open'));
 
+    document.querySelectorAll('.training-group .sub-register').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('li.sub');
+        showRegistrationForm(item);
+      });
+    });
+
+    /* ---------- Training: side-by-side registration form ---------- */
+    const trainingDialog = trainingModal.querySelector('.modal-dialog');
+    const trainingBody = trainingModal.querySelector('.training-body');
+    const formPane = document.getElementById('training-form');
+    const formFrame = document.getElementById('training-form-frame');
+    const formCourse = document.getElementById('training-form-course');
+    const formCloseBtn = document.getElementById('training-form-close');
+    const stacksVertically = () => window.matchMedia('(max-width: 900px)').matches;
+
+    function showRegistrationForm(item) {
+      if (!item) return;
+      const nameEl = item.querySelector('.sub-name');
+      const accordionBtn = item.querySelector('.sub-item');
+
+      /* Load the Google Form only now, the first time it is actually needed. */
+      if (formFrame.getAttribute('src') !== formFrame.dataset.src) {
+        formFrame.setAttribute('src', formFrame.dataset.src);
+      }
+
+      formCourse.textContent = nameEl ? nameEl.textContent.trim() : '';
+      formPane.hidden = false;
+      trainingBody.classList.add('split');
+      trainingDialog.classList.add('with-form');
+
+      /* Flag which course the visible form belongs to. */
+      trainingModal.querySelectorAll('.sub-item[aria-current]').forEach((el) => el.removeAttribute('aria-current'));
+      if (accordionBtn) accordionBtn.setAttribute('aria-current', 'true');
+
+      if (stacksVertically()) {
+        formPane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      formCloseBtn.focus({ preventScroll: true });
+    }
+
+    /* Returns true when a visible form pane was actually dismissed. */
+    function hideRegistrationForm(restoreFocus = true) {
+      if (formPane.hidden) return false;
+      const current = trainingModal.querySelector('.sub-item[aria-current="true"]');
+      formPane.hidden = true;
+      trainingBody.classList.remove('split');
+      trainingDialog.classList.remove('with-form');
+      if (current) {
+        current.removeAttribute('aria-current');
+        if (restoreFocus) current.focus({ preventScroll: true });
+      }
+      return true;
+    }
+
+    formCloseBtn.addEventListener('click', () => hideRegistrationForm());
+
+    /* Reset the pane when the whole modal is dismissed, so the next
+       visit to Training starts on the course list again. */
+    ['training-close', 'training-backdrop'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('click', () => hideRegistrationForm(false));
+    });
+
+    /* ---------- About slider ---------- */
     const aboutTrack = document.querySelector('.about-track');
     const aboutSlides = document.querySelectorAll('.about-slide');
     const aboutDots = document.querySelector('.about-dots');
