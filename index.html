@@ -624,6 +624,40 @@
       width: min(1200px, 92vw);
     }
 
+    #registration-modal .modal-dialog {
+      width: min(720px, 94vw);
+      height: 90vh;
+    }
+
+    #registration-modal .modal-body {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #registration-modal .modal-body iframe {
+      display: block;
+      width: 100%;
+      height: calc(90vh - 57px);
+      border: 0;
+    }
+
+    #training-modal .modal-dialog {
+      width: min(1100px, 94vw);
+      height: 90vh;
+    }
+
+    #training-modal .modal-body {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #training-modal .modal-body iframe {
+      display: block;
+      width: 100%;
+      height: calc(90vh - 57px);
+      border: 0;
+    }
+
     #about-modal .modal-body {
       padding: 24px;
     }
@@ -808,8 +842,8 @@
       </div>
       <div class="nav-right">
         <nav class="nav-links">
-          <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?usp=sharing" target="_blank" rel="noopener">Training</a>
-          <a href="https://lynk.id/dikodeworks" target="_blank" rel="noopener">Registration</a>
+          <a href="#" id="training-open">Training</a>
+          <a href="#" id="registration-open">Registration</a>
           <a href="#" id="subscribe-open" class="nav-subscribe">Subscription</a>
         </nav>
         <div class="socials">
@@ -881,6 +915,36 @@
       </div>
     </section>
   </main>
+
+  <div class="modal" id="registration-modal" role="dialog" aria-modal="true" aria-label="Registration">
+    <div class="modal-backdrop" id="registration-backdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">Registration</span>
+        <button class="modal-close" id="registration-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body registration-body">
+        <iframe data-src="https://docs.google.com/forms/d/e/1FAIpQLSdcmynwN2W7-4pGxbTg9I3ZLnh6MeuTC5PoSJfOBNBc_l0Yww/viewform?embedded=true" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="training-modal" role="dialog" aria-modal="true" aria-label="Training">
+    <div class="modal-backdrop" id="training-backdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title">Training</span>
+        <button class="modal-close" id="training-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body training-body">
+        <iframe data-src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRr_ezDxhLdq8z5PPDf_m-_uiQ-tDv18PL9DtDMAt2QwDtgKqZp-ofdZJQhWSdX-QsNq8uzQXMLhLkC/pubhtml?widget=true&amp;headers=false" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+      </div>
+    </div>
+  </div>
 
   <div class="modal" id="subscribe-modal" role="dialog" aria-modal="true" aria-label="Subscription">
     <div class="modal-backdrop" id="subscribe-backdrop"></div>
@@ -987,6 +1051,36 @@
     });
     contactCloseBtn.addEventListener('click', () => contactModal.classList.remove('open'));
     contactBackdrop.addEventListener('click', () => contactModal.classList.remove('open'));
+
+    const registrationModal = document.getElementById('registration-modal');
+    const registrationOpenBtn = document.getElementById('registration-open');
+    const registrationCloseBtn = document.getElementById('registration-close');
+    const registrationBackdrop = document.getElementById('registration-backdrop');
+
+    registrationOpenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const frame = registrationModal.querySelector('iframe');
+      const src = frame.getAttribute('data-src');
+      if (frame.getAttribute('src') !== src) frame.setAttribute('src', src);
+      registrationModal.classList.add('open');
+    });
+    registrationCloseBtn.addEventListener('click', () => registrationModal.classList.remove('open'));
+    registrationBackdrop.addEventListener('click', () => registrationModal.classList.remove('open'));
+
+    const trainingModal = document.getElementById('training-modal');
+    const trainingOpenBtn = document.getElementById('training-open');
+    const trainingCloseBtn = document.getElementById('training-close');
+    const trainingBackdrop = document.getElementById('training-backdrop');
+
+    trainingOpenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const frame = trainingModal.querySelector('iframe');
+      const src = frame.getAttribute('data-src');
+      if (frame.getAttribute('src') !== src) frame.setAttribute('src', src);
+      trainingModal.classList.add('open');
+    });
+    trainingCloseBtn.addEventListener('click', () => trainingModal.classList.remove('open'));
+    trainingBackdrop.addEventListener('click', () => trainingModal.classList.remove('open'));
 
     const aboutTrack = document.querySelector('.about-track');
     const aboutSlides = document.querySelectorAll('.about-slide');
