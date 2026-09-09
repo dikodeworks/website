@@ -265,14 +265,50 @@
       animation: obstacle-move 6s linear infinite;
     }
 
+    .cactus-short {
+      position: absolute;
+      bottom: 6px;
+      left: 100%;
+      width: 2px;
+      height: 2px;
+      background: #8a8a8a;
+      box-shadow: 6px 0px 0 #8a8a8a, 8px 0px 0 #8a8a8a,
+                  6px 2px 0 #8a8a8a, 8px 2px 0 #8a8a8a,
+                  4px 4px 0 #8a8a8a, 6px 4px 0 #8a8a8a, 8px 4px 0 #8a8a8a, 10px 4px 0 #8a8a8a,
+                  6px 6px 0 #8a8a8a, 8px 6px 0 #8a8a8a,
+                  6px 8px 0 #8a8a8a, 8px 8px 0 #8a8a8a,
+                  4px 10px 0 #8a8a8a, 6px 10px 0 #8a8a8a, 8px 10px 0 #8a8a8a, 10px 10px 0 #8a8a8a;
+      animation: obstacle-move 6s linear infinite;
+    }
+
+    .cactus-tall {
+      position: absolute;
+      bottom: 6px;
+      left: 100%;
+      width: 2px;
+      height: 2px;
+      background: #8a8a8a;
+      box-shadow: 6px 0px 0 #8a8a8a, 8px 0px 0 #8a8a8a,
+                  6px 2px 0 #8a8a8a, 8px 2px 0 #8a8a8a,
+                  4px 4px 0 #8a8a8a, 6px 4px 0 #8a8a8a, 8px 4px 0 #8a8a8a, 10px 4px 0 #8a8a8a,
+                  6px 6px 0 #8a8a8a, 8px 6px 0 #8a8a8a,
+                  6px 8px 0 #8a8a8a, 8px 8px 0 #8a8a8a,
+                  6px 10px 0 #8a8a8a, 8px 10px 0 #8a8a8a,
+                  4px 12px 0 #8a8a8a, 6px 12px 0 #8a8a8a, 8px 12px 0 #8a8a8a, 10px 12px 0 #8a8a8a,
+                  6px 14px 0 #8a8a8a, 8px 14px 0 #8a8a8a,
+                  6px 16px 0 #8a8a8a, 8px 16px 0 #8a8a8a,
+                  6px 18px 0 #8a8a8a, 8px 18px 0 #8a8a8a,
+                  4px 20px 0 #8a8a8a, 6px 20px 0 #8a8a8a, 8px 20px 0 #8a8a8a, 10px 20px 0 #8a8a8a;
+      animation: obstacle-move 6s linear infinite;
+    }
+
     .dino {
       position: absolute;
       left: 0;
       bottom: 6px;
       height: 28px;
       z-index: 0;
-      animation: dino-walk 6s linear infinite,
-                 dino-jump 6s linear infinite;
+      animation: dino-move 6s linear infinite;
     }
 
     .dino img {
@@ -282,29 +318,27 @@
       animation: dino-hop 0.45s ease-in-out infinite;
     }
 
+    /* Clouds removed */
+
     .nav-right, .brand { position: relative; z-index: 1; }
 
-    @keyframes dino-walk {
-      from { left: 0; }
-      to { left: 100%; }
-    }
-
-    @keyframes dino-jump {
-      0% { transform: translateY(0); }
-      46% { transform: translateY(0); }
-      50% { transform: translateY(-24px); }
-      54% { transform: translateY(-24px); }
-      58% { transform: translateY(0); }
-      63% { transform: translateY(-24px); }
-      67% { transform: translateY(-24px); }
-      71% { transform: translateY(0); }
-      75% { transform: translateY(-24px); }
-      79% { transform: translateY(-24px); }
-      83% { transform: translateY(0); }
-      88% { transform: translateY(-24px); }
-      92% { transform: translateY(-24px); }
-      96% { transform: translateY(0); }
-      100% { transform: translateY(0); }
+    @keyframes dino-move {
+      0%   { left: 0%;      transform: translateY(0);    opacity: 0; }
+      8%   { left: 7.2%;    transform: translateY(0);    opacity: 1; }
+      46%  { left: 43.7%;   transform: translateY(0);    opacity: 1; }
+      50%  { left: 47.6%;   transform: translateY(-24px); opacity: 1; }
+      54%  { left: 51.4%;   transform: translateY(-24px); opacity: 1; }
+      58%  { left: 55.2%;   transform: translateY(0);    opacity: 1; }
+      63%  { left: 60.1%;   transform: translateY(-24px); opacity: 1; }
+      67%  { left: 63.9%;   transform: translateY(-24px); opacity: 1; }
+      71%  { left: 67.8%;   transform: translateY(0);    opacity: 1; }
+      75%  { left: 71.6%;   transform: translateY(-24px); opacity: 1; }
+      79%  { left: 75.4%;   transform: translateY(-24px); opacity: 1; }
+      83%  { left: 79.2%;   transform: translateY(0);    opacity: 1; }
+      88%  { left: 84.1%;   transform: translateY(-24px); opacity: 1; }
+      92%  { left: 87.9%;   transform: translateY(-24px); opacity: 1; }
+      96%  { left: 91.7%;   transform: translateY(0);    opacity: 1; }
+      100% { left: 100%;    transform: translateY(0);    opacity: 0; }
     }
 
     @keyframes dino-hop {
@@ -1319,9 +1353,10 @@
       <div class="dino-track" aria-hidden="true">
         <span class="ground"></span>
         <span class="rock" style="animation-delay: 0s;"></span>
-        <span class="cactus" style="animation-delay: 1.5s;"></span>
+        <span class="cactus-tall" style="animation-delay: 1.5s;"></span>
         <span class="rock" style="animation-delay: 3s;"></span>
-        <span class="cactus" style="animation-delay: 4.5s;"></span>
+        <span class="cactus-short" style="animation-delay: 4.5s;"></span>
+        <span class="cactus" style="animation-delay: 6s;"></span>
         <span class="dino"><img src="dino/dino.png" alt=""></span>
       </div>
       <div class="nav-right">
