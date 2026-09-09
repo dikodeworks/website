@@ -1066,80 +1066,50 @@
     }
 
     #about-modal .modal-body {
-      padding: 24px;
+      padding: 24px 32px;
+      max-height: 80vh;
+      overflow-y: auto;
     }
 
-    .about-slider {
-      position: relative;
-      width: 100%;
-      border-radius: 12px;
-    }
-
-    .about-track {
-      display: flex;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-      border-radius: 12px;
-    }
-
-    .about-track::-webkit-scrollbar { display: none; }
-
-    .about-slide {
-      flex: 0 0 100%;
-      min-width: 0;
-      scroll-snap-align: center;
-    }
-
-    .about-slide img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    .about-nav {
-      width: 42px;
-      height: 42px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      border-radius: 50%;
-      background: var(--surface);
-      border: 1px solid var(--line-strong);
-      cursor: pointer;
+    .about-section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 0 0 4px;
       color: var(--ink);
     }
 
-    .about-nav:hover { background: var(--line); }
+    .about-body > p {
+      margin: 0 0 28px;
+      line-height: 1.7;
+      color: var(--ink-muted);
+    }
 
-    .about-controls {
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .about-card {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 24px;
-      margin-top: 16px;
+      flex-direction: column;
+      gap: 6px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
     }
 
-    .about-dots {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
+    .about-card strong {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
     }
 
-    .about-dots .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--line-strong);
-      border: none;
-      cursor: pointer;
-      padding: 0;
-    }
-
-    .about-dots .dot.active {
-      background: var(--ink);
+    .about-card .about-text {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--ink-muted);
     }
 
     #contact-modal .contact-body {
@@ -1701,19 +1671,26 @@
         </button>
       </div>
       <div class="modal-body about-body">
-        <div class="about-slider">
-          <div class="about-track">
-            <div class="about-slide"><img src="about/about-1.png" alt="About 1"></div>
-            <div class="about-slide"><img src="about/about-2.png" alt="About 2"></div>
+        <h2 class="about-section-title" data-i18n="about.title">About Us</h2>
+        <p data-i18n="about.desc">DikodeWorks is an IT training provider founded by active enterprise practitioners. We specialize in Network Infrastructure, Systems Administration, DevOps, Software Engineering, and Cyber Security — blending community collaboration with enterprise-grade standards.</p>
+
+        <h2 class="about-section-title" data-i18n="about.whyTitle">Why Us</h2>
+        <div class="about-grid">
+          <div class="about-card">
+            <strong data-i18n="about.why1Title">Active Practitioners</strong>
+            <span class="about-text" data-i18n="about.why1Desc">Learn from instructors who are still hands-on in the industry.</span>
           </div>
-          <div class="about-controls">
-            <button class="about-nav about-prev" aria-label="Previous">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-            <div class="about-dots"></div>
-            <button class="about-nav about-next" aria-label="Next">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
+          <div class="about-card">
+            <strong data-i18n="about.why2Title">Enterprise Standards</strong>
+            <span class="about-text" data-i18n="about.why2Desc">Curriculum built on real enterprise practices, tools, and workflows.</span>
+          </div>
+          <div class="about-card">
+            <strong data-i18n="about.why3Title">Cross-Domain Expertise</strong>
+            <span class="about-text" data-i18n="about.why3Desc">The full stack of modern IT careers, from Network to Security.</span>
+          </div>
+          <div class="about-card">
+            <strong data-i18n="about.why4Title">Real-World Ready</strong>
+            <span class="about-text" data-i18n="about.why4Desc">We build resilient tech talent, not just certificates.</span>
           </div>
         </div>
       </div>
@@ -1766,6 +1743,17 @@
         'modal.subscription': 'Subscription',
         'modal.contact': 'Contact',
         'modal.about': 'About Us',
+        'about.title': 'About Us',
+        'about.desc': 'DikodeWorks is an IT training provider founded by active enterprise practitioners. We specialize in Network Infrastructure, Systems Administration, DevOps, Software Engineering, and Cyber Security — blending community collaboration with enterprise-grade standards.',
+        'about.whyTitle': 'Why Us',
+        'about.why1Title': 'Active Practitioners',
+        'about.why1Desc': 'Learn from instructors who are still hands-on in the industry.',
+        'about.why2Title': 'Enterprise Standards',
+        'about.why2Desc': 'Curriculum built on real enterprise practices, tools, and workflows.',
+        'about.why3Title': 'Cross-Domain Expertise',
+        'about.why3Desc': 'The full stack of modern IT careers, from Network to Security.',
+        'about.why4Title': 'Real-World Ready',
+        'about.why4Desc': 'We build resilient tech talent, not just certificates.',
         'contact.title': 'We Love To Talk, Ask Anything',
         'training.network': 'Network Infrastructure',
         'training.course1': 'Network Fundamentals',
@@ -1814,6 +1802,17 @@
         'modal.subscription': 'Langganan',
         'modal.contact': 'Kontak',
         'modal.about': 'Tentang Kami',
+        'about.title': 'Tentang Kami',
+        'about.desc': 'DikodeWorks adalah penyedia pelatihan IT yang didirikan oleh praktisi enterprise aktif. Kami fokus pada Infrastruktur Jaringan, Administrasi Sistem, DevOps, Rekayasa Perangkat Lunak, dan Keamanan Siber — menggabungkan kolaborasi komunitas dengan standar enterprise.',
+        'about.whyTitle': 'Mengapa Kami',
+        'about.why1Title': 'Praktisi Aktif',
+        'about.why1Desc': 'Belajar dari instruktur yang masih aktif di industri.',
+        'about.why2Title': 'Standar Enterprise',
+        'about.why2Desc': 'Kurikulum berbasis praktik, tools, dan workflow enterprise nyata.',
+        'about.why3Title': 'Keahlian Lintas Domain',
+        'about.why3Desc': 'Seluruh spektrum karir IT modern, dari Jaringan hingga Keamanan.',
+        'about.why4Title': 'Siap Dunia Nyata',
+        'about.why4Desc': 'Kami membangun bakat teknologi yang tangguh, bukan sekadar sertifikat.',
         'contact.title': 'Kami Senang Bercerita, Tanyakan Apa Saja',
         'training.network': 'Infrastruktur Jaringan',
         'training.course1': 'Dasar-Dasar Jaringan',
@@ -2042,39 +2041,6 @@
     ['training-close', 'training-backdrop'].forEach((id) => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('click', () => hideRegistrationForm(false));
-    });
-
-    /* ---------- About slider ---------- */
-    const aboutTrack = document.querySelector('.about-track');
-    const aboutSlides = document.querySelectorAll('.about-slide');
-    const aboutDots = document.querySelector('.about-dots');
-    let aboutIndex = 0;
-
-    aboutSlides.forEach((_, i) => {
-      const dot = document.createElement('button');
-      dot.className = 'dot' + (i === 0 ? ' active' : '');
-      dot.addEventListener('click', () => goToAbout(i));
-      aboutDots.appendChild(dot);
-    });
-
-    function goToAbout(i) {
-      aboutIndex = (i + aboutSlides.length) % aboutSlides.length;
-      const slide = aboutSlides[aboutIndex];
-      aboutTrack.scrollTo({ left: slide.offsetLeft - aboutTrack.offsetLeft, behavior: 'smooth' });
-      aboutDots.querySelectorAll('.dot').forEach((d, j) =>
-        d.classList.toggle('active', j === aboutIndex)
-      );
-    }
-
-    document.querySelector('.about-prev').addEventListener('click', () => goToAbout(aboutIndex - 1));
-    document.querySelector('.about-next').addEventListener('click', () => goToAbout(aboutIndex + 1));
-
-    aboutTrack.addEventListener('scroll', () => {
-      const idx = Math.round(aboutTrack.scrollLeft / aboutTrack.clientWidth);
-      aboutDots.querySelectorAll('.dot').forEach((d, j) =>
-        d.classList.toggle('active', j === idx)
-      );
-      aboutIndex = idx;
     });
 
     const navToggle = document.getElementById('nav-toggle');
