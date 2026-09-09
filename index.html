@@ -1146,7 +1146,118 @@
       h2 { margin-bottom: 24px; }
       .modal { padding: 12px; }
       .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
+      .faq-list { gap: 12px; }
+      .faq-item { padding: 16px; }
     }
+
+    /* FAQ */
+    .faq {
+      padding: clamp(72px, 9vw, 96px) 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .faq h2 {
+      font-family: 'Space Grotestesk', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .faq-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .faq-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .faq-cols { grid-template-columns: 1fr; }
+    }
+
+    .faq-item {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color .2s ease;
+    }
+
+    .faq-item:hover { border-color: var(--line-strong); }
+
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 24px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-align: left;
+      color: var(--ink);
+      transition: background .2s ease;
+    }
+
+    .faq-question:hover { background: var(--surface); }
+
+    .faq-question .faq-icon {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: var(--muted);
+      transition: transform .25s ease, background .2s ease, color .2s ease;
+    }
+
+    .faq-item.open .faq-question .faq-icon {
+      transform: rotate(45deg);
+      background: var(--ink);
+      color: var(--white);
+      border-color: var(--ink);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .3s ease, padding .3s ease;
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 300px;
+    }
+
+    .faq-answer p {
+      padding: 0 24px 20px;
+      color: var(--ink-soft);
+      line-height: 1.7;
+    }
+
+    .faq-answer a {
+      color: var(--ink);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .faq-answer a:hover { color: #c02020; }
   </style>
 </head>
 <body>
@@ -1233,6 +1344,90 @@
                 <span class="name">Cyber Security</span>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq" id="faq">
+      <div class="wrap">
+        <h2>Frequently Asked Questions<span class="red">.</span></h2>
+        <div class="faq-cols">
+          <div class="faq-col">
+            <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>How do I register for training?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <p>You can register for training by visiting <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Schedule</a></p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>How much does the training cost?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <p>Training fees are listed on each course detail page on <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Training</a></p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>What will I learn in a training session?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <p>The materials covered in each training can be found in the detail section of each course</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>Where is the training location?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <p>Online with Google Meet or 1m1 Akses UI, Depok</p>
+            </div>
+          </div>
+          </div>
+          <div class="faq-col">
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>Where can I view the training schedule?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <p>The training schedule is available at <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Schedule</a></p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>Prerequisites for networking training?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <p>You should be proficient in operating a computer and understand what an IP Address is</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>Prerequisites for programming training?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <p>You should have basic programming knowledge.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>Prerequisites for sysadmin training?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" role="region">
+              <p>For the Linux server training, you should have knowledge of basic Linux commands.</p>
+            </div>
+          </div>
           </div>
         </div>
       </div>
@@ -1654,6 +1849,17 @@
     navToggle.addEventListener('click', () => {
       const open = nav.classList.toggle('open');
       navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    /* FAQ accordion */
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+        btn.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
+      });
     });
   </script>
 </body>
