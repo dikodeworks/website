@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -90,7 +90,56 @@
       display: flex;
       align-items: center;
       gap: 16px;
-    }    .socials a {
+    }
+
+    /* Language switcher */
+    .lang-switch {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .lang-btn {
+      padding: 5px 12px;
+      border: none;
+      background: transparent;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background .2s ease, color .2s ease;
+    }
+
+    .lang-btn.active {
+      background: var(--ink);
+      color: var(--white);
+    }
+
+    .lang-btn:not(.active):hover {
+      color: var(--ink);
+    }
+
+    /* Language switch transition */
+    header, main, footer {
+      transition: opacity .3s ease, transform .3s ease;
+    }
+
+    body.lang-fading header,
+    body.lang-fading main,
+    body.lang-fading footer {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      header, main, footer { transition: none; transform: none; }
+    }
+
+    .socials a {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -1277,9 +1326,9 @@
       </div>
       <div class="nav-right">
         <nav class="nav-links">
-          <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?usp=sharing" target="_blank" rel="noopener">Training</a>
-          <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?usp=sharing" target="_blank" rel="noopener">Schedule</a>
-          <a href="#" id="subscribe-open" class="nav-subscribe">Subscription</a>
+          <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?usp=sharing" target="_blank" rel="noopener"><span data-i18n="nav.training">Training</span></a>
+          <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?usp=sharing" target="_blank" rel="noopener"><span data-i18n="nav.schedule">Schedule</span></a>
+          <a href="#" id="subscribe-open" class="nav-subscribe"><span data-i18n="nav.subscription">Subscription</span></a>
         </nav>
         <div class="socials">
         <a href="https://www.instagram.com/dikodeworks" target="_blank" rel="noopener" aria-label="Instagram">
@@ -1292,6 +1341,10 @@
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
         </a>
         </div>
+        <div class="lang-switch" id="lang-switch" role="group" aria-label="Language">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="id">ID</button>
+        </div>
       </div>
       <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -1303,46 +1356,46 @@
     <section class="hero" id="home" style="border-top: none;">
       <div class="wrap hero-grid">
         <div class="hero-left">
-          <h1>Building resilient <span class="accent">tech talent</span> &amp; secure digital ecosystems<span class="red">.</span></h1>
-          <p class="hero-sub">IT Professional Training, Delivered by Active Practitioners</p>
+          <h1 data-i18n-html="hero.title">Building resilient <span class="accent">tech talent</span> &amp; secure digital ecosystems<span class="red">.</span></h1>
+          <p class="hero-sub" data-i18n="hero.subtitle">IT Professional Training, Delivered by Active Practitioners</p>
           <div class="hero-actions">
-            <a href="#" class="btn btn-ghost" id="about-open">About Us</a>
-            <a href="#" class="btn btn-primary" id="contact-open">Contact</a>
+            <a href="#" class="btn btn-ghost" id="about-open"><span data-i18n="hero.about">About Us</span></a>
+            <a href="#" class="btn btn-primary" id="contact-open"><span data-i18n="hero.contact">Contact</span></a>
           </div>
         </div>
         <div class="hero-right" id="specialties">
-          <h2>Our Expertise<span class="red">.</span></h2>
+          <h2 data-i18n-html="expertise.title">Our Expertise<span class="red">.</span></h2>
           <div class="specialty-list">
             <div class="specialty-track">
               <div class="specialty-item">
-                <span class="name">Network Infrastructure</span>
+                <span class="name" data-i18n="expertise.network">Network Infrastructure</span>
               </div>
               <div class="specialty-item">
-                <span class="name">Systems Administration</span>
+                <span class="name" data-i18n="expertise.systems">Systems Administration</span>
               </div>
               <div class="specialty-item">
-                <span class="name">IT Development Operation</span>
+                <span class="name" data-i18n="expertise.devops">IT Development Operation</span>
               </div>
               <div class="specialty-item">
-                <span class="name">Software Engineering</span>
+                <span class="name" data-i18n="expertise.software">Software Engineering</span>
               </div>
               <div class="specialty-item">
-                <span class="name">Cyber Security</span>
+                <span class="name" data-i18n="expertise.security">Cyber Security</span>
               </div>
               <div class="specialty-item">
-                <span class="name">Network Infrastructure</span>
+                <span class="name" data-i18n="expertise.network">Network Infrastructure</span>
               </div>
               <div class="specialty-item">
-                <span class="name">Systems Administration</span>
+                <span class="name" data-i18n="expertise.systems">Systems Administration</span>
               </div>
               <div class="specialty-item">
-                <span class="name">IT Development Operation</span>
+                <span class="name" data-i18n="expertise.devops">IT Development Operation</span>
               </div>
               <div class="specialty-item">
-                <span class="name">Software Engineering</span>
+                <span class="name" data-i18n="expertise.software">Software Engineering</span>
               </div>
               <div class="specialty-item">
-                <span class="name">Cyber Security</span>
+                <span class="name" data-i18n="expertise.security">Cyber Security</span>
               </div>
             </div>
           </div>
@@ -1352,81 +1405,81 @@
 
     <section class="faq" id="faq">
       <div class="wrap">
-        <h2>Frequently Asked Questions<span class="red">.</span></h2>
+        <h2 data-i18n-html="faq.title">Frequently Asked Questions<span class="red">.</span></h2>
         <div class="faq-cols">
           <div class="faq-col">
             <div class="faq-item">
             <button class="faq-question" aria-expanded="false">
-              <span>How do I register for training?</span>
+              <span data-i18n="faq.q1">How do I register for training?</span>
               <span class="faq-icon" aria-hidden="true">+</span>
             </button>
             <div class="faq-answer" role="region">
-              <p>You can register for training by visiting <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Schedule</a></p>
+              <p data-i18n-html="faq.a1">You can register for training by visiting <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Schedule</a></p>
             </div>
           </div>
           <div class="faq-item">
             <button class="faq-question" aria-expanded="false">
-              <span>How much does the training cost?</span>
+              <span data-i18n="faq.q2">How much does the training cost?</span>
               <span class="faq-icon" aria-hidden="true">+</span>
             </button>
             <div class="faq-answer" role="region">
-              <p>Training fees are listed on each course detail page on <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Training</a></p>
+              <p data-i18n-html="faq.a2">Training fees are listed on each course detail page on <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Training</a></p>
             </div>
           </div>
           <div class="faq-item">
             <button class="faq-question" aria-expanded="false">
-              <span>What will I learn in a training session?</span>
+              <span data-i18n="faq.q3">What will I learn in a training session?</span>
               <span class="faq-icon" aria-hidden="true">+</span>
             </button>
             <div class="faq-answer" role="region">
-              <p>The materials covered in each training can be found in the detail section of each course</p>
+              <p data-i18n="faq.a3">The materials covered in each training can be found in the detail section of each course</p>
             </div>
           </div>
           <div class="faq-item">
             <button class="faq-question" aria-expanded="false">
-              <span>Where is the training location?</span>
+              <span data-i18n="faq.q4">Where is the training location?</span>
               <span class="faq-icon" aria-hidden="true">+</span>
             </button>
             <div class="faq-answer" role="region">
-              <p>Online with Google Meet or 1m1 Akses UI, Depok</p>
+              <p data-i18n="faq.a4">Online with Google Meet or 1m1 Akses UI, Depok</p>
             </div>
           </div>
           </div>
           <div class="faq-col">
           <div class="faq-item">
             <button class="faq-question" aria-expanded="false">
-              <span>Where can I view the training schedule?</span>
+              <span data-i18n="faq.q5">Where can I view the training schedule?</span>
               <span class="faq-icon" aria-hidden="true">+</span>
             </button>
             <div class="faq-answer" role="region">
-              <p>The training schedule is available at <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Schedule</a></p>
+              <p data-i18n-html="faq.a5">The training schedule is available at <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Schedule</a></p>
             </div>
           </div>
           <div class="faq-item">
             <button class="faq-question" aria-expanded="false">
-              <span>Prerequisites for networking training?</span>
+              <span data-i18n="faq.q6">Prerequisites for networking training?</span>
               <span class="faq-icon" aria-hidden="true">+</span>
             </button>
             <div class="faq-answer" role="region">
-              <p>You should be proficient in operating a computer and understand what an IP Address is</p>
+              <p data-i18n="faq.a6">You should be proficient in operating a computer and understand what an IP Address is</p>
             </div>
           </div>
           <div class="faq-item">
             <button class="faq-question" aria-expanded="false">
-              <span>Prerequisites for programming training?</span>
+              <span data-i18n="faq.q7">Prerequisites for programming training?</span>
               <span class="faq-icon" aria-hidden="true">+</span>
             </button>
             <div class="faq-answer" role="region">
-              <p>You should have basic programming knowledge.</p>
+              <p data-i18n="faq.a7">You should have basic programming knowledge.</p>
             </div>
           </div>
           <div class="faq-item">
             <button class="faq-question" aria-expanded="false">
-              <span>Prerequisites for sysadmin training?</span>
+              <span data-i18n="faq.q8">Prerequisites for sysadmin training?</span>
               <span class="faq-icon" aria-hidden="true">+</span>
             </button>
             <div class="faq-answer" role="region">
-              <p>For the Linux server training, you should have knowledge of basic Linux commands.</p>
+              <p data-i18n="faq.a8">For the Linux server training, you should have knowledge of basic Linux commands.</p>
             </div>
           </div>
           </div>
@@ -1439,7 +1492,7 @@
     <div class="modal-backdrop" id="training-backdrop"></div>
     <div class="modal-dialog">
       <div class="modal-header">
-        <span class="modal-title">Training</span>
+        <span class="modal-title" data-i18n="modal.training">Training</span>
         <button class="modal-close" id="training-close" aria-label="Close">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
@@ -1447,16 +1500,16 @@
       <div class="modal-body training-body">
         <div class="training-groups" id="training-list">
           <div class="training-group">
-            <h4 class="group-title">Network Infrastructure</h4>
+            <h4 class="group-title" data-i18n="training.network">Network Infrastructure</h4>
             <ul>
               <li class="sub">
                 <button type="button" class="sub-item" id="net-fundamentals-btn" aria-expanded="false" aria-controls="net-fundamentals">
-                  <span class="sub-name">Network Fundamentals</span>
+                  <span class="sub-name" data-i18n="training.course1">Network Fundamentals</span>
                   <span class="sub-caret" aria-hidden="true">+</span>
                 </button>
                 <div class="sub-panel" id="net-fundamentals" role="region" aria-labelledby="net-fundamentals-btn">
                   <div class="sub-panel-inner">
-                    <h5 class="sub-curriculum-title">Curriculum</h5>
+                    <h5 class="sub-curriculum-title" data-i18n="training.curriculum">Curriculum</h5>
                     <ul class="sub-curriculum">
                       <li>OSI &amp; TCP/IP Model</li>
                       <li>IP Addressing &amp; Subnetting</li>
@@ -1464,19 +1517,19 @@
                       <li>Routing Fundamentals &amp; NAT</li>
                       <li>Network Addressing, DNS &amp; DHCP</li>
                     </ul>
-                    <p class="sub-cost">Fee: <strong>Rp 2.500.000</strong></p>
-                    <button type="button" class="sub-register">Register Now</button>
+                    <p class="sub-cost"><span data-i18n="training.fee">Fee</span>: <strong>Rp 2.500.000</strong></p>
+                    <button type="button" class="sub-register" data-i18n="training.register">Register Now</button>
                   </div>
                 </div>
               </li>
               <li class="sub">
                 <button type="button" class="sub-item" id="net-routing-btn" aria-expanded="false" aria-controls="net-routing">
-                  <span class="sub-name">Switching &amp; Routing (CCNA)</span>
+                  <span class="sub-name" data-i18n="training.course2">Switching &amp; Routing (CCNA)</span>
                   <span class="sub-caret" aria-hidden="true">+</span>
                 </button>
                 <div class="sub-panel" id="net-routing" role="region" aria-labelledby="net-routing-btn">
                   <div class="sub-panel-inner">
-                    <h5 class="sub-curriculum-title">Curriculum</h5>
+                    <h5 class="sub-curriculum-title" data-i18n="training.curriculum">Curriculum</h5>
                     <ul class="sub-curriculum">
                       <li>Cisco IOS Basics &amp; CLI</li>
                       <li>VLANs, Trunking &amp; STP</li>
@@ -1484,19 +1537,19 @@
                       <li>Access Control Lists (ACL)</li>
                       <li>Network Address Translation (NAT)</li>
                     </ul>
-                    <p class="sub-cost">Fee: <strong>Rp 6.500.000</strong></p>
-                    <button type="button" class="sub-register">Register Now</button>
+                    <p class="sub-cost"><span data-i18n="training.fee">Fee</span>: <strong>Rp 6.500.000</strong></p>
+                    <button type="button" class="sub-register" data-i18n="training.register">Register Now</button>
                   </div>
                 </div>
               </li>
               <li class="sub">
                 <button type="button" class="sub-item" id="net-mikrotik-btn" aria-expanded="false" aria-controls="net-mikrotik">
-                  <span class="sub-name">MikroTik Administration</span>
+                  <span class="sub-name" data-i18n="training.course3">MikroTik Administration</span>
                   <span class="sub-caret" aria-hidden="true">+</span>
                 </button>
                 <div class="sub-panel" id="net-mikrotik" role="region" aria-labelledby="net-mikrotik-btn">
                   <div class="sub-panel-inner">
-                    <h5 class="sub-curriculum-title">Curriculum</h5>
+                    <h5 class="sub-curriculum-title" data-i18n="training.curriculum">Curriculum</h5>
                     <ul class="sub-curriculum">
                       <li>RouterOS &amp; Winbox/WebFig Setup</li>
                       <li>Interfaces &amp; Bridge Configuration</li>
@@ -1504,19 +1557,19 @@
                       <li>Firewall (Filter Rules &amp; Address Lists)</li>
                       <li>Wireless &amp; Hotspot Configuration</li>
                     </ul>
-                    <p class="sub-cost">Fee: <strong>Rp 4.500.000</strong></p>
-                    <button type="button" class="sub-register">Register Now</button>
+                    <p class="sub-cost"><span data-i18n="training.fee">Fee</span>: <strong>Rp 4.500.000</strong></p>
+                    <button type="button" class="sub-register" data-i18n="training.register">Register Now</button>
                   </div>
                 </div>
               </li>
               <li class="sub">
                 <button type="button" class="sub-item" id="net-wifi-btn" aria-expanded="false" aria-controls="net-wifi">
-                  <span class="sub-name">Wireless &amp; Wi-Fi Engineering</span>
+                  <span class="sub-name" data-i18n="training.course4">Wireless &amp; Wi-Fi Engineering</span>
                   <span class="sub-caret" aria-hidden="true">+</span>
                 </button>
                 <div class="sub-panel" id="net-wifi" role="region" aria-labelledby="net-wifi-btn">
                   <div class="sub-panel-inner">
-                    <h5 class="sub-curriculum-title">Curriculum</h5>
+                    <h5 class="sub-curriculum-title" data-i18n="training.curriculum">Curriculum</h5>
                     <ul class="sub-curriculum">
                       <li>RF Fundamentals &amp; Radio Spectrum</li>
                       <li>Wi-Fi Standards (802.11 a/b/g/n/ac/ax)</li>
@@ -1524,19 +1577,19 @@
                       <li>WPA2/WPA3 &amp; Enterprise Security</li>
                       <li>Site Survey &amp; Troubleshooting</li>
                     </ul>
-                    <p class="sub-cost">Fee: <strong>Rp 5.500.000</strong></p>
-                    <button type="button" class="sub-register">Register Now</button>
+                    <p class="sub-cost"><span data-i18n="training.fee">Fee</span>: <strong>Rp 5.500.000</strong></p>
+                    <button type="button" class="sub-register" data-i18n="training.register">Register Now</button>
                   </div>
                 </div>
               </li>
               <li class="sub">
                 <button type="button" class="sub-item" id="net-monitor-btn" aria-expanded="false" aria-controls="net-monitor">
-                  <span class="sub-name">Network Monitoring &amp; Troubleshooting</span>
+                  <span class="sub-name" data-i18n="training.course5">Network Monitoring &amp; Troubleshooting</span>
                   <span class="sub-caret" aria-hidden="true">+</span>
                 </button>
                 <div class="sub-panel" id="net-monitor" role="region" aria-labelledby="net-monitor-btn">
                   <div class="sub-panel-inner">
-                    <h5 class="sub-curriculum-title">Curriculum</h5>
+                    <h5 class="sub-curriculum-title" data-i18n="training.curriculum">Curriculum</h5>
                     <ul class="sub-curriculum">
                       <li>SNMP &amp; Network Monitoring Tools</li>
                       <li>Packet Analysis with Wireshark</li>
@@ -1544,8 +1597,8 @@
                       <li>Logging, Alerting &amp; Dashboards</li>
                       <li>Diagnosing Common Network Faults</li>
                     </ul>
-                    <p class="sub-cost">Fee: <strong>Rp 3.500.000</strong></p>
-                    <button type="button" class="sub-register">Register Now</button>
+                    <p class="sub-cost"><span data-i18n="training.fee">Fee</span>: <strong>Rp 3.500.000</strong></p>
+                    <button type="button" class="sub-register" data-i18n="training.register">Register Now</button>
                   </div>
                 </div>
               </li>
@@ -1556,7 +1609,7 @@
         <aside class="training-form" id="training-form" hidden aria-labelledby="training-form-title">
           <div class="training-form-header">
             <div class="training-form-heading">
-              <h4 class="training-form-title" id="training-form-title">Registration</h4>
+              <h4 class="training-form-title" id="training-form-title" data-i18n="training.formTitle">Registration</h4>
               <p class="training-form-course" id="training-form-course"></p>
             </div>
             <button type="button" class="training-form-close" id="training-form-close" aria-label="Close registration form">
@@ -1575,7 +1628,7 @@
     <div class="modal-backdrop" id="subscribe-backdrop"></div>
     <div class="modal-dialog">
       <div class="modal-header">
-        <span class="modal-title">Subscription</span>
+        <span class="modal-title" data-i18n="modal.subscription">Subscription</span>
         <button class="modal-close" id="subscribe-close" aria-label="Close">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
@@ -1590,13 +1643,13 @@
     <div class="modal-backdrop" id="contact-backdrop"></div>
     <div class="modal-dialog">
       <div class="modal-header">
-        <span class="modal-title">Contact</span>
+        <span class="modal-title" data-i18n="modal.contact">Contact</span>
         <button class="modal-close" id="contact-close" aria-label="Close">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <div class="modal-body contact-body">
-        <h3>We Love To Talk, Ask Anything</h3>
+        <h3 data-i18n="contact.title">We Love To Talk, Ask Anything</h3>
         <img src="contact/qr-code.png" alt="QR Code" class="contact-qr">
         <a href="mailto:contact@dikodeworks.id" class="contact-email">contact@dikodeworks.id</a>
       </div>
@@ -1607,7 +1660,7 @@
     <div class="modal-backdrop" id="about-backdrop"></div>
     <div class="modal-dialog">
       <div class="modal-header">
-        <span class="modal-title">About Us</span>
+        <span class="modal-title" data-i18n="modal.about">About Us</span>
         <button class="modal-close" id="about-close" aria-label="Close">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
@@ -1634,12 +1687,157 @@
 
   <footer>
     <div class="wrap footer-inner">
-      <p>&copy; <span id="year"></span> DikodeWorks. All rights reserved.</p>
+      <p>&copy; <span id="year"></span> DikodeWorks. <span data-i18n="footer.rights">All rights reserved.</span></p>
     </div>
   </footer>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* ---------- Language switcher ---------- */
+    const i18n = {
+      en: {
+        'nav.training': 'Training',
+        'nav.schedule': 'Schedule',
+        'nav.subscription': 'Subscription',
+        'hero.title': 'Building resilient <span class="accent">tech talent</span> &amp; secure digital ecosystems<span class="red">.</span>',
+        'hero.subtitle': 'IT Professional Training, Delivered by Active Practitioners',
+        'hero.about': 'About Us',
+        'hero.contact': 'Contact',
+        'expertise.title': 'Our Expertise<span class="red">.</span>',
+        'expertise.network': 'Network Infrastructure',
+        'expertise.systems': 'Systems Administration',
+        'expertise.devops': 'IT Development Operation',
+        'expertise.software': 'Software Engineering',
+        'expertise.security': 'Cyber Security',
+        'faq.title': 'Frequently Asked Questions<span class="red">.</span>',
+        'faq.q1': 'How do I register for training?',
+        'faq.a1': 'You can register for training by visiting <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Schedule</a>',
+        'faq.q2': 'How much does the training cost?',
+        'faq.a2': 'Training fees are listed on each course detail page on <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Training</a>',
+        'faq.q3': 'What will I learn in a training session?',
+        'faq.a3': 'The materials covered in each training can be found in the detail section of each course',
+        'faq.q4': 'Where is the training location?',
+        'faq.a4': 'Online with Google Meet or 1m1 Akses UI, Depok',
+        'faq.q5': 'Where can I view the training schedule?',
+        'faq.a5': 'The training schedule is available at <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Schedule</a>',
+        'faq.q6': 'Prerequisites for networking training?',
+        'faq.a6': 'You should be proficient in operating a computer and understand what an IP Address is',
+        'faq.q7': 'Prerequisites for programming training?',
+        'faq.a7': 'You should have basic programming knowledge.',
+        'faq.q8': 'Prerequisites for sysadmin training?',
+        'faq.a8': 'For the Linux server training, you should have knowledge of basic Linux commands.',
+        'modal.training': 'Training',
+        'modal.subscription': 'Subscription',
+        'modal.contact': 'Contact',
+        'modal.about': 'About Us',
+        'contact.title': 'We Love To Talk, Ask Anything',
+        'training.network': 'Network Infrastructure',
+        'training.course1': 'Network Fundamentals',
+        'training.course2': 'Switching &amp; Routing (CCNA)',
+        'training.course3': 'MikroTik Administration',
+        'training.course4': 'Wireless &amp; Wi-Fi Engineering',
+        'training.course5': 'Network Monitoring &amp; Troubleshooting',
+        'training.curriculum': 'Curriculum',
+        'training.fee': 'Fee',
+        'training.register': 'Register Now',
+        'training.formTitle': 'Registration',
+        'footer.rights': 'All rights reserved.',
+      },
+      id: {
+        'nav.training': 'Pelatihan',
+        'nav.schedule': 'Jadwal',
+        'nav.subscription': 'Langganan',
+        'hero.title': 'Membangun <span class="accent">bakat teknologi</span> yang tangguh &amp; ekosistem digital yang aman<span class="red">.</span>',
+        'hero.subtitle': 'Pelatihan IT Profesional, Dibawakan oleh Praktisi Aktif',
+        'hero.about': 'Tentang Kami',
+        'hero.contact': 'Kontak',
+        'expertise.title': 'Keahlian Kami<span class="red">.</span>',
+        'expertise.network': 'Infrastruktur Jaringan',
+        'expertise.systems': 'Administrasi Sistem',
+        'expertise.devops': 'Development Operation IT',
+        'expertise.software': 'Rekayasa Perangkat Lunak',
+        'expertise.security': 'Keamanan Siber',
+        'faq.title': 'Pertanyaan yang Sering Diajukan<span class="red">.</span>',
+        'faq.q1': 'Bagaimana cara mendaftar pelatihan?',
+        'faq.a1': 'Anda dapat mendaftar pelatihan dengan mengunjungi <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Jadwal</a>',
+        'faq.q2': 'Berapa biaya pelatihan?',
+        'faq.a2': 'Biaya pelatihan tercantum pada halaman detail setiap kursus di <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Pelatihan</a>',
+        'faq.q3': 'Apa yang akan saya pelajari dalam sesi pelatihan?',
+        'faq.a3': 'Materi yang dibahas pada setiap pelatihan dapat ditemukan di bagian detail setiap kursus',
+        'faq.q4': 'Di mana lokasi pelatihan?',
+        'faq.a4': 'Daring (online) melalui Google Meet atau 1m1 Akses UI, Depok',
+        'faq.q5': 'Di mana saya dapat melihat jadwal pelatihan?',
+        'faq.a5': 'Jadwal pelatihan tersedia di <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Jadwal</a>',
+        'faq.q6': 'Prasyarat untuk pelatihan jaringan?',
+        'faq.a6': 'Anda sebaiknya mahir mengoperasikan komputer dan memahami apa itu Alamat IP',
+        'faq.q7': 'Prasyarat untuk pelatihan pemrograman?',
+        'faq.a7': 'Anda sebaiknya memiliki pengetahuan dasar pemrograman.',
+        'faq.q8': 'Prasyarat untuk pelatihan sysadmin?',
+        'faq.a8': 'Untuk pelatihan server Linux, Anda sebaiknya memiliki pengetahuan dasar perintah Linux.',
+        'modal.training': 'Pelatihan',
+        'modal.subscription': 'Langganan',
+        'modal.contact': 'Kontak',
+        'modal.about': 'Tentang Kami',
+        'contact.title': 'Kami Senang Bercerita, Tanyakan Apa Saja',
+        'training.network': 'Infrastruktur Jaringan',
+        'training.course1': 'Dasar-Dasar Jaringan',
+        'training.course2': 'Switching &amp; Routing (CCNA)',
+        'training.course3': 'Administrasi MikroTik',
+        'training.course4': 'Teknik Nirkabel &amp; Wi-Fi',
+        'training.course5': 'Pemantauan &amp; Pemecahan Masalah Jaringan',
+        'training.curriculum': 'Kurikulum',
+        'training.fee': 'Biaya',
+        'training.register': 'Daftar Sekarang',
+        'training.formTitle': 'Pendaftaran',
+        'footer.rights': 'Hak cipta dilindungi.',
+      },
+    };
+
+    let fading = false;
+
+    function switchLanguage(lang, animate = true) {
+      const dict = i18n[lang] || i18n.en;
+
+      const apply = () => {
+        document.documentElement.lang = lang;
+
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+          const key = el.dataset.i18n;
+          if (dict[key] !== undefined) el.textContent = dict[key];
+        });
+
+        document.querySelectorAll('[data-i18n-html]').forEach((el) => {
+          const key = el.dataset.i18nHtml;
+          if (dict[key] !== undefined) el.innerHTML = dict[key];
+        });
+
+        document.querySelectorAll('.lang-btn').forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.lang === lang);
+        });
+
+        localStorage.setItem('dikodeworks-lang', lang);
+      };
+
+      if (!animate || lang === document.documentElement.lang || fading) {
+        apply();
+        return;
+      }
+
+      fading = true;
+      document.body.classList.add('lang-fading');
+      setTimeout(() => {
+        apply();
+        document.body.classList.remove('lang-fading');
+        fading = false;
+      }, 320);
+    }
+
+    document.querySelectorAll('.lang-btn').forEach((btn) => {
+      btn.addEventListener('click', () => switchLanguage(btn.dataset.lang));
+    });
+
+    switchLanguage(localStorage.getItem('dikodeworks-lang') || 'id', false);
 
     /* ---------- Shared modal controller ---------- */
     const modals = Array.from(document.querySelectorAll('.modal'));
