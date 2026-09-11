@@ -1188,7 +1188,53 @@
     }
 
     .jadwal-scroll {
-      overflow-x: auto;
+      max-height: 46vh;
+      overflow: auto;
+    }
+
+    .jadwal-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .jadwal-search-input {
+      flex: 1;
+      min-width: 0;
+      padding: 9px 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: var(--surface);
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: var(--ink);
+    }
+
+    .jadwal-search-input:focus {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+      border-color: var(--ink);
+    }
+
+    .jadwal-search-clear {
+      flex: none;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .jadwal-search-clear:hover {
+      color: #c02020;
+      background: var(--line);
     }
 
     .jadwal-table {
@@ -1198,7 +1244,10 @@
     }
 
     .jadwal-table thead th {
+      position: sticky;
+      top: 0;
       background: var(--line);
+      z-index: 1;
       font-family: 'Space Grotesk', sans-serif;
       font-size: 0.82rem;
       font-weight: 700;
@@ -1212,7 +1261,13 @@
       padding: 12px 14px;
       border-bottom: 1px solid var(--line);
       color: var(--ink-soft);
-      vertical-align: middle;
+      vertical-align: top;
+    }
+
+    .jadwal-table tbody td.jadwal-multi {
+      white-space: pre;
+      line-height: 1.5;
+      padding-left: 18px;
     }
 
     .jadwal-table tbody tr:last-child td {
@@ -1614,6 +1669,10 @@
           <span class="jadwal-progress-track"><span class="jadwal-progress-fill" id="jadwal-progress-fill"></span></span>
           <span class="jadwal-progress-label" id="jadwal-progress-label">0%</span>
         </div>
+        <div class="jadwal-search">
+          <input type="search" id="jadwal-search-input" class="jadwal-search-input" placeholder="Search training, date, location…" aria-label="Search schedule">
+          <button type="button" class="jadwal-search-clear" id="jadwal-search-clear" aria-label="Clear search">&times;</button>
+        </div>
         <div class="jadwal-scroll">
           <table class="jadwal-table" id="jadwal-table">
             <thead id="jadwal-head"></thead>
@@ -1750,6 +1809,9 @@
         'jadwal.error': 'Unable to load the schedule. Please try again later.',
         'jadwal.updated': 'Last updated at',
         'jadwal.register': 'Register',
+        'jadwal.searchPlaceholder': 'Search training, date, location…',
+        'jadwal.none': 'No trainings scheduled yet. Add rows in Notion.',
+        'jadwal.searchEmpty': 'No matching training found.',
         'jadwal.notConfigured': 'Schedule source not configured yet.',
         'footer.rights': 'All rights reserved.',
       },
@@ -1814,6 +1876,9 @@
         'jadwal.error': 'Kekade belad jadwal. Penjau Vuit koneksi Apps Script dalam kode.',
         'jadwal.updated': 'Di-update pada',
         'jadwal.register': 'Registrasi',
+        'jadwal.searchPlaceholder': 'Keceke pelatihan, tanggal, lokasi…',
+        'jadwal.none': 'Belum ada pelatihan daprograman. Pandang rega dalam Notion.',
+        'jadwal.searchEmpty': 'Tidak ada pelatihan yang acko.',
         'jadwal.notConfigured': 'Source jadwal belum disetup. Penjau Vuit URL Apps Script dalam kode.',
         'footer.rights': 'Hak cipta dilindungi.',
       },
@@ -1836,6 +1901,11 @@
           const key = el.dataset.i18nHtml;
           if (dict[key] !== undefined) el.innerHTML = dict[key];
         });
+
+        const searchPh = document.getElementById('jadwal-search-input');
+        if (searchPh && dict['jadwal.searchPlaceholder'] !== undefined) {
+          searchPh.placeholder = dict['jadwal.searchPlaceholder'];
+        }
 
         document.querySelectorAll('.lang-btn').forEach((btn) => {
           btn.classList.toggle('active', btn.dataset.lang === lang);
@@ -2066,21 +2136,27 @@
        links) work even when both live sources are unreachable.
        Refresh with:  python3 scripts/build_schedule.py */
     const JADWAL_INLINE_DATA = {
-      "columns": ["Training", "Materi", "Tanggal", "Waktu", "Lokasi", "Biaya", "Registrasi"],
+      "columns": ["Tanggal", "Training", "Materi", "Waktu", "Lokasi", "Biaya", "Registrasi"],
       "rows": [
-        [{"v": "Product", "link": null}, {"v": "Product Manager", "link": null}, {"v": "17 Agustus 2026", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 100.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}],
-        [{"v": "DevOps", "link": null}, {"v": "Kubernetes", "link": null}, {"v": "17 Agustus 2026", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 150.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}]
+        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 1", "link": null}, {"v": "…\n…\n…", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}],
+        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 2", "link": null}, {"v": "…\n…\n…", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}],
+        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 3", "link": null}, {"v": "…\n…\n…", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}],
+        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 4", "link": null}, {"v": "…\n…\n…", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}],
+        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 5", "link": null}, {"v": "…\n…\n…", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}],
+        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 6", "link": null}, {"v": "…\n…\n…", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}]
       ]
     };
     /* Public sheet endpoint, loaded as JSONP since it sends no CORS headers.
        Last-resort fallback for cell values only (no hyperlinks). */
     const JADWAL_FALLBACK_URL = 'https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/gviz/tq?tqx=out:json&gid=745406458';
     const JADWAL_REFRESH_MS = 5 * 60 * 1000;
-    const JADWAL_COLUMNS = ['Training', 'Materi', 'Tanggal', 'Waktu', 'Lokasi', 'Biaya', 'Registrasi'];
+    const JADWAL_COLUMNS = ['Tanggal', 'Training', 'Materi', 'Waktu', 'Lokasi', 'Biaya', 'Registrasi'];
 
     const jadwalHead = document.getElementById('jadwal-head');
     const jadwalRows = document.getElementById('jadwal-rows');
     const jadwalMeta = document.getElementById('jadwal-meta');
+    const jadwalSearchInput = document.getElementById('jadwal-search-input');
+    const jadwalSearchClear = document.getElementById('jadwal-search-clear');
 
     const localized = (key) => {
       const dict = i18n[document.documentElement.lang] || i18n.en;
@@ -2181,7 +2257,12 @@
       return { headers, entries, updated: new Date().toISOString() };
     }
 
+    /* Cached full dataset so the search box can re-filter without refetching. */
+    let jadwalRowsData = [];
+    let jadwalMetaUpdated = null;
+
     function renderJadwal(headers, entries, updated) {
+      /* Map JADWAL_COLUMNS (display order) to indices in the source headers. */
       const columns = JADWAL_COLUMNS.map((name) => {
         const idx = headers.findIndex((h) => h.trim().toLowerCase() === name.toLowerCase());
         return idx === -1 ? null : idx;
@@ -2197,36 +2278,63 @@
       });
       jadwalHead.replaceChildren(headRow);
 
-      const visible = entries
+      jadwalRowsData = entries
         .filter((cells) => cells.some((cell) => cell && cell.v !== ''))
         .map((cells) => present.map((idx) => cells[idx] || { v: '', link: null }));
+      jadwalMetaUpdated = updated;
+
+      applyJadwalFilter();
+    }
+
+    /* Render the cached rows filtered by the search box.
+       Rows are appended DIRECTLY into <tbody id="jadwal-rows"> — never wrap
+       them in another <tbody> (which breaks the table layout). */
+    function applyJadwalFilter() {
+      const q = (jadwalSearchInput.value || '').trim().toLowerCase();
+
+      if (!q) {
+        jadwalSearchClear.style.display = 'none';
+      } else {
+        jadwalSearchClear.style.display = 'flex';
+      }
+
+      const visible = q
+        ? jadwalRowsData.filter((cells) => cells.some((cell) => cell && cell.v.toLowerCase().includes(q)))
+        : jadwalRowsData;
+
+      jadwalRows.textContent = '';
 
       if (!visible.length) {
-        jadwalStatus(localized('jadwal.empty'));
-        jadwalMeta.textContent = '';
+        if (q) {
+          const tr = document.createElement('tr');
+          tr.className = 'jadwal-status';
+          const td = document.createElement('td');
+          td.setAttribute('colspan', String(JADWAL_COLUMNS.length));
+          td.textContent = localized('jadwal.searchEmpty');
+          tr.appendChild(td);
+          jadwalRows.appendChild(tr);
+        }
+        jadwalMeta.textContent = jadwalMetaUpdated ? formatJadwalMeta(jadwalMetaUpdated) : '';
         return;
       }
 
-      // jadwalRows is the <tbody> element; clear it and rebuild rows directly.
-      jadwalRows.textContent = '';
       visible.forEach((cells) => {
         const tr = document.createElement('tr');
         cells.forEach((cell, i) => {
           const td = document.createElement('td');
-          const makeButton = () => {
-            const rawLabel = cell.v || localized('jadwal.register');
-            const label = /^https?:\/\//i.test(rawLabel) ? localized('jadwal.register') : rawLabel;
-            const link = cell.link || JADWAL_NOTION_URL;
+
+          /* Any cell carrying a hyperlink renders as a button (Registrasi). */
+          if (cell.link) {
             const a = document.createElement('a');
             a.className = 'jadwal-register';
-            a.href = link;
+            a.href = cell.link;
             a.setAttribute('target', '_blank');
             a.setAttribute('rel', 'noopener');
-            a.textContent = label;
-            return a;
-          };
-          if (i === cells.length - 1) {
-            td.appendChild(makeButton());
+            a.textContent = localized('jadwal.register');
+            td.appendChild(a);
+          } else if (cell.v.includes('\n')) {
+            td.classList.add('jadwal-multi');
+            td.textContent = cell.v;
           } else {
             td.textContent = cell.v;
           }
@@ -2235,59 +2343,64 @@
         jadwalRows.appendChild(tr);
       });
 
-      const pad = (n) => String(n).padStart(2, '0');
-      if (updated) {
-        const date = new Date(updated);
-        jadwalMeta.textContent = localized('jadwal.updated') + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
-      } else {
-        jadwalMeta.textContent = '';
-      }
+      jadwalMeta.textContent = jadwalMetaUpdated ? formatJadwalMeta(jadwalMetaUpdated) : '';
     }
+
+    const formatJadwalMeta = (updated) => {
+      const pad = (n) => String(n).padStart(2, '0');
+      const date = new Date(updated);
+      return localized('jadwal.updated') + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+    };
 
     /* Parse r.jina.ai Markdown of the Notion page.
    Format after "Isi tabel":
-     Training / Materi / Tanggal / Waktu / Lokasi / Biaya / Registrasi
-     <value> (Registrasi value is a MD link  [text](url))
-   repeated per row. */
+     Tanggal / Training / Materi / Waktu / Lokasi / Biaya / Registrasi
+     <value> (Registrasi is a MD link  [text](url))
+   repeated per row.
+   A field may contain MORE THAN ONE value line (e.g. Materi lists several
+   materials). Consecutive value lines for the same key are joined with \n.
+   This parser is position- and completeness-tolerant: a new row starts
+   whenever a key repeats, and missing keys simply stay empty. */
     function parseNotionMarkdown(text) {
-      const JADWAL_LOWER = ['training', 'materi', 'tanggal', 'waktu', 'lokasi', 'biaya', 'registrasi'];
+      const KEYS = ['tanggal', 'training', 'materi', 'waktu', 'lokasi', 'biaya', 'registrasi'];
       const lines = String(text).split(/\r?\n/).map((l) => l.trim());
       const start = lines.findIndex((l) => l.trim().toLowerCase() === 'isi tabel');
-
-      const headers = ['Training', 'Materi', 'Tanggal', 'Waktu', 'Lokasi', 'Biaya', 'Registrasi'];
       const entries = [];
-      let row = null;
-      let pendingKey = null;
+      const mdLink = new RegExp('\\[([^\\]]*)\\]\\(([^)]+)\\)');
 
-      const pushValue = (val) => {
-        if (!pendingKey) return;
-        const ci = JADWAL_LOWER.indexOf(pendingKey);
-        const mdLink = new RegExp('\\[([^\\]]*)\\]\\(([^)]+)\\)');
-        const linkMatch = val.match(mdLink);
-        const cell = {
-          v: linkMatch ? linkMatch[1] : val,
-          link: linkMatch ? linkMatch[2] : null,
-        };
-        if (row === null) row = [];
-        row[ci] = cell;
-        pendingKey = null;
-        if (row.filter((c) => c).length === headers.length) {
-          entries.push(row);
-          row = null;
-        }
+      let row = new Map();
+      let currentKey = null;
+
+      const flush = () => {
+        if (!row.size) return;
+        const cells = JADWAL_COLUMNS.map((name) => row.get(name.toLowerCase()) || { v: '', link: null });
+        entries.push(cells);
+        row = new Map();
       };
 
       for (let i = (start === -1 ? 0 : start + 1); i < lines.length; i++) {
         const l = lines[i];
         if (!l) continue;
-        const li = JADWAL_LOWER.indexOf(l.toLowerCase());
-        if (li !== -1) {
-          pendingKey = l.toLowerCase();
+        const low = l.toLowerCase();
+        if (KEYS.includes(low)) {
+          if (row.has(low)) flush();   /* repeat key → new row */
+          currentKey = low;
         } else {
-          pushValue(l);
+          const m = l.match(mdLink);
+          const value = m ? m[1] : l;
+          const link = m ? m[2] : null;
+          if (!currentKey) continue;
+          const existing = row.get(currentKey);
+          if (existing) {
+            existing.v += '\n' + value;
+            if (link) existing.link = link;
+          } else {
+            row.set(currentKey, { v: value, link: link });
+          }
         }
       }
-      return { headers, entries, updated: new Date().toISOString() };
+      flush();
+      return { headers: JADWAL_COLUMNS, entries, updated: new Date().toISOString() };
     }
 
     async function fetchJadwal() {
@@ -2372,9 +2485,23 @@
           jadwalRows.innerHTML = '';
           jadwalHead.innerHTML = '';
           jadwalMeta.textContent = '';
+          if (jadwalSearchInput && jadwalSearchInput.value) jadwalSearchInput.value = '';
           fetchJadwal();
         }, 50);
       }, { capture: true });
+    }
+
+    /* Filter the table as the user types; clear button resets it. */
+    if (jadwalSearchInput) {
+      jadwalSearchInput.addEventListener('input', applyJadwalFilter);
+      jadwalSearchInput.addEventListener('search', applyJadwalFilter);
+    }
+    if (jadwalSearchClear) {
+      jadwalSearchClear.addEventListener('click', () => {
+        jadwalSearchInput.value = '';
+        applyJadwalFilter();
+        jadwalSearchInput.focus({ preventScroll: true });
+      });
     }
 
     if (JADWAL_API_URL || JADWAL_FALLBACK_URL) {
