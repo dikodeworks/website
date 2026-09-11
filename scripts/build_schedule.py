@@ -1,12 +1,25 @@
 #!/usr/bin/env python3
-"""Fetch a public Notion page and dump its schedule table as schedule.json.
+"""Fetch a public Notion page (via r.jina.ai Markdown) and dump its schedule
+table as schedule.json.
 
-The Notion page is a flat list of blocks:
-  section 1: a "Tabel" heading followed by 7 bulleted_list blocks (the columns)
-  section 2 ("Isi tabel"): repeated label(text) + value(bulleted_list) pairs
+The Notion page is rendered server-side by r.jina.ai and returned as Markdown:
+  ... "Isi tabel" ...
+  Tanggal
+  17 Agustus 2026
+  Training
+  Training 1
+  Materi
+  item A
+  item B
+  Registrasi
+  [Registrasi](https://lynk.id/dikodeworks/n08485j53pn0)
+  ...
+
+A field may contain MORE THAN ONE value line (e.g. Materi lists several
+materials). Consecutive value lines for the same key are joined with \n.
 
 Configuration via env vars:
-  NOTION_PAGE_ID   (required) e.g. 3d76fa85-8bba-8067-8c5a-d21fda12a21f
+  NOTION_PAGE_ID   (required) e.g. 3d76fa858bba80678c5ad21fda12a21f
   NOTION_HOST      (optional)  default teguhpm.notion.site
   OUTPUT           (optional)  default schedule.json
 
@@ -15,128 +28,80 @@ Safe to run anywhere: python3, no third-party dependencies.
 
 import json
 import os
+import re
 import sys
+import time
 import urllib.request
 
 PAGE_ID = os.environ.get("NOTION_PAGE_ID", "").strip().replace("-", "")
 HOST = os.environ.get("NOTION_HOST", "teguhpm.notion.site").strip()
 OUTPUT = os.environ.get("OUTPUT", "schedule.json").strip()
 
-EXPECTED_COLUMNS = ["Training", "Materi", "Tanggal", "Waktu", "Lokasi", "Biaya", "Registrasi"]
+EXPECTED_COLUMNS = ["Tanggal", "Training", "Materi", "Waktu", "Lokasi", "Biaya", "Registrasi"]
+_lower = [c.lower() for c in EXPECTED_COLUMNS]
 
 
-def fetch_chunk(page_id):
-    url = f"https://{HOST}/api/v3/loadCachedPageChunk"
-    body = json.dumps(
-        {
-            "pageId": page_id,
-            "cursor": {"stack": []},
-            "chunkNumber": 0,
-            "verticalColumns": False,
-        }
-    ).encode("utf-8")
+def fetch_markdown():
+    url = f"https://r.jina.ai/https://{HOST}/" + PAGE_ID + "?generated=" + str(int(time.time()))
     req = urllib.request.Request(
         url,
-        data=body,
         headers={
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "User-Agent": "Mozilla/5.0 (compatible; problem-confirm/1.0)",
+            "Accept": "*/*",
+            "User-Agent": "Mozilla/5.0 (compatible; dikodeworks-schedule/1.0)",
+            "X-Timeout": "30",
         },
     )
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        return json.load(resp)
+    with urllib.request.urlopen(req, timeout=90) as resp:
+        return resp.read().decode("utf-8", errors="replace")
 
 
-def block_text(props):
-    if not props:
-        return ""
-    first = list(props.values())[0]
-    out = []
-    if first and isinstance(first, list):
-        for item in first:
-            if isinstance(item, list) and item:
-                out.append(item[0] if isinstance(item[0], str) else "")
-    return "".join(out)
+def parse(text):
+    lines = [l.strip() for l in text.split("\n")]
+    start = next((i for i, l in enumerate(lines) if l.lower() == "isi tabel"), -1)
+    if start == -1:
+        return EXPECTED_COLUMNS, []
 
-
-def block_link(props):
-    if not props:
-        return None
-    first = list(props.values())[0]
-    if first and isinstance(first, list):
-        for item in first:
-            if isinstance(item, list) and len(item) > 1 and isinstance(item[1], list) and item[1]:
-                for ann in item[1]:
-                    if isinstance(ann, list) and len(ann) > 1 and ann[0] == "a":
-                        return ann[1]
-    return None
-
-
-def pull_blocks(payload):
-    blocks = []
-    for bid, node in payload.get("recordMap", {}).get("block", {}).items():
-        value = node.get("value", {}).get("value", {})
-        kind = value.get("type")
-        if kind not in ("text", "bulleted_list"):
-            continue
-        props = value.get("properties", {})
-        blocks.append(
-            {
-                "type": kind,
-                "text": block_text(props).strip(),
-                "link": block_link(props),
-            }
-        )
-    return blocks
-
-
-def find_header(seq):
-    """Return the list of header names for the scheduled-table section."""
-    for i, blk in enumerate(seq):
-        if blk["type"] != "text":
-            continue
-        if blk["text"].strip().lower() in ("tabel", "table"):
-            headers = []
-            j = i + 1
-            while j < len(seq) and seq[j]["type"] == "bulleted_list":
-                headers.append(seq[j]["text"])
-                j += 1
-            if len(headers) >= len(EXPECTED_COLUMNS):
-                return headers[: len(EXPECTED_COLUMNS)]
-    return EXPECTED_COLUMNS
-
-
-def find_rows(seq, headers):
-    """Find the label/value pairs; each label is a text block immediately
-    followed by a bulleted_list holding the value."""
-    wanted = [h.strip().lower() for h in headers]
+    link_re = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
+    headers = []
     rows = []
-    cur = {}
-    i = 0
-    while i < len(seq) - 1:
-        blk = seq[i]
-        nxt = seq[i + 1]
-        if (
-            blk["type"] == "text"
-            and nxt["type"] == "bulleted_list"
-            and blk["text"].strip().lower() in wanted
-            and blk["text"].strip().lower() not in (h.lower() for h in cur)
-        ):
-            key = blk["text"].strip()
-            cur[key] = {
-                "v": nxt["text"],
-                "link": nxt["link"],
-            }
-            i += 2
-            if len(cur) == len(wanted):
-                rows.append(cur)
-                cur = {}
+    row = None
+    pending = None
+
+    def push(val):
+        nonlocal row, pending
+        if pending is None:
+            return
+        ci = _lower.index(pending)
+        m = link_re.match(val)
+        value = m.group(1) if m else val
+        link = m.group(2) if m else None
+        if row is None:
+            row = [None] * len(headers)
+        if row[ci] is None:
+            row[ci] = {"v": value, "link": link}
+        else:
+            row[ci]["v"] += "\n" + value
+            if link:
+                row[ci]["link"] = link
+        if all(row):
+            rows.append(row)
+            row = None
+            pending = None
+
+    # Build header list from the FIRST occurrence of the key/value pairs; use
+    # EXPECTED_COLUMNS order so output is stable and matches the site.
+    headers = list(EXPECTED_COLUMNS)
+
+    for i in range(start + 1, len(lines)):
+        l = lines[i]
+        if not l:
             continue
-        i += 1
-    if cur:
-        rows.append(cur)
-    return rows
+        low = l.lower()
+        if low in _lower:
+            pending = low
+        else:
+            push(l)
+    return headers, rows
 
 
 def normalize(rows, headers):
@@ -144,13 +109,8 @@ def normalize(rows, headers):
     for row in rows:
         entry = []
         for h in headers:
-            cell = row.get(h, {})
-            entry.append(
-                {
-                    "v": cell.get("v", ""),
-                    "link": cell.get("link"),
-                }
-            )
+            cell = row[_lower.index(h.lower())]
+            entry.append({"v": cell.get("v", ""), "link": cell.get("link")})
         entries.append(entry)
     return entries
 
@@ -158,15 +118,13 @@ def normalize(rows, headers):
 def main():
     if not PAGE_ID:
         sys.exit("NOTION_PAGE_ID is required")
-    payload = fetch_chunk(PAGE_ID)
-    seq = pull_blocks(payload)
-    headers = find_header(seq)
-    rows = find_rows(seq, headers)
+    text = fetch_markdown()
+    headers, rows = parse(text)
     document = {
-        "source": f"https://{HOST}/" + PAGE_ID + "?source=copy_link",
+        "source": f"https://{HOST}/" + PAGE_ID,
         "columns": headers,
         "rows": normalize(rows, headers),
-        "note": "generated by scripts/build_schedule.py from public Notion page",
+        "note": "generated by scripts/build_schedule.py via r.jina.ai from public Notion page",
     }
     with open(OUTPUT, "w", encoding="utf-8") as fh:
         json.dump(document, fh, ensure_ascii=False, indent=2)
