@@ -164,7 +164,8 @@
       gap: 32px;
     }
 
-    .nav-links a {
+    .nav-links a,
+    .nav-links .nav-link-btn {
       position: relative;
       font-family: 'Space Grotesk', sans-serif;
       font-size: 1.05rem;
@@ -174,7 +175,15 @@
       transition: color .2s ease;
     }
 
-    .nav-links a::after {
+    .nav-links .nav-link-btn {
+      border: none;
+      background: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .nav-links a::after,
+    .nav-links .nav-link-btn::after {
       content: "";
       position: absolute;
       left: 0;
@@ -187,8 +196,10 @@
       transition: transform .25s ease;
     }
 
-    .nav-links a:hover { color: var(--ink); }
-    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-links a:hover,
+    .nav-links .nav-link-btn:hover { color: var(--ink); }
+    .nav-links a:hover::after,
+    .nav-links .nav-link-btn:hover::after { transform: scaleX(1); }
 
     .nav-toggle {
       display: none;
@@ -1162,6 +1173,126 @@
     }
 
     .faq-answer a:hover { color: #c02020; }
+
+    /* Jadwal schedule modal */
+    #jadwal-modal .modal-dialog {
+      width: min(1100px, 96vw);
+    }
+
+    #jadwal-modal .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 20px 24px;
+      overflow: auto;
+    }
+
+    .jadwal-scroll {
+      overflow-x: auto;
+    }
+
+    .jadwal-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .jadwal-table thead th {
+      background: var(--line);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-align: left;
+      padding: 10px 14px;
+      white-space: nowrap;
+    }
+
+    .jadwal-table tbody td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--ink-soft);
+      vertical-align: middle;
+    }
+
+    .jadwal-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .jadwal-table tbody tr:not(.jadwal-status):hover td {
+      background: var(--surface);
+    }
+
+    .jadwal-table .jadwal-status td {
+      text-align: center;
+      padding: 32px 0;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .jadwal-register {
+      display: inline-block;
+      padding: 8px 20px;
+      border: none;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .2s ease, color .2s ease;
+    }
+
+    .jadwal-register:hover,
+    .jadwal-register:focus-visible {
+      background: #c02020;
+    }
+
+    .jadwal-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* Jadwal loading progress bar (1-100%) */
+    .jadwal-progress {
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .jadwal-progress.active {
+      display: flex;
+    }
+
+    .jadwal-progress .jadwal-progress-track {
+      flex: 1;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--line);
+      overflow: hidden;
+    }
+
+    .jadwal-progress .jadwal-progress-fill {
+      display: block;
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: #c02020;
+      transition: width .15s linear;
+    }
+
+    .jadwal-progress .jadwal-progress-label {
+      flex: none;
+      min-width: 52px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
   </style>
 </head>
 <body>
@@ -1173,7 +1304,7 @@
       <div class="nav-right">
         <nav class="nav-links">
           <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?usp=sharing" target="_blank" rel="noopener"><span data-i18n="nav.training">Training</span></a>
-          <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?usp=sharing" target="_blank" rel="noopener"><span data-i18n="nav.schedule">Schedule</span></a>
+          <button type="button" class="nav-link-btn" id="jadwal-open"><span data-i18n="nav.schedule">Schedule</span></button>
         </nav>
         <div class="socials">
         <a href="https://www.instagram.com/dikodeworks" target="_blank" rel="noopener" aria-label="Instagram">
@@ -1469,6 +1600,31 @@
     </div>
   </div>
 
+  <div class="modal" id="jadwal-modal" role="dialog" aria-modal="true" aria-label="Jadwal">
+    <div class="modal-backdrop" id="jadwal-backdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title" data-i18n="nav.schedule">Schedule</span>
+        <button class="modal-close" id="jadwal-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="jadwal-progress" id="jadwal-progress" role="status" aria-live="polite">
+          <span class="jadwal-progress-track"><span class="jadwal-progress-fill" id="jadwal-progress-fill"></span></span>
+          <span class="jadwal-progress-label" id="jadwal-progress-label">0%</span>
+        </div>
+        <div class="jadwal-scroll">
+          <table class="jadwal-table" id="jadwal-table">
+            <thead id="jadwal-head"></thead>
+            <tbody id="jadwal-rows"></tbody>
+          </table>
+        </div>
+        <p class="jadwal-meta" id="jadwal-meta" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+
   <div class="modal" id="contact-modal" role="dialog" aria-modal="true" aria-label="Contact">
     <div class="modal-backdrop" id="contact-backdrop"></div>
     <div class="modal-dialog">
@@ -1588,6 +1744,13 @@
         'training.fee': 'Fee',
         'training.register': 'Register Now',
         'training.formTitle': 'Registration',
+        'jadwal.loading': 'Loading…',
+        'jadwal.loadingProgress': 'Loading…',
+        'jadwal.empty': 'No trainings scheduled yet.',
+        'jadwal.error': 'Unable to load the schedule. Please try again later.',
+        'jadwal.updated': 'Last updated at',
+        'jadwal.register': 'Register',
+        'jadwal.notConfigured': 'Schedule source not configured yet.',
         'footer.rights': 'All rights reserved.',
       },
       id: {
@@ -1645,6 +1808,13 @@
         'training.fee': 'Biaya',
         'training.register': 'Daftar Sekarang',
         'training.formTitle': 'Pendaftaran',
+        'jadwal.loading': 'Sedang belading…',
+        'jadwal.loadingProgress': 'Sedang belading…',
+        'jadwal.empty': 'Belum ada pelatihan daprograman.',
+        'jadwal.error': 'Kekade belad jadwal. Penjau Vuit koneksi Apps Script dalam kode.',
+        'jadwal.updated': 'Di-update pada',
+        'jadwal.register': 'Registrasi',
+        'jadwal.notConfigured': 'Source jadwal belum disetup. Penjau Vuit URL Apps Script dalam kode.',
         'footer.rights': 'Hak cipta dilindungi.',
       },
     };
@@ -1741,6 +1911,7 @@
       ['about-modal', 'about-open', 'about-close', 'about-backdrop'],
       ['contact-modal', 'contact-open', 'contact-close', 'contact-backdrop'],
       ['training-modal', 'training-open', 'training-close', 'training-backdrop'],
+      ['jadwal-modal', 'jadwal-open', 'jadwal-close', 'jadwal-backdrop'],
     ].forEach(([modalId, openId, closeId, backdropId]) => {
       const modal = document.getElementById(modalId);
       if (!modal) return;
@@ -1881,6 +2052,335 @@
         btn.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
       });
     });
+
+    /* ---------- Jadwal: live schedule table ---------- */
+    /* Every refresh (click or 5-min timer) first pulls the LIVE Notion page.
+       It is rendered server-side by the r.jina.ai reader proxy, which replies
+       with CORS headers, returning the page as plain Markdown. */
+    const JADWAL_NOTION_URL = 'https://teguhpm.notion.site/Jadwal-Training-3d76fa858bba80678c5ad21fda12a21f';
+    const JADWAL_NOTION_LIVE_URL = 'https://r.jina.ai/' + JADWAL_NOTION_URL;
+    /* schedule.json is generated from the public Notion page by the
+       .github/workflows/refresh-schedule.yml workflow (every 5 minutes). */
+    const JADWAL_API_URL = 'schedule.json';
+    /* Embedded snapshot of schedule.json so the table (and the registrasi
+       links) work even when both live sources are unreachable.
+       Refresh with:  python3 scripts/build_schedule.py */
+    const JADWAL_INLINE_DATA = {
+      "columns": ["Training", "Materi", "Tanggal", "Waktu", "Lokasi", "Biaya", "Registrasi"],
+      "rows": [
+        [{"v": "Product", "link": null}, {"v": "Product Manager", "link": null}, {"v": "17 Agustus 2026", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 100.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}],
+        [{"v": "DevOps", "link": null}, {"v": "Kubernetes", "link": null}, {"v": "17 Agustus 2026", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 150.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}]
+      ]
+    };
+    /* Public sheet endpoint, loaded as JSONP since it sends no CORS headers.
+       Last-resort fallback for cell values only (no hyperlinks). */
+    const JADWAL_FALLBACK_URL = 'https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/gviz/tq?tqx=out:json&gid=745406458';
+    const JADWAL_REFRESH_MS = 5 * 60 * 1000;
+    const JADWAL_COLUMNS = ['Training', 'Materi', 'Tanggal', 'Waktu', 'Lokasi', 'Biaya', 'Registrasi'];
+
+    const jadwalHead = document.getElementById('jadwal-head');
+    const jadwalRows = document.getElementById('jadwal-rows');
+    const jadwalMeta = document.getElementById('jadwal-meta');
+
+    const localized = (key) => {
+      const dict = i18n[document.documentElement.lang] || i18n.en;
+      return dict[key] !== undefined ? dict[key] : key;
+    };
+
+    const jadwalStatus = (message) => {
+      jadwalRows.innerHTML = '<tr class="jadwal-status"><td colspan="' + JADWAL_COLUMNS.length + '">' + message + '</td></tr>';
+    };
+
+    /* ---------- Jadwal loading progress (1-100%) ---------- */
+    const jadwalProgress = document.getElementById('jadwal-progress');
+    const jadwalProgressFill = document.getElementById('jadwal-progress-fill');
+    const jadwalProgressLabel = document.getElementById('jadwal-progress-label');
+
+    let jadwalProgressTimer = null;
+    let jadwalProgressTick = 0;
+    let jadwalProgressValue = 0;
+
+    const jadwalShowProgress = () => {
+      if (!jadwalProgress) return;
+      jadwalProgress.value = 0;
+      jadwalProgressValue = 0;
+      jadwalProgressTick = 0;
+      jadwalProgress.classList.add('active');
+      jadwalProgressFill.style.width = '0%';
+      jadwalProgressLabel.textContent = '0%';
+
+      /* Simulated async progress: advances quickly at first, eases near 90%,
+         then jumps to 100% when the data actually arrives. */
+      if (jadwalProgressTimer) clearInterval(jadwalProgressTimer);
+      jadwalProgressTimer = setInterval(() => {
+        jadwalProgressTick++;
+        if (jadwalProgressValue < 90) {
+          const step = Math.max(1, Math.ceil((90 - jadwalProgressValue) * 0.12 * (1 + Math.sin(jadwalProgressTick * 0.5))));
+          jadwalProgressValue = Math.min(90, jadwalProgressValue + step);
+        } else {
+          jadwalProgressValue = Math.min(99, jadwalProgressValue + 1);
+        }
+        jadwalProgressFill.style.width = jadwalProgressValue + '%';
+        jadwalProgressLabel.textContent = Math.round(jadwalProgressValue) + '%';
+      }, 90);
+    };
+
+    const jadwalHideProgress = () => {
+      if (jadwalProgressTimer) clearInterval(jadwalProgressTimer);
+      jadwalProgressTimer = null;
+      if (!jadwalProgress) return;
+      jadwalProgressValue = 100;
+      jadwalProgressFill.style.width = '100%';
+      jadwalProgressLabel.textContent = '100%';
+      setTimeout(() => {
+        jadwalProgress.classList.remove('active');
+      }, 250);
+    };
+
+    const jadwalFailProgress = () => {
+      if (jadwalProgressTimer) clearInterval(jadwalProgressTimer);
+      jadwalProgressTimer = null;
+      if (!jadwalProgress) return;
+      setTimeout(() => {
+        jadwalProgress.classList.remove('active');
+      }, 250);
+    };
+
+    /* Wait for the next JSONP answer before replacing the table. */
+    let jadwalJsonp = null;
+    window.google = window.google || {};
+    window.google.visualization = window.google.visualization || {};
+    window.google.visualization.Query = window.google.visualization.Query || {};
+    window.google.visualization.Query.setResponse = (payload) => {
+      if (typeof jadwalJsonp === 'function') jadwalJsonp(payload);
+    };
+
+    /* Notion/CI payload (schedule.json): { columns:[], rows:[[{v, link}]], updated? } */
+    function normalizeSchedule(data) {
+      const headers = (data.columns || []).map((h) => String(h).trim());
+      const entries = (data.rows || []).map((row) => {
+        return headers.map((h, ci) => {
+          const cell = row[ci] || { v: '' };
+          return { v: String(cell.v || ''), link: cell.link || null };
+        });
+      });
+      return { headers, entries, updated: data.updated };
+    }
+
+    /* Public gviz payload: { table: { cols:[{label}], rows:[{ c:[{v}] }] } } */
+    function normalizeGviz(data) {
+      const cols = (data.table && data.table.cols) || [];
+      const headers = cols.map((c) => String(c.label || '').trim());
+      const entries = ((data.table && data.table.rows) || []).map((row) => {
+        const raw = (row && row.c) ? row.c : [];
+        return raw.map((cell) => ({
+          v: cell && cell.v !== undefined && cell.v !== null ? String(cell.v) : '',
+          link: null,
+        }));
+      });
+      return { headers, entries, updated: new Date().toISOString() };
+    }
+
+    function renderJadwal(headers, entries, updated) {
+      const columns = JADWAL_COLUMNS.map((name) => {
+        const idx = headers.findIndex((h) => h.trim().toLowerCase() === name.toLowerCase());
+        return idx === -1 ? null : idx;
+      });
+      const present = columns.filter((idx) => idx !== null);
+
+      const headRow = document.createElement('tr');
+      present.forEach((idx) => {
+        const th = document.createElement('th');
+        th.setAttribute('scope', 'col');
+        th.textContent = headers[idx].trim();
+        headRow.appendChild(th);
+      });
+      jadwalHead.replaceChildren(headRow);
+
+      const visible = entries
+        .filter((cells) => cells.some((cell) => cell && cell.v !== ''))
+        .map((cells) => present.map((idx) => cells[idx] || { v: '', link: null }));
+
+      if (!visible.length) {
+        jadwalStatus(localized('jadwal.empty'));
+        jadwalMeta.textContent = '';
+        return;
+      }
+
+      // jadwalRows is the <tbody> element; clear it and rebuild rows directly.
+      jadwalRows.textContent = '';
+      visible.forEach((cells) => {
+        const tr = document.createElement('tr');
+        cells.forEach((cell, i) => {
+          const td = document.createElement('td');
+          const makeButton = () => {
+            const rawLabel = cell.v || localized('jadwal.register');
+            const label = /^https?:\/\//i.test(rawLabel) ? localized('jadwal.register') : rawLabel;
+            const link = cell.link || JADWAL_NOTION_URL;
+            const a = document.createElement('a');
+            a.className = 'jadwal-register';
+            a.href = link;
+            a.setAttribute('target', '_blank');
+            a.setAttribute('rel', 'noopener');
+            a.textContent = label;
+            return a;
+          };
+          if (i === cells.length - 1) {
+            td.appendChild(makeButton());
+          } else {
+            td.textContent = cell.v;
+          }
+          tr.appendChild(td);
+        });
+        jadwalRows.appendChild(tr);
+      });
+
+      const pad = (n) => String(n).padStart(2, '0');
+      if (updated) {
+        const date = new Date(updated);
+        jadwalMeta.textContent = localized('jadwal.updated') + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+      } else {
+        jadwalMeta.textContent = '';
+      }
+    }
+
+    /* Parse r.jina.ai Markdown of the Notion page.
+   Format after "Isi tabel":
+     Training / Materi / Tanggal / Waktu / Lokasi / Biaya / Registrasi
+     <value> (Registrasi value is a MD link  [text](url))
+   repeated per row. */
+    function parseNotionMarkdown(text) {
+      const JADWAL_LOWER = ['training', 'materi', 'tanggal', 'waktu', 'lokasi', 'biaya', 'registrasi'];
+      const lines = String(text).split(/\r?\n/).map((l) => l.trim());
+      const start = lines.findIndex((l) => l.trim().toLowerCase() === 'isi tabel');
+
+      const headers = ['Training', 'Materi', 'Tanggal', 'Waktu', 'Lokasi', 'Biaya', 'Registrasi'];
+      const entries = [];
+      let row = null;
+      let pendingKey = null;
+
+      const pushValue = (val) => {
+        if (!pendingKey) return;
+        const ci = JADWAL_LOWER.indexOf(pendingKey);
+        const mdLink = new RegExp('\\[([^\\]]*)\\]\\(([^)]+)\\)');
+        const linkMatch = val.match(mdLink);
+        const cell = {
+          v: linkMatch ? linkMatch[1] : val,
+          link: linkMatch ? linkMatch[2] : null,
+        };
+        if (row === null) row = [];
+        row[ci] = cell;
+        pendingKey = null;
+        if (row.filter((c) => c).length === headers.length) {
+          entries.push(row);
+          row = null;
+        }
+      };
+
+      for (let i = (start === -1 ? 0 : start + 1); i < lines.length; i++) {
+        const l = lines[i];
+        if (!l) continue;
+        const li = JADWAL_LOWER.indexOf(l.toLowerCase());
+        if (li !== -1) {
+          pendingKey = l.toLowerCase();
+        } else {
+          pushValue(l);
+        }
+      }
+      return { headers, entries, updated: new Date().toISOString() };
+    }
+
+    async function fetchJadwal() {
+      /* Loading animation: show the 1-100% progress bar while data loads. */
+      jadwalShowProgress();
+
+      let ok = false;
+
+      /* 1) Live Notion via r.jina.ai (renders the page, CORS-enabled).
+         r.jina.ai caches by full URL, so a unique query param per request
+         forces a fresh server-side render of the Notion page. */
+      try {
+        const sep = JADWAL_NOTION_LIVE_URL.includes('?') ? '&' : '?';
+        const liveUrl = JADWAL_NOTION_LIVE_URL + sep + 't=' + Date.now();
+        const res = await fetch(liveUrl, { cache: 'no-store' });
+        if (res.ok) {
+          const data = parseNotionMarkdown(await res.text());
+          if (data.entries.length) {
+            renderJadwal(data.headers, data.entries, data.updated);
+            ok = true;
+            jadwalHideProgress();
+            return;
+          }
+        }
+      } catch (err) {
+        /* fall through */
+      }
+
+      /* 2) schedule.json (Notion snapshot from the GitHub Actions workflow). */
+      if (JADWAL_API_URL) {
+        try {
+          const cacheBust = JADWAL_API_URL + '?t=' + Date.now();
+          const res = await fetch(cacheBust, { cache: 'no-store' });
+          if (res.ok) {
+            const data = normalizeSchedule(await res.json());
+            renderJadwal(data.headers, data.entries, data.updated);
+            ok = true;
+            jadwalHideProgress();
+            return;
+          }
+        } catch (err) {
+          /* fall through to the inline snapshot */
+        }
+      }
+
+      /* 3) Embedded snapshot. */
+      if (JADWAL_INLINE_DATA) {
+        const data = normalizeSchedule(JADWAL_INLINE_DATA);
+        renderJadwal(data.headers, data.entries, null);
+        ok = true;
+        jadwalHideProgress();
+        return;
+      }
+
+      if (!JADWAL_FALLBACK_URL) {
+        jadwalStatus(localized('jadwal.notConfigured'));
+        jadwalHideProgress();
+        return;
+      }
+
+      /* 4) Google Sheet gviz (values only, no hyperlinks). */
+      jadwalJsonp = (payload) => {
+        const data = normalizeGviz(payload);
+        renderJadwal(data.headers, data.entries, data.updated);
+        jadwalHideProgress();
+      };
+      const script = document.createElement('script');
+      script.src = JADWAL_FALLBACK_URL;
+      script.onerror = () => {
+        jadwalStatus(localized('jadwal.error'));
+        jadwalFailProgress();
+      };
+      document.head.appendChild(script);
+    }
+
+    const jadwalOpenBtn = document.getElementById('jadwal-open');
+    if (jadwalOpenBtn) {
+      /* Every click re-fetches the LIVE Notion page and re-renders the table
+         with a unique cache-busting URL so the result is always fresh. */
+      jadwalOpenBtn.addEventListener('click', () => {
+        setTimeout(() => {
+          jadwalRows.innerHTML = '';
+          jadwalHead.innerHTML = '';
+          jadwalMeta.textContent = '';
+          fetchJadwal();
+        }, 50);
+      }, { capture: true });
+    }
+
+    if (JADWAL_API_URL || JADWAL_FALLBACK_URL) {
+      fetchJadwal();
+      setInterval(fetchJadwal, JADWAL_REFRESH_MS);
+    }
   </script>
 </body>
 </html>
