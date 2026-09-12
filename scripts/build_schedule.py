@@ -38,6 +38,7 @@ HOST = os.environ.get("NOTION_HOST", "teguhpm.notion.site").strip()
 OUTPUT = os.environ.get("OUTPUT", "schedule.json").strip()
 
 EXPECTED_COLUMNS = ["Tanggal", "Training", "Materi", "Waktu", "Lokasi", "Biaya", "Registrasi"]
+OUTPUT_COLUMNS = ["Tanggal", "Training", "Waktu", "Lokasi", "Biaya", "Registrasi"]
 _lower = [c.lower() for c in EXPECTED_COLUMNS]
 
 
@@ -59,38 +60,35 @@ def parse(text):
     lines = [l.strip() for l in text.split("\n")]
     start = next((i for i, l in enumerate(lines) if l.lower() == "isi tabel"), -1)
     if start == -1:
-        return EXPECTED_COLUMNS, []
+        return list(OUTPUT_COLUMNS), []
 
     link_re = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
-    headers = []
     rows = []
-    row = None
+    row = {}
     pending = None
+
+    def to_cell(val):
+        m = link_re.match(val)
+        return {"v": m.group(1) if m else val, "link": m.group(2) if m else None}
 
     def push(val):
         nonlocal row, pending
         if pending is None:
             return
-        ci = _lower.index(pending)
-        m = link_re.match(val)
-        value = m.group(1) if m else val
-        link = m.group(2) if m else None
-        if row is None:
-            row = [None] * len(headers)
-        if row[ci] is None:
-            row[ci] = {"v": value, "link": link}
+        cell = to_cell(val)
+        if pending not in row:
+            row[pending] = dict(cell)
         else:
-            row[ci]["v"] += "\n" + value
-            if link:
-                row[ci]["link"] = link
-        if all(row):
+            row[pending]["v"] += "\n" + cell["v"]
+            if cell["link"]:
+                row[pending]["link"] = cell["link"]
+        # Row is complete once every rendered column is filled. Materi is
+        # recognized as a field so its values stay out of the neighbours, but
+        # it is not part of the output.
+        if all(col.lower() in row for col in OUTPUT_COLUMNS):
             rows.append(row)
-            row = None
+            row = {}
             pending = None
-
-    # Build header list from the FIRST occurrence of the key/value pairs; use
-    # EXPECTED_COLUMNS order so output is stable and matches the site.
-    headers = list(EXPECTED_COLUMNS)
 
     for i in range(start + 1, len(lines)):
         l = lines[i]
@@ -101,7 +99,7 @@ def parse(text):
             pending = low
         else:
             push(l)
-    return headers, rows
+    return list(OUTPUT_COLUMNS), rows
 
 
 def normalize(rows, headers):
@@ -109,7 +107,7 @@ def normalize(rows, headers):
     for row in rows:
         entry = []
         for h in headers:
-            cell = row[_lower.index(h.lower())]
+            cell = row.get(h.lower(), {"v": "", "link": None})
             entry.append({"v": cell.get("v", ""), "link": cell.get("link")})
         entries.append(entry)
     return entries
