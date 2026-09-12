@@ -1175,7 +1175,19 @@
       text-underline-offset: 2px;
     }
 
-    .faq-answer a:hover { color: #c02020; }
+    .faq-answer .faq-link-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      color: var(--ink);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
+    }
+
+    .faq-answer a:hover,
+    .faq-answer .faq-link-btn:hover { color: #c02020; }
 
     /* Training popup (FAQ-style accordion) */
     .training-faq {
@@ -1559,7 +1571,7 @@
               <span class="faq-icon" aria-hidden="true">+</span>
             </button>
             <div class="faq-answer" role="region">
-              <p data-i18n-html="faq.a1">You can register for training by visiting <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Schedule</a></p>
+              <p data-i18n-html="faq.a1">You can register for training by visiting <button type="button" class="faq-link-btn" data-open-modal="jadwal-modal">Schedule</button></p>
             </div>
           </div>
           <div class="faq-item">
@@ -1568,7 +1580,7 @@
               <span class="faq-icon" aria-hidden="true">+</span>
             </button>
             <div class="faq-answer" role="region">
-              <p data-i18n-html="faq.a2">Training fees are listed on each course detail page on <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Training</a></p>
+              <p data-i18n-html="faq.a2">Training fees are listed on each course detail page on <button type="button" class="faq-link-btn" data-open-modal="training-modal">Training</button></p>
             </div>
           </div>
           <div class="faq-item">
@@ -1597,7 +1609,7 @@
               <span class="faq-icon" aria-hidden="true">+</span>
             </button>
             <div class="faq-answer" role="region">
-              <p data-i18n-html="faq.a5">The training schedule is available at <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Schedule</a></p>
+              <p data-i18n-html="faq.a5">The training schedule is available at <button type="button" class="faq-link-btn" data-open-modal="jadwal-modal">Schedule</button></p>
             </div>
           </div>
           <div class="faq-item">
@@ -1764,15 +1776,15 @@
         'expertise.security': 'Cyber Security',
         'faq.title': 'Frequently Asked Questions<span class="red">.</span>',
         'faq.q1': 'How do I register for training?',
-        'faq.a1': 'You can register for training by visiting <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Schedule</a>',
+        'faq.a1': 'You can register for training by visiting <button type="button" class="faq-link-btn" data-open-modal="jadwal-modal">Schedule</button>',
         'faq.q2': 'How much does the training cost?',
-        'faq.a2': 'Training fees are listed on each course detail page on <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Training</a>',
+        'faq.a2': 'Training fees are listed on each course detail page on <button type="button" class="faq-link-btn" data-open-modal="training-modal">Training</button>',
         'faq.q3': 'What will I learn in training?',
         'faq.a3': 'The materials covered in each training can be found in the detail section of each course',
         'faq.q4': 'Where is the training location?',
         'faq.a4': 'Online or offline at 1m1 Akses UI, Depok',
         'faq.q5': 'Where can I view the training schedule?',
-        'faq.a5': 'The training schedule is available at <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Schedule</a>',
+        'faq.a5': 'The training schedule is available at <button type="button" class="faq-link-btn" data-open-modal="jadwal-modal">Schedule</button>',
         'faq.q6': 'Prerequisites for networking training?',
         'faq.a6': 'You should be proficient in operating a computer and understand what an IP Address is',
         'faq.q7': 'Prerequisites for programming training?',
@@ -1842,15 +1854,15 @@
         'expertise.security': 'Keamanan Siber',
         'faq.title': 'Pertanyaan yang Sering Diajukan<span class="red">.</span>',
         'faq.q1': 'Bagaimana cara mendaftar pelatihan?',
-        'faq.a1': 'Anda dapat mendaftar pelatihan dengan mengunjungi <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Jadwal</a>',
+        'faq.a1': 'Anda dapat mendaftar pelatihan dengan mengunjungi <button type="button" class="faq-link-btn" data-open-modal="jadwal-modal">Jadwal</button>',
         'faq.q2': 'Berapa biaya pelatihan?',
-        'faq.a2': 'Biaya pelatihan tercantum pada halaman detail setiap kursus di <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Pelatihan</a>',
+        'faq.a2': 'Biaya pelatihan tercantum pada halaman detail setiap kursus di <button type="button" class="faq-link-btn" data-open-modal="training-modal">Pelatihan</button>',
         'faq.q3': 'Apa yang akan saya pelajari?',
         'faq.a3': 'Materi yang dibahas pada setiap pelatihan dapat ditemukan di bagian detail setiap kursus',
         'faq.q4': 'Di mana lokasi pelatihan?',
         'faq.a4': 'Daring atau tatap muka di 1m1 Akses UI, Depok',
         'faq.q5': 'Di mana saya dapat melihat jadwal pelatihan?',
-        'faq.a5': 'Jadwal pelatihan tersedia di <a href="https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/edit?gid=745406458#gid=745406458" target="_blank" rel="noopener">Jadwal</a>',
+        'faq.a5': 'Jadwal pelatihan tersedia di <button type="button" class="faq-link-btn" data-open-modal="jadwal-modal">Jadwal</button>',
         'faq.q6': 'Prasyarat untuk pelatihan jaringan?',
         'faq.a6': 'Anda sebaiknya mahir mengoperasikan komputer dan memahami apa itu Alamat IP',
         'faq.q7': 'Prasyarat untuk pelatihan pemrograman?',
@@ -2025,6 +2037,32 @@
       }
       if (closeBtn) closeBtn.addEventListener('click', () => closeModal(modal));
       if (backdrop) backdrop.addEventListener('click', () => closeModal(modal));
+    });
+
+    /* Any trigger stamped with data-open-modal opens the matching popup
+       (used by the FAQ answers' Training / Schedule buttons) and refreshes
+       its live Notion data exactly like clicking the menu item. */
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest('[data-open-modal]');
+      if (!trigger) return;
+      e.preventDefault();
+      const modal = document.getElementById(trigger.getAttribute('data-open-modal'));
+      if (!modal || typeof openModal !== 'function') return;
+      openModal(modal, trigger);
+      setTimeout(() => {
+        if (modal.id === 'training-modal') {
+          if (trainingFaq) trainingFaq.textContent = '';
+          if (trainingSearchInput && trainingSearchInput.value) trainingSearchInput.value = '';
+          if (trainingSearchClear) trainingSearchClear.style.display = 'none';
+          fetchTraining();
+        } else if (modal.id === 'jadwal-modal') {
+          jadwalRows.innerHTML = '';
+          jadwalHead.innerHTML = '';
+          jadwalMeta.textContent = '';
+          if (jadwalSearchInput && jadwalSearchInput.value) jadwalSearchInput.value = '';
+          fetchJadwal();
+        }
+      }, 50);
     });
 
     /* Escape closes the topmost modal; Tab is trapped inside it. */
