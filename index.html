@@ -584,6 +584,9 @@
     }
 
     #training-modal .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
       padding: 20px 24px;
       overflow: auto;
     }
@@ -1174,6 +1177,117 @@
 
     .faq-answer a:hover { color: #c02020; }
 
+    /* Training popup (FAQ-style accordion) */
+    .training-faq {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .training-faq-empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 32px 16px;
+    }
+
+    .training-faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .35s ease, padding .35s ease;
+    }
+
+    .training-faq-item.open .training-faq-answer {
+      max-height: 2200px;
+    }
+
+    .training-faq-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding: 4px 24px 24px;
+    }
+
+    .training-faq-label {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .training-faq-module strong {
+      display: block;
+      color: var(--ink);
+      font-size: .95rem;
+      margin-bottom: 8px;
+    }
+
+    .training-faq-module ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .training-faq-module li {
+      position: relative;
+      padding-left: 16px;
+      color: var(--ink-soft);
+      font-size: .95rem;
+      line-height: 1.7;
+    }
+
+    .training-faq-module li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: .6em;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--line-strong);
+    }
+
+    .training-faq-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: var(--ink-soft);
+      font-size: .95rem;
+      line-height: 1.5;
+    }
+
+    .training-faq-info strong {
+      color: var(--ink);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .training-faq-register {
+      align-self: flex-start;
+      display: inline-block;
+      padding: 10px 24px;
+      margin-top: 4px;
+      border: none;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--white);
+      font-family: inherit;
+      font-size: .85rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .2s ease, color .2s ease;
+    }
+
+    .training-faq-register:hover,
+    .training-faq-register:focus-visible {
+      background: #c02020;
+    }
+
     /* Jadwal schedule modal */
     #jadwal-modal .modal-dialog {
       width: min(1100px, 96vw);
@@ -1358,7 +1472,7 @@
       </a>
       <div class="nav-right">
         <nav class="nav-links">
-          <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?usp=sharing" target="_blank" rel="noopener"><span data-i18n="nav.training">Training</span></a>
+          <button type="button" class="nav-link-btn" id="training-open"><span data-i18n="nav.training">Training</span></button>
           <button type="button" class="nav-link-btn" id="jadwal-open"><span data-i18n="nav.schedule">Schedule</span></button>
         </nav>
         <div class="socials">
@@ -1528,129 +1642,16 @@
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <div class="modal-body training-body">
-        <div class="training-groups" id="training-list">
-          <div class="training-group">
-            <h4 class="group-title" data-i18n="training.network">Network Infrastructure</h4>
-            <ul>
-              <li class="sub">
-                <button type="button" class="sub-item" id="net-fundamentals-btn" aria-expanded="false" aria-controls="net-fundamentals">
-                  <span class="sub-name" data-i18n="training.course1">Network Fundamentals</span>
-                  <span class="sub-caret" aria-hidden="true">+</span>
-                </button>
-                <div class="sub-panel" id="net-fundamentals" role="region" aria-labelledby="net-fundamentals-btn">
-                  <div class="sub-panel-inner">
-                    <h5 class="sub-curriculum-title" data-i18n="training.curriculum">Curriculum</h5>
-                    <ul class="sub-curriculum">
-                      <li>OSI &amp; TCP/IP Model</li>
-                      <li>IP Addressing &amp; Subnetting</li>
-                      <li>Ethernet, Switching &amp; VLAN Basics</li>
-                      <li>Routing Fundamentals &amp; NAT</li>
-                      <li>Network Addressing, DNS &amp; DHCP</li>
-                    </ul>
-                    <p class="sub-cost"><span data-i18n="training.fee">Fee</span>: <strong>Rp 2.500.000</strong></p>
-                    <button type="button" class="sub-register" data-i18n="training.register">Register Now</button>
-                  </div>
-                </div>
-              </li>
-              <li class="sub">
-                <button type="button" class="sub-item" id="net-routing-btn" aria-expanded="false" aria-controls="net-routing">
-                  <span class="sub-name" data-i18n="training.course2">Switching &amp; Routing (CCNA)</span>
-                  <span class="sub-caret" aria-hidden="true">+</span>
-                </button>
-                <div class="sub-panel" id="net-routing" role="region" aria-labelledby="net-routing-btn">
-                  <div class="sub-panel-inner">
-                    <h5 class="sub-curriculum-title" data-i18n="training.curriculum">Curriculum</h5>
-                    <ul class="sub-curriculum">
-                      <li>Cisco IOS Basics &amp; CLI</li>
-                      <li>VLANs, Trunking &amp; STP</li>
-                      <li>Static &amp; Dynamic Routing (OSPF)</li>
-                      <li>Access Control Lists (ACL)</li>
-                      <li>Network Address Translation (NAT)</li>
-                    </ul>
-                    <p class="sub-cost"><span data-i18n="training.fee">Fee</span>: <strong>Rp 6.500.000</strong></p>
-                    <button type="button" class="sub-register" data-i18n="training.register">Register Now</button>
-                  </div>
-                </div>
-              </li>
-              <li class="sub">
-                <button type="button" class="sub-item" id="net-mikrotik-btn" aria-expanded="false" aria-controls="net-mikrotik">
-                  <span class="sub-name" data-i18n="training.course3">MikroTik Administration</span>
-                  <span class="sub-caret" aria-hidden="true">+</span>
-                </button>
-                <div class="sub-panel" id="net-mikrotik" role="region" aria-labelledby="net-mikrotik-btn">
-                  <div class="sub-panel-inner">
-                    <h5 class="sub-curriculum-title" data-i18n="training.curriculum">Curriculum</h5>
-                    <ul class="sub-curriculum">
-                      <li>RouterOS &amp; Winbox/WebFig Setup</li>
-                      <li>Interfaces &amp; Bridge Configuration</li>
-                      <li>DHCP, DNS &amp; IP Services</li>
-                      <li>Firewall (Filter Rules &amp; Address Lists)</li>
-                      <li>Wireless &amp; Hotspot Configuration</li>
-                    </ul>
-                    <p class="sub-cost"><span data-i18n="training.fee">Fee</span>: <strong>Rp 4.500.000</strong></p>
-                    <button type="button" class="sub-register" data-i18n="training.register">Register Now</button>
-                  </div>
-                </div>
-              </li>
-              <li class="sub">
-                <button type="button" class="sub-item" id="net-wifi-btn" aria-expanded="false" aria-controls="net-wifi">
-                  <span class="sub-name" data-i18n="training.course4">Wireless &amp; Wi-Fi Engineering</span>
-                  <span class="sub-caret" aria-hidden="true">+</span>
-                </button>
-                <div class="sub-panel" id="net-wifi" role="region" aria-labelledby="net-wifi-btn">
-                  <div class="sub-panel-inner">
-                    <h5 class="sub-curriculum-title" data-i18n="training.curriculum">Curriculum</h5>
-                    <ul class="sub-curriculum">
-                      <li>RF Fundamentals &amp; Radio Spectrum</li>
-                      <li>Wi-Fi Standards (802.11 a/b/g/n/ac/ax)</li>
-                      <li>Access Point Design &amp; Placement</li>
-                      <li>WPA2/WPA3 &amp; Enterprise Security</li>
-                      <li>Site Survey &amp; Troubleshooting</li>
-                    </ul>
-                    <p class="sub-cost"><span data-i18n="training.fee">Fee</span>: <strong>Rp 5.500.000</strong></p>
-                    <button type="button" class="sub-register" data-i18n="training.register">Register Now</button>
-                  </div>
-                </div>
-              </li>
-              <li class="sub">
-                <button type="button" class="sub-item" id="net-monitor-btn" aria-expanded="false" aria-controls="net-monitor">
-                  <span class="sub-name" data-i18n="training.course5">Network Monitoring &amp; Troubleshooting</span>
-                  <span class="sub-caret" aria-hidden="true">+</span>
-                </button>
-                <div class="sub-panel" id="net-monitor" role="region" aria-labelledby="net-monitor-btn">
-                  <div class="sub-panel-inner">
-                    <h5 class="sub-curriculum-title" data-i18n="training.curriculum">Curriculum</h5>
-                    <ul class="sub-curriculum">
-                      <li>SNMP &amp; Network Monitoring Tools</li>
-                      <li>Packet Analysis with Wireshark</li>
-                      <li>Latency, Throughput &amp; Packet Loss</li>
-                      <li>Logging, Alerting &amp; Dashboards</li>
-                      <li>Diagnosing Common Network Faults</li>
-                    </ul>
-                    <p class="sub-cost"><span data-i18n="training.fee">Fee</span>: <strong>Rp 3.500.000</strong></p>
-                    <button type="button" class="sub-register" data-i18n="training.register">Register Now</button>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
+      <div class="modal-body">
+        <div class="jadwal-progress" id="training-progress" role="status" aria-live="polite">
+          <span class="jadwal-progress-track"><span class="jadwal-progress-fill" id="training-progress-fill"></span></span>
+          <span class="jadwal-progress-label" id="training-progress-label">0%</span>
         </div>
-
-        <aside class="training-form" id="training-form" hidden aria-labelledby="training-form-title">
-          <div class="training-form-header">
-            <div class="training-form-heading">
-              <h4 class="training-form-title" id="training-form-title" data-i18n="training.formTitle">Registration</h4>
-              <p class="training-form-course" id="training-form-course"></p>
-            </div>
-            <button type="button" class="training-form-close" id="training-form-close" aria-label="Close registration form">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          </div>
-          <div class="training-form-body">
-            <iframe id="training-form-frame" title="Course registration form" data-src="https://docs.google.com/forms/d/e/1FAIpQLSdcmynwN2W7-4pGxbTg9I3ZLnh6MeuTC5PoSJfOBNBc_l0Yww/viewform?embedded=true" frameborder="0" marginheight="0" marginwidth="0">Loading&#8230;</iframe>
-          </div>
-        </aside>
+        <div class="jadwal-search">
+          <input type="search" id="training-search-input" class="jadwal-search-input" placeholder="Search training…" aria-label="Search training">
+          <button type="button" class="jadwal-search-clear" id="training-search-clear" aria-label="Clear search">&times;</button>
+        </div>
+        <div class="training-faq" id="training-faq" aria-live="polite"></div>
       </div>
     </div>
   </div>
@@ -1803,6 +1804,17 @@
         'training.fee': 'Fee',
         'training.register': 'Register Now',
         'training.formTitle': 'Registration',
+        'training.duration': 'Duration',
+        'training.investment': 'Investment',
+        'training.none': 'No trainings available yet.',
+        'training.defaultTitle': 'Training',
+        'training.searchEmpty': 'No matching training found.',
+        'training.registerShort': 'Register',
+        'training.judul': 'Judul',
+        'training.kurikulum': 'Kurikulum',
+        'training.durasi': 'Durasi',
+        'training.biaya': 'Biaya',
+        'training.searchPlaceholder': 'Search training…',
         'jadwal.loading': 'Loading…',
         'jadwal.loadingProgress': 'Loading…',
         'jadwal.empty': 'No trainings scheduled yet.',
@@ -1868,8 +1880,19 @@
         'training.course5': 'Pemantauan &amp; Pemecahan Masalah Jaringan',
         'training.curriculum': 'Kurikulum',
         'training.fee': 'Biaya',
-        'training.register': 'Daftar Sekarang',
+        'training.register': 'Registrasi',
         'training.formTitle': 'Pendaftaran',
+        'training.duration': 'Durasi Training',
+        'training.investment': 'Biaya Investasi',
+        'training.none': 'Belum ada pelatihan.',
+        'training.defaultTitle': 'Pelatihan',
+        'training.searchEmpty': 'Tidak ada pelatihan yang cocok.',
+        'training.registerShort': 'Registrasi',
+        'training.judul': 'Judul',
+        'training.kurikulum': 'Kurikulum',
+        'training.durasi': 'Durasi',
+        'training.biaya': 'Biaya',
+        'training.searchPlaceholder': 'Cari pelatihan…',
         'jadwal.loading': 'Sedang belading…',
         'jadwal.loadingProgress': 'Sedang belading…',
         'jadwal.empty': 'Belum ada pelatihan daprograman.',
@@ -1905,6 +1928,11 @@
         const searchPh = document.getElementById('jadwal-search-input');
         if (searchPh && dict['jadwal.searchPlaceholder'] !== undefined) {
           searchPh.placeholder = dict['jadwal.searchPlaceholder'];
+        }
+
+        const trainingSearchPh = document.getElementById('training-search-input');
+        if (trainingSearchPh && dict['training.searchPlaceholder'] !== undefined) {
+          trainingSearchPh.placeholder = dict['training.searchPlaceholder'];
         }
 
         document.querySelectorAll('.lang-btn').forEach((btn) => {
@@ -2008,8 +2036,6 @@
 
       if (e.key === 'Escape') {
         e.preventDefault();
-        /* Progressive disclosure: peel off the form pane before the modal. */
-        if (modal === trainingModal && hideRegistrationForm()) return;
         closeModal(modal);
         return;
       }
@@ -2030,80 +2056,6 @@
     /* ---------- Training accordion ---------- */
     const trainingModal = document.getElementById('training-modal');
 
-    document.querySelectorAll('.training-group .sub-item').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const panel = btn.parentElement.querySelector('.sub-panel');
-        if (!panel) return;
-        const willOpen = !panel.classList.contains('open');
-        panel.classList.toggle('open', willOpen);
-        btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-      });
-    });
-
-    document.querySelectorAll('.training-group .sub-register').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const item = btn.closest('li.sub');
-        showRegistrationForm(item);
-      });
-    });
-
-    /* ---------- Training: side-by-side registration form ---------- */
-    const trainingDialog = trainingModal.querySelector('.modal-dialog');
-    const trainingBody = trainingModal.querySelector('.training-body');
-    const formPane = document.getElementById('training-form');
-    const formFrame = document.getElementById('training-form-frame');
-    const formCourse = document.getElementById('training-form-course');
-    const formCloseBtn = document.getElementById('training-form-close');
-    const stacksVertically = () => window.matchMedia('(max-width: 900px)').matches;
-
-    function showRegistrationForm(item) {
-      if (!item) return;
-      const nameEl = item.querySelector('.sub-name');
-      const accordionBtn = item.querySelector('.sub-item');
-
-      /* Load the Google Form only now, the first time it is actually needed. */
-      if (formFrame.getAttribute('src') !== formFrame.dataset.src) {
-        formFrame.setAttribute('src', formFrame.dataset.src);
-      }
-
-      formCourse.textContent = nameEl ? nameEl.textContent.trim() : '';
-      formPane.hidden = false;
-      trainingBody.classList.add('split');
-      trainingDialog.classList.add('with-form');
-
-      /* Flag which course the visible form belongs to. */
-      trainingModal.querySelectorAll('.sub-item[aria-current]').forEach((el) => el.removeAttribute('aria-current'));
-      if (accordionBtn) accordionBtn.setAttribute('aria-current', 'true');
-
-      if (stacksVertically()) {
-        formPane.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      formCloseBtn.focus({ preventScroll: true });
-    }
-
-    /* Returns true when a visible form pane was actually dismissed. */
-    function hideRegistrationForm(restoreFocus = true) {
-      if (formPane.hidden) return false;
-      const current = trainingModal.querySelector('.sub-item[aria-current="true"]');
-      formPane.hidden = true;
-      trainingBody.classList.remove('split');
-      trainingDialog.classList.remove('with-form');
-      if (current) {
-        current.removeAttribute('aria-current');
-        if (restoreFocus) current.focus({ preventScroll: true });
-      }
-      return true;
-    }
-
-    formCloseBtn.addEventListener('click', () => hideRegistrationForm());
-
-    /* Reset the pane when the whole modal is dismissed, so the next
-       visit to Training starts on the course list again. */
-    ['training-close', 'training-backdrop'].forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) el.addEventListener('click', () => hideRegistrationForm(false));
-    });
-
     const navToggle = document.getElementById('nav-toggle');
     const nav = document.querySelector('.nav');
 
@@ -2123,6 +2075,375 @@
       });
     });
 
+    /* ---------- Training: live content from Notion (Pelatihan) ---------- */
+    const TRAINING_NOTION_URL = 'https://teguhpm.notion.site/Pelatihan-3d86fa858bba80129507c7eecc79b5de';
+    const TRAINING_NOTION_LIVE_URL = 'https://r.jina.ai/' + TRAINING_NOTION_URL;
+    const TRAINING_REFRESH_MS = 5 * 60 * 1000;
+    const TRAINING_KEYS = ['judul', 'kurikulum', 'durasi', 'biaya', 'registrasi'];
+    /* Default lynk.id registration link used per category until a per-training
+       "Registrasi" link is filled in Notion. Matches the Notion value. */
+    const TRAINING_DEFAULT_REGISTER = 'https://lynk.id/dikodeworks';
+
+    const trainingFaq = document.getElementById('training-faq');
+    const trainingSearchInput = document.getElementById('training-search-input');
+    const trainingSearchClear = document.getElementById('training-search-clear');
+
+    /* Fallback snapshot so the list works offline (mirror of Notion content). */
+    const TRAINING_INLINE = [
+      {
+        id: '001', title: 'Training 1',
+        modules: [
+          { name: 'Module 1 …', items: ['…', '…', '…', '…'] },
+          { name: 'Module 2 …', items: ['…', '…', '…', '…'] },
+        ],
+        durasi: '3 Hari (Jam Belajar Mulai Pukul 09.00 s.d 17.00 WIB Perharinya)',
+        biaya: 'Rp 2.000.000,-',
+        registrasi: 'https://lynk.id/dikodeworks',
+      },
+      {
+        id: '002', title: 'Training 2',
+        modules: [
+          { name: 'Module 1 …', items: ['…', '…', '…', '…'] },
+          { name: 'Module 2 …', items: ['…', '…', '…', '…'] },
+        ],
+        durasi: '3 Hari (Jam Belajar Mulai Pukul 09.00 s.d 17.00 WIB Perharinya)',
+        biaya: 'Rp 2.000.000,-',
+        registrasi: 'https://lynk.id/dikodeworks',
+      },
+    ];
+
+/* Parse the r.jina.ai Markdown of the Pelatihan page.
+   Layout-agnostic key/value parser. Skips the page header (jina meta + the
+   "Tabel dan Kolom" column description) and then reacts to the field labels
+   (Judul / Kurikulum / Durasi / Biaya / Link Registrasi) wherever they appear
+   — as headings (####), bulleted lists, or plain text. A group is complete
+   once it has a Biaya value; a new Judul/Kurikulum (or numeric marker) then
+   starts the next group.
+
+     Judul
+     Training 1              <- judul value
+     Kurikulum
+     Module 1 …              <- module header
+     … … … …                 <- module items
+     Durasi
+     3 Hari (...)            <- durasi
+     Biaya
+     Rp 2.000.000,-          <- biaya
+     Registrasi
+     - https://lynk.id/...    <- registrasi URL (list bullet stripped) */
+    function parseNotionTraining(text) {
+      const lines = String(text).split(/\r?\n/).map((l) => l.trim());
+      const groups = [];
+      const mdLink = new RegExp('\\[([^\\]]*)\\]\\(([^)]+)\\)');
+
+      /* Skip jina's front-matter and the page's own column description. */
+      let i = 0;
+      for (; i < lines.length; i++) {
+        const low = lines[i].toLowerCase();
+        if (low.indexOf('markdown content:') !== -1) { i++; break; }
+      }
+      for (; i < lines.length; i++) {
+        const low = lines[i].replace(/^#{1,6}\s*/, '').trim().toLowerCase();
+        if (low === 'isi tabel' || low === '—' || low === '-' || /^#{1,6}\s*$/.test(lines[i])) { i++; break; }
+      }
+
+      const labelOf = (text) => {
+        const low = text.toLowerCase();
+        /* Values that happen to mention a field name (e.g. a "Registrasi"
+           markdown link or a bare URL) are never labels. */
+        if (/\[\S+\]\([^)]+\)/.test(low) || /^https?:\/\//.test(low)) return null;
+        if (low === 'judul' || low === 'kurikulum' || low === 'durasi' || low === 'biaya') return low;
+        if (low === 'durasi training') return 'durasi';
+        if (low === 'biaya investasi') return 'biaya';
+        if (low === 'link registrasi' || low === 'registrasi') return 'registrasi';
+        if (low.indexOf('kurikulum') !== -1) return 'kurikulum';
+        if (low.indexOf('durasi') !== -1) return 'durasi';
+        if (low.indexOf('biaya') !== -1) return 'biaya';
+        if (low.indexOf('judul') !== -1) return 'judul';
+        if (low.indexOf('registrasi') !== -1) return 'registrasi';
+        return null;
+      };
+
+      let cur = null;
+      let section = null;   // 'judul' | 'kurikulum' | 'durasi' | 'biaya' | 'registrasi'
+      let module = null;
+
+      const startGroup = (id) => {
+        if (cur && cur.title) groups.push(cur);
+        cur = { id: id || '', title: '', modules: [], durasi: '', biaya: '', registrasi: '' };
+        section = 'judul';
+        module = null;
+      };
+      const flushModule = () => {
+        if (cur && module && module.name) cur.modules.push(module);
+        module = null;
+      };
+
+      for (; i < lines.length; i++) {
+        const l = lines[i];
+        if (!l) continue;
+
+        const clean = l.replace(/^#{1,6}\s*/, '').trim();
+        const label = labelOf(clean);
+        const numMark = clean.match(/^(\d{3})\s*$/);
+
+        if (numMark) {
+          /* Group marker (e.g. "001"): start a fresh group if the previous one
+             is complete (has a title & body), or there is no group yet. */
+          if (!cur || (cur.title && cur.biaya)) startGroup(numMark[1]);
+          else if (!cur.id) cur.id = numMark[1];
+          continue;
+        }
+
+        if (label) {
+          /* Flush any open module before switching out of Kurikulum. */
+          if (section === 'kurikulum') flushModule();
+          if (label === 'judul' || label === 'kurikulum') {
+            /* A group is complete after Biaya; a new Judul/Kurikulum begins
+               the next one. */
+            if (cur && cur.biaya) startGroup('');
+          } else if (label !== 'registrasi') {
+            if (cur && cur.biaya) startGroup('');
+          }
+          section = label;
+          module = null;
+          continue;
+        }
+
+        if (!cur) startGroup('');
+
+        if (section === 'judul') {
+          if (!cur.title) cur.title = l;
+          section = null;
+        } else if (section === 'kurikulum') {
+          if (/^module\b/i.test(l) || /^mod\b/i.test(l) || /^day\b/i.test(l)) {
+            flushModule();
+            module = { name: l, items: [] };
+          } else if (module) {
+            module.items.push(l);
+          }
+        } else if (section === 'durasi') {
+          cur.durasi = (cur.durasi ? cur.durasi + '\n' : '') + l;
+        } else if (section === 'biaya') {
+          cur.biaya = (cur.biaya ? cur.biaya + '\n' : '') + l;
+        } else if (section === 'registrasi') {
+          const val = l.replace(/^[-*+]\s+/, '');
+          const m = val.match(mdLink);
+          const link = m ? (m[2] || '') : val;
+          if (!cur.registrasi) cur.registrasi = link;
+        }
+      }
+      flushModule();
+      if (cur && cur.title) groups.push(cur);
+
+      /* Derive fallback titles and ids. */
+      groups.forEach((g, k) => {
+        if (!g.title.trim()) g.title = localized('training.defaultTitle') + ' ' + (k + 1);
+        if (!g.id) g.id = String(k + 1).padStart(3, '0');
+      });
+      return groups;
+    }
+
+    /* Cache the parsed groups so re-renders and refreshes stay instant. */
+    let trainingGroupsData = [];
+    let trainingLastGood = null;
+
+    /* Render the FAQ-style accordion list (Judul / Kurikulum / Durasi / Biaya). */
+    function renderTraining(groups) {
+      trainingGroupsData = groups || [];
+      if (!trainingFaq) return;
+
+      trainingFaq.textContent = '';
+
+      if (!trainingGroupsData.length) {
+        const empty = document.createElement('p');
+        empty.className = 'training-faq-empty';
+        empty.textContent = localized('training.none');
+        trainingFaq.appendChild(empty);
+        return;
+      }
+
+      trainingGroupsData.forEach((g, k) => {
+        const item = document.createElement('div');
+        item.className = 'faq-item training-faq-item';
+
+        const btn = document.createElement('button');
+        btn.className = 'faq-question';
+        btn.type = 'button';
+        btn.id = 'training-panel-btn-' + k;
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-controls', 'training-panel-' + k);
+
+        const label = document.createElement('span');
+        label.textContent = g.title;
+        const icon = document.createElement('span');
+        icon.className = 'faq-icon';
+        icon.setAttribute('aria-hidden', 'true');
+        icon.textContent = '+';
+        btn.appendChild(label);
+        btn.appendChild(icon);
+
+        const panel = document.createElement('div');
+        panel.className = 'training-faq-answer';
+        panel.id = 'training-panel-' + k;
+        panel.setAttribute('role', 'region');
+        panel.setAttribute('aria-labelledby', 'training-panel-btn-' + k);
+
+        const inner = document.createElement('div');
+        inner.className = 'training-faq-inner';
+
+        if (g.modules && g.modules.length) {
+          const labelCur = document.createElement('h5');
+          labelCur.className = 'training-faq-label';
+          labelCur.textContent = localized('training.curriculum');
+          inner.appendChild(labelCur);
+          g.modules.forEach((m) => {
+            const moduleEl = document.createElement('div');
+            moduleEl.className = 'training-faq-module';
+            const nameEl = document.createElement('strong');
+            nameEl.textContent = m.name || '';
+            moduleEl.appendChild(nameEl);
+            const items = (m.items || []).filter(Boolean);
+            if (items.length) {
+              const ul = document.createElement('ul');
+              items.forEach((it) => {
+                const li = document.createElement('li');
+                li.textContent = it;
+                ul.appendChild(li);
+              });
+              moduleEl.appendChild(ul);
+            }
+            inner.appendChild(moduleEl);
+          });
+        }
+
+        if (g.durasi) {
+          const dur = document.createElement('p');
+          dur.className = 'training-faq-info';
+          const durLabel = document.createElement('strong');
+          durLabel.textContent = localized('training.duration');
+          const durText = document.createElement('span');
+          durText.textContent = g.durasi;
+          dur.appendChild(durLabel);
+          dur.appendChild(durText);
+          inner.appendChild(dur);
+        }
+
+        if (g.biaya) {
+          const cost = document.createElement('p');
+          cost.className = 'training-faq-info';
+          const costLabel = document.createElement('strong');
+          costLabel.textContent = localized('training.investment');
+          const costText = document.createElement('span');
+          costText.textContent = g.biaya;
+          cost.appendChild(costLabel);
+          cost.appendChild(costText);
+          inner.appendChild(cost);
+        }
+
+const reg = document.createElement('a');
+          reg.className = 'training-faq-register';
+          reg.href = g.registrasi || TRAINING_DEFAULT_REGISTER;
+          reg.setAttribute('target', '_blank');
+          reg.setAttribute('rel', 'noopener');
+          reg.textContent = localized('training.register');
+          inner.appendChild(reg);
+
+          panel.appendChild(inner);
+        item.appendChild(btn);
+        item.appendChild(panel);
+        trainingFaq.appendChild(item);
+      });
+
+      applyTrainingSearch();
+    }
+
+    /* Filter the accordion items as the user types (like the schedule menu).
+       On a non-empty query the matching items are also auto-expanded. */
+    function applyTrainingSearch() {
+      if (!trainingSearchInput || !trainingFaq) return;
+      const q = trainingSearchInput.value.trim().toLowerCase();
+      if (trainingSearchClear) trainingSearchClear.style.display = q ? 'flex' : 'none';
+
+      const items = Array.from(trainingFaq.querySelectorAll('.training-faq-item'));
+      if (!items.length) return;
+      let visible = 0;
+
+      items.forEach((item, k) => {
+        const g = trainingGroupsData[k];
+        const hay = [
+          g ? g.title : '',
+          (g && g.modules || []).map((m) => m.name + ' ' + (m.items || []).join(' ')).join(' '),
+          g ? g.durasi : '',
+          g ? g.biaya : '',
+          g ? g.registrasi : '',
+        ].join(' ').toLowerCase();
+        const match = !q || hay.indexOf(q) !== -1;
+        item.style.display = match ? '' : 'none';
+        const btn = item.querySelector('.faq-question');
+        if (q && match) {
+          if (!item.classList.contains('open')) {
+            item.classList.add('open');
+            if (btn) btn.setAttribute('aria-expanded', 'true');
+          }
+          visible++;
+        } else if (!q && item.classList.contains('open')) {
+          item.classList.remove('open');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      let emptyEl = trainingFaq.querySelector('.training-faq-empty');
+      if (q && visible === 0) {
+        if (!emptyEl) {
+          emptyEl = document.createElement('p');
+          emptyEl.className = 'training-faq-empty';
+          trainingFaq.appendChild(emptyEl);
+        }
+        emptyEl.textContent = localized('training.searchEmpty');
+      } else if (emptyEl) {
+        emptyEl.remove();
+      }
+    }
+
+    /* Open/close one accordion item at a time (FAQ style). */
+    if (trainingFaq) {
+      trainingFaq.addEventListener('click', (e) => {
+        const btn = e.target.closest('.faq-question');
+        if (!btn || !trainingFaq.contains(btn)) return;
+        const item = btn.closest('.training-faq-item');
+        if (!item) return;
+        const willOpen = !item.classList.contains('open');
+        trainingFaq.querySelectorAll('.training-faq-item.open').forEach((i) => i.classList.remove('open'));
+        item.classList.toggle('open', willOpen);
+        btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      });
+    }
+
+    async function fetchTraining() {
+      trainingShowProgress();
+      try {
+        const sep = TRAINING_NOTION_LIVE_URL.includes('?') ? '&' : '?';
+        const liveUrl = TRAINING_NOTION_LIVE_URL + sep + 't=' + Date.now();
+        const res = await fetch(liveUrl, { cache: 'no-store' });
+        if (res.ok) {
+          const groups = parseNotionTraining(await res.text());
+          if (groups.length) {
+            trainingLastGood = groups;
+            renderTraining(groups);
+            trainingHideProgress();
+            return;
+          }
+        }
+      } catch (err) {
+        /* fall through */
+      }
+      /* On failure, prefer the last successfully rendered data over stale
+         inline snapshots so the list never "un-updates" after a transient error. */
+      renderTraining(trainingLastGood || TRAINING_INLINE);
+      trainingHideProgress();
+    }
+
     /* ---------- Jadwal: live schedule table ---------- */
     /* Every refresh (click or 5-min timer) first pulls the LIVE Notion page.
        It is rendered server-side by the r.jina.ai reader proxy, which replies
@@ -2136,21 +2457,21 @@
        links) work even when both live sources are unreachable.
        Refresh with:  python3 scripts/build_schedule.py */
     const JADWAL_INLINE_DATA = {
-      "columns": ["Tanggal", "Training", "Materi", "Waktu", "Lokasi", "Biaya", "Registrasi"],
+      "columns": ["Tanggal", "Training", "Waktu", "Lokasi", "Biaya", "Registrasi"],
       "rows": [
-        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 1", "link": null}, {"v": "…\n…\n…", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}],
-        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 2", "link": null}, {"v": "…\n…\n…", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}],
-        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 3", "link": null}, {"v": "…\n…\n…", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}],
-        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 4", "link": null}, {"v": "…\n…\n…", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}],
-        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 5", "link": null}, {"v": "…\n…\n…", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}],
-        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 6", "link": null}, {"v": "…\n…\n…", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "Registrasi", "link": "https://lynk.id/dikodeworks/n08485j53pn0"}]
+        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 1", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}],
+        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 2", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}],
+        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 3", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}],
+        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 3", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}],
+        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 3", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}],
+        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 3", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}]
       ]
     };
     /* Public sheet endpoint, loaded as JSONP since it sends no CORS headers.
        Last-resort fallback for cell values only (no hyperlinks). */
     const JADWAL_FALLBACK_URL = 'https://docs.google.com/spreadsheets/d/1AbYEkeHWCWnAVR14H9yD8TmTe1sC-CaprjDA8HeU0jI/gviz/tq?tqx=out:json&gid=745406458';
     const JADWAL_REFRESH_MS = 5 * 60 * 1000;
-    const JADWAL_COLUMNS = ['Tanggal', 'Training', 'Materi', 'Waktu', 'Lokasi', 'Biaya', 'Registrasi'];
+    const JADWAL_COLUMNS = ['Tanggal', 'Training', 'Waktu', 'Lokasi', 'Biaya', 'Registrasi'];
 
     const jadwalHead = document.getElementById('jadwal-head');
     const jadwalRows = document.getElementById('jadwal-rows');
@@ -2229,6 +2550,48 @@
     window.google.visualization.Query = window.google.visualization.Query || {};
     window.google.visualization.Query.setResponse = (payload) => {
       if (typeof jadwalJsonp === 'function') jadwalJsonp(payload);
+    };
+
+    /* ---------- Training loading progress (reuses .jadwal-progress styles) ---------- */
+    const trainingProgress = document.getElementById('training-progress');
+    const trainingProgressFill = document.getElementById('training-progress-fill');
+    const trainingProgressLabel = document.getElementById('training-progress-label');
+
+    let trainingProgressTimer = null;
+    let trainingProgressTick = 0;
+    let trainingProgressValue = 0;
+
+    const trainingShowProgress = () => {
+      if (!trainingProgress) return;
+      trainingProgressValue = 0;
+      trainingProgressTick = 0;
+      trainingProgress.classList.add('active');
+      trainingProgressFill.style.width = '0%';
+      trainingProgressLabel.textContent = '0%';
+      if (trainingProgressTimer) clearInterval(trainingProgressTimer);
+      trainingProgressTimer = setInterval(() => {
+        trainingProgressTick++;
+        if (trainingProgressValue < 90) {
+          const step = Math.max(1, Math.ceil((90 - trainingProgressValue) * 0.12 * (1 + Math.sin(trainingProgressTick * 0.5))));
+          trainingProgressValue = Math.min(90, trainingProgressValue + step);
+        } else {
+          trainingProgressValue = Math.min(99, trainingProgressValue + 1);
+        }
+        trainingProgressFill.style.width = trainingProgressValue + '%';
+        trainingProgressLabel.textContent = Math.round(trainingProgressValue) + '%';
+      }, 90);
+    };
+
+    const trainingHideProgress = () => {
+      if (trainingProgressTimer) clearInterval(trainingProgressTimer);
+      trainingProgressTimer = null;
+      if (!trainingProgress) return;
+      trainingProgressValue = 100;
+      trainingProgressFill.style.width = '100%';
+      trainingProgressLabel.textContent = '100%';
+      setTimeout(() => {
+        trainingProgress.classList.remove('active');
+      }, 250);
     };
 
     /* Notion/CI payload (schedule.json): { columns:[], rows:[[{v, link}]], updated? } */
@@ -2357,6 +2720,8 @@
      Tanggal / Training / Materi / Waktu / Lokasi / Biaya / Registrasi
      <value> (Registrasi is a MD link  [text](url))
    repeated per row.
+   Materi is still recognized as a field so its values don't bleed into the
+   neighbours, but it is excluded from the rendered columns (JADWAL_COLUMNS).
    A field may contain MORE THAN ONE value line (e.g. Materi lists several
    materials). Consecutive value lines for the same key are joined with \n.
    This parser is position- and completeness-tolerant: a new row starts
@@ -2381,6 +2746,9 @@
       for (let i = (start === -1 ? 0 : start + 1); i < lines.length; i++) {
         const l = lines[i];
         if (!l) continue;
+        /* Skip row/block markers like "### 001" (Notion databases render a
+           numbered heading per row) so they don't leak into cell values. */
+        if (/^#{1,6}\s*[0-9]{1,6}\s*$/.test(l) || /^[0-9]{3}$/.test(l)) continue;
         const low = l.toLowerCase();
         if (KEYS.includes(low)) {
           if (row.has(low)) flush();   /* repeat key → new row */
@@ -2476,6 +2844,20 @@
       document.head.appendChild(script);
     }
 
+    const trainingOpenBtn = document.getElementById('training-open');
+    if (trainingOpenBtn) {
+      /* Every click re-fetches the LIVE Pelatihan page and re-renders the
+         FAQ-style list with a fresh (uncached) render. */
+      trainingOpenBtn.addEventListener('click', () => {
+        setTimeout(() => {
+          if (trainingFaq) trainingFaq.textContent = '';
+          if (trainingSearchInput && trainingSearchInput.value) trainingSearchInput.value = '';
+          if (trainingSearchClear) trainingSearchClear.style.display = 'none';
+          fetchTraining();
+        }, 50);
+      }, { capture: true });
+    }
+
     const jadwalOpenBtn = document.getElementById('jadwal-open');
     if (jadwalOpenBtn) {
       /* Every click re-fetches the LIVE Notion page and re-renders the table
@@ -2504,10 +2886,27 @@
       });
     }
 
+    /* Filter the training accordion as the user types; clear button resets it. */
+    if (trainingSearchInput) {
+      trainingSearchInput.addEventListener('input', applyTrainingSearch);
+      trainingSearchInput.addEventListener('search', applyTrainingSearch);
+    }
+    if (trainingSearchClear) {
+      trainingSearchClear.addEventListener('click', () => {
+        trainingSearchInput.value = '';
+        applyTrainingSearch();
+        trainingSearchInput.focus({ preventScroll: true });
+      });
+    }
+
     if (JADWAL_API_URL || JADWAL_FALLBACK_URL) {
       fetchJadwal();
       setInterval(fetchJadwal, JADWAL_REFRESH_MS);
     }
+
+    /* Warm the training table on page load and keep it fresh every 5 min. */
+    fetchTraining();
+    setInterval(fetchTraining, TRAINING_REFRESH_MS);
   </script>
 </body>
 </html>
