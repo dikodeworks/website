@@ -569,17 +569,17 @@
     }
 
     #about-modal .modal-dialog {
-      width: min(1200px, 92vw);
+      width: min(1200px, 100%);
     }
 
     #training-modal .modal-dialog {
-      width: min(1100px, 94vw);
+      width: min(1100px, 100%);
       transition: width .3s ease;
     }
 
     /* Widened once the registration form pane is revealed. */
     #training-modal .modal-dialog.with-form {
-      width: min(1500px, 96vw);
+      width: min(1500px, 100%);
       height: 90vh;
     }
 
@@ -695,7 +695,7 @@
     /* Not enough room for two columns: stack the form below the list. */
     @media (max-width: 900px) {
       #training-modal .modal-dialog.with-form {
-        width: min(1100px, 94vw);
+        width: min(1100px, 100%);
       }
 
       #training-modal .training-body.split {
@@ -1039,17 +1039,29 @@
         gap: 0;
       }
 
-      .nav-links a {
+      .nav-links a,
+      .nav-links .nav-link-btn {
         padding: 14px 0;
         font-size: 1.05rem;
+        text-align: left;
         border-bottom: 1px solid var(--line);
       }
 
-      .nav-links a:last-child { border-bottom: none; }
+      .nav-links a:last-child,
+      .nav-links .nav-link-btn:last-child { border-bottom: none; }
 
-      .nav-links a::after { display: none; }
+      .nav-links .nav-link-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .nav-links a::after,
+      .nav-links .nav-link-btn::after { display: none; }
 
       .socials { justify-content: center; padding-top: 16px; gap: 14px; }
+
+      .lang-switch { align-self: center; margin-top: 16px; }
     }
 
     @media (max-width: 640px) {
@@ -1302,7 +1314,7 @@
 
     /* Jadwal schedule modal */
     #jadwal-modal .modal-dialog {
-      width: min(1100px, 96vw);
+      width: min(1100px, 100%);
     }
 
     #jadwal-modal .modal-body {
@@ -1473,6 +1485,39 @@
       font-weight: 700;
       color: var(--ink);
       font-variant-numeric: tabular-nums;
+    }
+
+    /* Small screens: tighten modal/FAQ/table spacing. Placed last so these
+       overrides win over the base rules regardless of specificity. */
+    @media (max-width: 640px) {
+      #training-modal .modal-body,
+      #jadwal-modal .modal-body {
+        padding: 16px;
+      }
+
+      .jadwal-scroll {
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .jadwal-table {
+        min-width: 640px;
+      }
+
+      .faq-question {
+        padding: 16px;
+      }
+
+      .training-faq-inner {
+        padding: 4px 16px 16px;
+      }
+
+      .faq-answer p {
+        padding: 0 16px 16px;
+      }
+
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
