@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'; frame-src https://docs.google.com; img-src 'self' data:" />
   <link rel="canonical" href="https://dikodeworks.id/" />
   <script>
     /* Clean URL (web only): /index.html → /. Skipped for file:// previews so
@@ -1276,7 +1276,8 @@
             <tbody id="training-sheet-rows"></tbody>
           </table>
         </div>
-        <iframe class="sheet-embed" id="training-sheet-fallback" hidden title="Pelatihan" loading="lazy"
+        <iframe class="sheet-embed" id="training-sheet-fallback" hidden title="Pelatihan" loading="lazy" referrerpolicy="no-referrer"
+          sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
           data-src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQupzYPZjnBr4DHLlp0vtIDr0eVamaMmIttgK7lS1DuYmeslWp_8s59eYaUD7hSWQQpKwRo1PckSuf-/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
         <p class="jadwal-meta" id="training-sheet-meta" aria-live="polite"></p>
       </div>
