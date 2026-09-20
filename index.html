@@ -2185,6 +2185,7 @@
 
     /* ---------- Training: live content from Notion (Pelatihan) ---------- */
     const TRAINING_NOTION_URL = 'https://teguhpm.notion.site/Pelatihan-3d86fa858bba80129507c7eecc79b5de';
+    const TRAINING_PAGE_ID = '3d86fa858bba80129507c7eecc79b5de';
     const TRAINING_NOTION_LIVE_URL = 'https://r.jina.ai/' + TRAINING_NOTION_URL;
     const TRAINING_REFRESH_MS = 5 * 60 * 1000;
     const TRAINING_KEYS = ['judul', 'kurikulum', 'durasi', 'biaya', 'registrasi'];
@@ -2532,12 +2533,24 @@ const reg = document.createElement('a');
     async function fetchTraining() {
       trainingShowProgress();
       trainingUpdated = new Date().toISOString();
+
+      /* 1) LIVE Notion page API (CORS-enabled, no r.jina proxy / no limits). */
       try {
-        /* Stable r.jina.ai URL. Adding unique cache-busting queries makes
-           r.jina.ai block the whole domain (403 AbuseAlleviationError), which
-           broke live loading entirely. r.jina refreshes its own cache. */
-        const liveUrl = TRAINING_NOTION_LIVE_URL;
-        const res = await fetch(liveUrl, { cache: 'no-store' });
+        const lines = await notionApiLines(TRAINING_PAGE_ID);
+        const groups = parseNotionTraining('Markdown Content:\n' + lines.join('\n'));
+        if (groups.length) {
+          trainingLastGood = groups;
+          renderTraining(groups);
+          trainingHideProgress();
+          return;
+        }
+      } catch (err) {
+        /* fall through */
+      }
+
+      /* 2) r.jina.ai proxy fallback. */
+      try {
+        const res = await fetch(TRAINING_NOTION_LIVE_URL, { cache: 'no-store' });
         if (res.ok) {
           const groups = parseNotionTraining(await res.text());
           if (groups.length) {
@@ -2550,8 +2563,7 @@ const reg = document.createElement('a');
       } catch (err) {
         /* fall through */
       }
-      /* On failure, prefer the last successfully rendered data over stale
-         inline snapshots so the list never "un-updates" after a transient error. */
+
       renderTraining(trainingLastGood || TRAINING_INLINE);
       trainingHideProgress();
     }
@@ -2561,6 +2573,7 @@ const reg = document.createElement('a');
        It is rendered server-side by the r.jina.ai reader proxy, which replies
        with CORS headers, returning the page as plain Markdown. */
     const JADWAL_NOTION_URL = 'https://teguhpm.notion.site/Jadwal-Training-3d76fa858bba80678c5ad21fda12a21f';
+    const JADWAL_PAGE_ID = '3d76fa858bba80678c5ad21fda12a21f';
     const JADWAL_NOTION_LIVE_URL = 'https://r.jina.ai/' + JADWAL_NOTION_URL;
     /* schedule.json is generated from the public Notion page by the
        .github/workflows/refresh-schedule.yml workflow (every 5 minutes). */
@@ -2598,6 +2611,33 @@ const reg = document.createElement('a');
       }
       return s;
     };
+
+    /* Live Notion data via the public page API (CORS-enabled, no r.jina.ai
+       proxy and therefore no abuse rate-limits). Returns the page's text
+       blocks in document order as an array of lines. */
+    async function notionApiLines(pageId) {
+      const res = await fetch('https://notion-api.splitbee.io/v1/page/' + pageId, { cache: 'no-store' });
+      if (!res.ok) throw new Error('notion api ' + res.status);
+      const data = await res.json();
+      const root = (data[pageId] && data[pageId].value && data[pageId].value.value) || null;
+      const out = [];
+      const titleOf = (v) => {
+        const p = v && v.properties && v.properties.title;
+        if (!p) return '';
+        try { return p.map((x) => x[0]).join(''); } catch (e) { return ''; }
+      };
+      const walk = (ids) => {
+        (ids || []).forEach((id) => {
+          const v = data[id] && data[id].value && data[id].value.value;
+          if (!v) return;
+          const t = titleOf(v);
+          if (t) out.push(t);
+          if (v.content && v.content.length) walk(v.content);
+        });
+      };
+      if (root) walk(root.content);
+      return out;
+    }
 
     const jadwalStatus = (message) => {
       const tr = document.createElement('tr');
@@ -2851,7 +2891,7 @@ const reg = document.createElement('a');
         } else {
           const m = l.match(mdLink);
           const value = m ? m[1] : l;
-          const link = m ? m[2] : null;
+          const link = m ? m[2] : (/^https?:\/\//i.test(l) ? l : null);
           if (!currentKey) continue;
           const existing = row.get(currentKey);
           if (existing) {
@@ -2870,9 +2910,20 @@ const reg = document.createElement('a');
       /* Loading animation: show the 1-100% progress bar while data loads. */
       jadwalShowProgress();
 
-      /* 1) LIVE Notion via r.jina.ai first, so the table always reflects the
-         link. Stable URL: unique cache-busting queries get the domain blocked
-         by r.jina.ai's abuse limiter. */
+      /* 1) LIVE Notion page API first (CORS-enabled, no r.jina proxy). */
+      try {
+        const lines = await notionApiLines(JADWAL_PAGE_ID);
+        const data = parseNotionMarkdown(lines.join('\n'));
+        if (data.entries.length) {
+          renderJadwal(data.headers, data.entries, data.updated);
+          jadwalHideProgress();
+          return;
+        }
+      } catch (err) {
+        /* fall through */
+      }
+
+      /* 2) r.jina.ai proxy fallback. */
       try {
         const res = await fetch(JADWAL_NOTION_LIVE_URL, { cache: 'no-store' });
         if (res.ok) {
@@ -2887,7 +2938,7 @@ const reg = document.createElement('a');
         /* fall through */
       }
 
-      /* 2) schedule.json snapshot (fallback when the live render is down). */
+      /* 3) schedule.json snapshot (fallback when live is unreachable). */
       if (JADWAL_API_URL) {
         try {
           const cacheBust = JADWAL_API_URL + '?t=' + Date.now();

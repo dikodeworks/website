@@ -7,6 +7,8 @@
 
   var TRAINING_URL = 'https://r.jina.ai/https://teguhpm.notion.site/Pelatihan-3d86fa858bba80129507c7eecc79b5de';
   var JADWAL_URL = 'https://r.jina.ai/https://teguhpm.notion.site/Jadwal-Training-3d76fa858bba80678c5ad21fda12a21f';
+  var TRAINING_PAGE_ID = '3d86fa858bba80129507c7eecc79b5de';
+  var JADWAL_PAGE_ID = '3d76fa858bba80678c5ad21fda12a21f';
   var SCHEDULE_JSON = '../schedule.json';
   var REFRESH_MS = 5 * 60 * 1000;
   var JADWAL_COLUMNS = ['Tanggal', 'Training', 'Waktu', 'Lokasi', 'Biaya', 'Registrasi'];
@@ -99,6 +101,32 @@
   }
 
   var $ = function (id) { return document.getElementById(id); };
+
+  /* Live Notion data via the public page API (CORS-enabled, no r.jina.ai
+     proxy and therefore no abuse rate-limits). Returns text blocks in order. */
+  async function notionApiLines(pageId) {
+    var res = await fetch('https://notion-api.splitbee.io/v1/page/' + pageId, { cache: 'no-store' });
+    if (!res.ok) throw new Error('notion api ' + res.status);
+    var data = await res.json();
+    var root = (data[pageId] && data[pageId].value && data[pageId].value.value) || null;
+    var out = [];
+    var titleOf = function (v) {
+      var p = v && v.properties && v.properties.title;
+      if (!p) return '';
+      try { return p.map(function (x) { return x[0]; }).join(''); } catch (e) { return ''; }
+    };
+    var walk = function (ids) {
+      (ids || []).forEach(function (id) {
+        var v = data[id] && data[id].value && data[id].value.value;
+        if (!v) return;
+        var t = titleOf(v);
+        if (t) out.push(t);
+        if (v.content && v.content.length) walk(v.content);
+      });
+    };
+    if (root) walk(root.content);
+    return out;
+  }
 
   /* ---------- Inject modal markup ---------- */
   var CLOSE_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
@@ -498,24 +526,29 @@
     }
   }
 
-  function fetchTraining() {
+  async function fetchTraining() {
     trainingProgress.show();
     trainingUpdated = new Date().toISOString();
-    fetch(TRAINING_URL, { cache: 'no-store' })
-      .then(function (res) { return res.ok ? res.text() : ''; })
-      .then(function (text) {
-        var groups = text ? parseNotionTraining(text) : [];
-        if (groups.length) {
-          trainingLastGood = groups;
-          renderTraining(groups);
-        } else {
-          renderTraining(trainingLastGood || TRAINING_INLINE);
-        }
-      })
-      .catch(function () {
-        renderTraining(trainingLastGood || TRAINING_INLINE);
-      })
-      .then(function () { trainingProgress.hide(); });
+    var groups = [];
+    /* 1) LIVE Notion page API first. */
+    try {
+      var lines = await notionApiLines(TRAINING_PAGE_ID);
+      groups = lines.length ? parseNotionTraining('Markdown Content:\n' + lines.join('\n')) : [];
+    } catch (e) { groups = []; }
+    /* 2) r.jina.ai proxy fallback. */
+    if (!groups.length) {
+      try {
+        var res = await fetch(TRAINING_URL, { cache: 'no-store' });
+        if (res.ok) groups = parseNotionTraining(await res.text());
+      } catch (e) { /* ignore */ }
+    }
+    if (groups.length) {
+      trainingLastGood = groups;
+      renderTraining(groups);
+    } else {
+      renderTraining(trainingLastGood || TRAINING_INLINE);
+    }
+    trainingProgress.hide();
   }
 
   /* ---------- Schedule (table) ---------- */
@@ -562,7 +595,7 @@
       } else {
         var m = l.match(mdLink);
         var value = m ? m[1] : l;
-        var link = m ? m[2] : null;
+        var link = m ? m[2] : (/^https?:\/\//i.test(l) ? l : null);
         if (!currentKey) continue;
         var existing = row.get(currentKey);
         if (existing) {
@@ -654,29 +687,40 @@
     jadwalMeta.textContent = jadwalMetaUpdated ? formatMeta(jadwalMetaUpdated) : '';
   }
 
-  function fetchSchedule() {
+  async function fetchSchedule() {
     jadwalProgress.show();
     var fallback = normalizeSchedule(SCHEDULE_INLINE);
-    var show = function (data) {
-      var stamp = new Date().toISOString();
-      if (data && data.entries && data.entries.length) {
-        renderSchedule(data.headers, data.entries, data.updated || stamp);
-      } else {
-        renderSchedule(fallback.headers, fallback.entries, stamp);
-      }
-    };
-    /* 1) LIVE Jadwal Notion page first (stable URL) so the popup always
-       reflects the link. 2) schedule.json snapshot as fallback. */
-    fetch(JADWAL_URL, { cache: 'no-store' })
-      .then(function (r) { return r.ok ? r.text().then(parseNotionMarkdown) : null; })
-      .then(function (data) {
-        if (data && data.entries && data.entries.length) { show(data); return; }
-        return fetch(SCHEDULE_JSON + '?t=' + Date.now(), { cache: 'no-store' })
-          .then(function (r2) { return r2.ok ? r2.json().then(normalizeSchedule) : null; })
-          .then(function (d2) { show(d2); });
-      })
-      .catch(function () { show(null); })
-      .then(function () { jadwalProgress.hide(); });
+    var data = null;
+
+    /* 1) LIVE Notion page API first (CORS-enabled). */
+    try {
+      var lines = await notionApiLines(JADWAL_PAGE_ID);
+      data = lines.length ? parseNotionMarkdown(lines.join('\n')) : null;
+    } catch (e) { data = null; }
+
+    /* 2) r.jina.ai proxy fallback. */
+    if (!(data && data.entries && data.entries.length)) {
+      try {
+        var r = await fetch(JADWAL_URL, { cache: 'no-store' });
+        if (r.ok) data = parseNotionMarkdown(await r.text());
+      } catch (e) { /* ignore */ }
+    }
+
+    /* 3) schedule.json snapshot fallback. */
+    if (!(data && data.entries && data.entries.length)) {
+      try {
+        var r2 = await fetch(SCHEDULE_JSON + '?t=' + Date.now(), { cache: 'no-store' });
+        if (r2.ok) data = normalizeSchedule(await r2.json());
+      } catch (e) { /* ignore */ }
+    }
+
+    var stamp = new Date().toISOString();
+    if (data && data.entries && data.entries.length) {
+      renderSchedule(data.headers, data.entries, data.updated || stamp);
+    } else {
+      renderSchedule(fallback.headers, fallback.entries, stamp);
+    }
+    jadwalProgress.hide();
   }
 
   /* ---------- Chrome / language ---------- */
