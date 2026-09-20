@@ -8,6 +8,11 @@ on:
 permissions:
   contents: write
 
+# Serialise runs so two 5-minute refreshes never race on `git push`.
+concurrency:
+  group: refresh-notion-snapshots
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
@@ -32,7 +37,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet schedule.json && git diff --quiet event.json; then
+          if [ -z "$(git status --porcelain schedule.json event.json)" ]; then
             echo "snapshots unchanged"
           else
             git add schedule.json event.json
