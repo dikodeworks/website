@@ -2524,10 +2524,9 @@ const reg = document.createElement('a');
       trainingShowProgress();
       trainingUpdated = new Date().toISOString();
       try {
-        /* Stable URL — no per-request cache-busting query, because r.jina.ai
-           blocks domains hit with a burst of unique URLs (403 AbuseAlleviation
-           Error), which was silently disabling the live fetch. */
-        const liveUrl = TRAINING_NOTION_LIVE_URL;
+        /* Fresh on every open: a short 5-minute cache bucket lets r.jina.ai
+           re-render without spamming it with a unique URL per request. */
+        const liveUrl = TRAINING_NOTION_LIVE_URL + '?t=' + freshToken();
         const res = await fetch(liveUrl, { cache: 'no-store' });
         if (res.ok) {
           const groups = parseNotionTraining(await res.text());
@@ -2724,7 +2723,7 @@ const reg = document.createElement('a');
       jadwalRowsData = entries
         .filter((cells) => cells.some((cell) => cell && cell.v !== ''))
         .map((cells) => present.map((idx) => cells[idx] || { v: '', link: null }));
-      jadwalMetaUpdated = updated;
+      jadwalMetaUpdated = updated || new Date().toISOString();
 
       applyJadwalFilter();
     }
@@ -2791,10 +2790,19 @@ const reg = document.createElement('a');
     }
 
     const formatJadwalMeta = (updated) => {
-      const pad = (n) => String(n).padStart(2, '0');
       const date = new Date(updated);
-      return localized('jadwal.updated') + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+      if (isNaN(date.getTime())) return '';
+      const locale = document.documentElement.lang === 'id' ? 'id-ID' : 'en-US';
+      const when = new Intl.DateTimeFormat(locale, {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+        hour: '2-digit', minute: '2-digit',
+      }).format(date);
+      return localized('jadwal.updated') + ' ' + when;
     };
+
+    /* Short cache bucket: a fresh r.jina.ai URL about once a minute keeps the
+       live fetch current without a new URL on every request (abuse limiter). */
+    const freshToken = () => String(Math.floor(Date.now() / 60000));
 
     /* Parse r.jina.ai Markdown of the Notion page.
    Format after "Isi tabel":
@@ -2856,11 +2864,24 @@ const reg = document.createElement('a');
       /* Loading animation: show the 1-100% progress bar while data loads. */
       jadwalShowProgress();
 
-      /* 1) schedule.json first: it is re-generated from the public Notion page
-         by the GitHub Actions workflow every 5 minutes, so it is both reliable
-         and near-live. The live r.jina.ai render is secondary — hammering it
-         once per click (or every 5 min) with unique cache-busting URLs makes it
-         throttle the whole domain with 403 AbuseAlleviationError. */
+      /* 1) LIVE Notion via r.jina.ai first, so the table always reflects the
+         link. A short cache bucket keeps the URL fresh without a unique URL
+         per request (which trips r.jina.ai's abuse limiter). */
+      try {
+        const res = await fetch(JADWAL_NOTION_LIVE_URL + '?t=' + freshToken(), { cache: 'no-store' });
+        if (res.ok) {
+          const data = parseNotionMarkdown(await res.text());
+          if (data.entries.length) {
+            renderJadwal(data.headers, data.entries, data.updated);
+            jadwalHideProgress();
+            return;
+          }
+        }
+      } catch (err) {
+        /* fall through */
+      }
+
+      /* 2) schedule.json snapshot (fallback when the live render is down). */
       if (JADWAL_API_URL) {
         try {
           const cacheBust = JADWAL_API_URL + '?t=' + Date.now();
@@ -2874,22 +2895,6 @@ const reg = document.createElement('a');
         } catch (err) {
           /* fall through */
         }
-      }
-
-      /* 2) Live Notion via r.jina.ai (stable URL — no per-request query, which
-         is what triggers r.jina.ai's abuse limiter). */
-      try {
-        const res = await fetch(JADWAL_NOTION_LIVE_URL, { cache: 'no-store' });
-        if (res.ok) {
-          const data = parseNotionMarkdown(await res.text());
-          if (data.entries.length) {
-            renderJadwal(data.headers, data.entries, data.updated);
-            jadwalHideProgress();
-            return;
-          }
-        }
-      } catch (err) {
-        /* fall through */
       }
 
       /* 3) Embedded snapshot. */
@@ -2968,6 +2973,16 @@ const reg = document.createElement('a');
     /* Warm the training table on page load and keep it fresh every 5 min. */
     fetchTraining();
     setInterval(fetchTraining, TRAINING_REFRESH_MS);
+
+    /* Re-check the data of whichever menu is open when the tab is focused
+       again, so it never keeps showing previously fetched rows. */
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible') return;
+      const t = document.getElementById('training-modal');
+      const j = document.getElementById('jadwal-modal');
+      if (t && t.classList.contains('open')) fetchTraining();
+      if (j && j.classList.contains('open')) fetchJadwal();
+    });
   </script>
 </body>
 </html>

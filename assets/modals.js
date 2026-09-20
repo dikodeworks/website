@@ -229,9 +229,17 @@
 
   function formatMeta(iso) {
     var date = new Date(iso);
-    var pad = function (n) { return String(n).padStart(2, '0'); };
-    return localized('schedule.updated') + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+    if (isNaN(date.getTime())) return '';
+    var locale = document.documentElement.lang === 'id' ? 'id-ID' : 'en-US';
+    var when = new Intl.DateTimeFormat(locale, {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    }).format(date);
+    return localized('schedule.updated') + ' ' + when;
   }
+
+  /* Short cache bucket: a fresh r.jina.ai URL about once a minute. */
+  function freshToken() { return String(Math.floor(Date.now() / 60000)); }
 
   /* ---------- Training (accordion) ---------- */
   var trainingFaq, trainingSearchInput, trainingSearchClear, trainingMeta;
@@ -493,7 +501,7 @@
   function fetchTraining() {
     trainingProgress.show();
     trainingUpdated = new Date().toISOString();
-    fetch(TRAINING_URL, { cache: 'no-store' })
+    fetch(TRAINING_URL + '?t=' + freshToken(), { cache: 'no-store' })
       .then(function (res) { return res.ok ? res.text() : ''; })
       .then(function (text) {
         var groups = text ? parseNotionTraining(text) : [];
@@ -657,14 +665,16 @@
         renderSchedule(fallback.headers, fallback.entries, stamp);
       }
     };
-    fetch(SCHEDULE_JSON + '?t=' + Date.now(), { cache: 'no-store' })
-      .then(function (res) {
-        if (res.ok) return res.json().then(function (data) { return normalizeSchedule(data); });
-        return fetch(JADWAL_URL, { cache: 'no-store' }).then(function (r2) {
-          return r2.ok ? r2.text().then(function (t) { return parseNotionMarkdown(t); }) : null;
-        });
+    /* 1) LIVE Jadwal Notion page first (short cache bucket) so the popup
+       always reflects the link. 2) schedule.json snapshot as fallback. */
+    fetch(JADWAL_URL + '?t=' + freshToken(), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.text().then(parseNotionMarkdown) : null; })
+      .then(function (data) {
+        if (data && data.entries && data.entries.length) { show(data); return; }
+        return fetch(SCHEDULE_JSON + '?t=' + Date.now(), { cache: 'no-store' })
+          .then(function (r2) { return r2.ok ? r2.json().then(normalizeSchedule) : null; })
+          .then(function (d2) { show(d2); });
       })
-      .then(function (data) { show(data); })
       .catch(function () { show(null); })
       .then(function () { jadwalProgress.hide(); });
   }
@@ -798,6 +808,15 @@
     fetchSchedule();
     setInterval(fetchTraining, REFRESH_MS);
     setInterval(fetchSchedule, REFRESH_MS);
+
+    /* Re-check whichever popup is open when the tab is focused again. */
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible') return;
+      var t = $('training-modal');
+      var j = $('jadwal-modal');
+      if (t && t.classList.contains('open')) fetchTraining();
+      if (j && j.classList.contains('open')) fetchSchedule();
+    });
   }
 
   if (document.readyState === 'loading') {
