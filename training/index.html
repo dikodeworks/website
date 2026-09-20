@@ -13,10 +13,10 @@
       location.replace(location.pathname.replace(/index\.html$/, '') + location.search + location.hash);
     })();
   </script>
-  <title>Event — DikodeWorks</title>
+  <title>Pelatihan — DikodeWorks</title>
   <meta name="description" content="DikodeWorks upcoming events and training schedule." />
   <link rel="icon" type="image/png" href="../dino/favicon.png" />
-  <link rel="canonical" href="https://dikodeworks.id/event/" />
+  <link rel="canonical" href="https://dikodeworks.id/training/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -488,14 +488,14 @@
 <body>
   <header>
     <div class="wrap nav">
-      <a class="brand" href="../index.html">
+      <a class="brand" href="/">
         <span class="brand-name">DikodeWorks<span class="dot">.</span></span>
       </a>
       <div class="nav-right">
         <nav class="nav-links" aria-label="Main">
-          <a href="../training/" class="nav-link-btn" data-i18n="nav.training">Training</a>
+          <a href="/training/" class="active" data-i18n="nav.training" aria-current="page">Training</a>
           <button type="button" class="nav-link-btn" id="jadwal-open" data-i18n="nav.schedule">Schedule</button>
-          <a href="index.html" class="active" data-i18n="nav.event" aria-current="page">Event</a>
+          <a href="/event/" data-i18n="nav.event">Event</a>
         </nav>
         <div class="socials">
           <a href="https://www.instagram.com/dikodeworks" target="_blank" rel="noopener" aria-label="Instagram">
@@ -523,21 +523,8 @@
     <section class="event-section">
       <div class="wrap">
         <div class="jadwal-panel">
-          <div class="jadwal-progress" id="jadwal-progress" role="status" aria-live="polite">
-            <span class="jadwal-progress-track"><span class="jadwal-progress-fill" id="jadwal-progress-fill"></span></span>
-            <span class="jadwal-progress-label" id="jadwal-progress-label">0%</span>
-          </div>
-          <div class="jadwal-search">
-            <input type="search" id="jadwal-search-input" class="jadwal-search-input" placeholder="Search…" aria-label="Search events">
-            <button type="button" class="jadwal-search-clear" id="jadwal-search-clear" aria-label="Clear search">&times;</button>
-          </div>
-          <div class="jadwal-scroll">
-            <table class="jadwal-table" id="jadwal-table">
-              <thead id="jadwal-head"></thead>
-              <tbody id="jadwal-rows"></tbody>
-            </table>
-          </div>
-          <p class="jadwal-meta" id="jadwal-meta" aria-live="polite"></p>
+          <iframe class="sheet-embed" title="Pelatihan" loading="lazy"
+            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQupzYPZjnBr4DHLlp0vtIDr0eVamaMmIttgK7lS1DuYmeslWp_8s59eYaUD7hSWQQpKwRo1PckSuf-/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
         </div>
       </div>
     </section>
@@ -738,358 +725,6 @@
       navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
 
-    /* ---------- Event table (from the public Event Notion page, same pattern as
-       the Training and Schedule menus: event.json snapshot → live render →
-       embedded fallback) ---------- */
-    const EVENT_NOTION_URL = 'https://teguhpm.notion.site/Event-3e16fa858bba80cc9ce1e72ebbabe516';
-    const EVENT_PAGE_ID = '3e16fa858bba80cc9ce1e72ebbabe516';
-    const EVENT_NOTION_LIVE_URL = 'https://r.jina.ai/' + EVENT_NOTION_URL;
-    const EVENT_API_URL = '../event.json';
-    const EVENT_REFRESH_MS = 5 * 60 * 1000;
-
-    /* Preferred display columns. A source column is shown under the matching
-       preferred group (by aliases) so wording in Notion never hides a field. */
-    const EVENT_PREFERRED = [
-      { name: 'Tanggal', keys: ['tanggal'] },
-      { name: 'Event', keys: ['event', 'kegiatan', 'nama', 'judul'] },
-      { name: 'Waktu', keys: ['waktu', 'jam', 'pukul'] },
-      { name: 'Lokasi', keys: ['lokasi', 'tempat'] },
-      { name: 'Biaya', keys: ['biaya', 'harga', 'donasi'] },
-      { name: 'Registrasi', keys: ['registrasi', 'link'] },
-    ];
-    /* Extra column labels that should still be parsed and could be shown when
-       present (beyond the preferred groups). */
-    const EVENT_EXTRA_COLUMNS = ['DESKRIPSI', 'KUOTA', 'PESERTA', 'STATUS'];
-
-    let activeColCount = EVENT_PREFERRED.length;
-
-    /* Embedded snapshot so the table works even when event.json and the live
-       Notion render are both unreachable (mirror of event.json). */
-    const EVENT_INLINE_DATA = {
-      "columns": ["Tanggal", "Event", "Waktu", "Lokasi", "Biaya", "Registrasi"],
-      "rows": [
-        [{"v": "DD-MM-YYYY", "link": null}, {"v": "Tech Talk - Product Manager di BUMN itu ngapain sih ?", "link": null}, {"v": "00:00", "link": null}, {"v": "Online", "link": null}, {"v": "FREE", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}]
-      ]
-    };
-
-    const jadwalHead = document.getElementById('jadwal-head');
-    const jadwalRows = document.getElementById('jadwal-rows');
-    const jadwalMeta = document.getElementById('jadwal-meta');
-    const jadwalSearchInput = document.getElementById('jadwal-search-input');
-    const jadwalSearchClear = document.getElementById('jadwal-search-clear');
-
-    const jadwalStatus = (message) => {
-      const tr = document.createElement('tr');
-      tr.className = 'jadwal-status';
-      const td = document.createElement('td');
-      td.setAttribute('colspan', String(activeColCount || EVENT_PREFERRED.length));
-      td.textContent = message;
-      tr.appendChild(td);
-      jadwalRows.replaceChildren(tr);
-    };
-
-    /* ---------- Loading progress (1-100%) ---------- */
-    const jadwalProgress = document.getElementById('jadwal-progress');
-    const jadwalProgressFill = document.getElementById('jadwal-progress-fill');
-    const jadwalProgressLabel = document.getElementById('jadwal-progress-label');
-
-    let jadwalProgressTimer = null;
-    let jadwalProgressTick = 0;
-    let jadwalProgressValue = 0;
-
-    const jadwalShowProgress = () => {
-      if (!jadwalProgress) return;
-      jadwalProgressValue = 0;
-      jadwalProgressTick = 0;
-      jadwalProgress.classList.add('active');
-      jadwalProgressFill.style.width = '0%';
-      jadwalProgressLabel.textContent = '0%';
-      if (jadwalProgressTimer) clearInterval(jadwalProgressTimer);
-      jadwalProgressTimer = setInterval(() => {
-        jadwalProgressTick++;
-        if (jadwalProgressValue < 90) {
-          const step = Math.max(1, Math.ceil((90 - jadwalProgressValue) * 0.12 * (1 + Math.sin(jadwalProgressTick * 0.5))));
-          jadwalProgressValue = Math.min(90, jadwalProgressValue + step);
-        } else {
-          jadwalProgressValue = Math.min(99, jadwalProgressValue + 1);
-        }
-        jadwalProgressFill.style.width = jadwalProgressValue + '%';
-        jadwalProgressLabel.textContent = Math.round(jadwalProgressValue) + '%';
-      }, 90);
-    };
-
-    const jadwalHideProgress = () => {
-      if (jadwalProgressTimer) clearInterval(jadwalProgressTimer);
-      jadwalProgressTimer = null;
-      if (!jadwalProgress) return;
-      jadwalProgressValue = 100;
-      jadwalProgressFill.style.width = '100%';
-      jadwalProgressLabel.textContent = '100%';
-      setTimeout(() => {
-        jadwalProgress.classList.remove('active');
-      }, 250);
-    };
-
-    /* Notion/CI payload (schedule.json): { columns:[], rows:[[{v, link}]], updated? } */
-    function normalizeSchedule(data) {
-      const headers = (data.columns || []).map((h) => String(h).trim());
-      const entries = (data.rows || []).map((row) => {
-        return headers.map((h, ci) => {
-          const cell = row[ci] || { v: '' };
-          return { v: String(cell.v || ''), link: cell.link || null };
-        });
-      });
-      return { headers, entries, updated: data.updated };
-    }
-
-    let jadwalRowsData = [];
-    let jadwalMetaUpdated = null;
-
-    /* Map discovered source headers (author's wording) onto the preferred
-       display columns by alias; right-to-left each header is used at most
-       once. Returns { indices } in display order. */
-    function mapColumns(headers) {
-      const lower = headers.map((h) => h.trim().toLowerCase());
-      const used = new Set();
-      const indices = [];
-      const assign = (keys) => {
-        const idx = lower.findIndex((h, i) => !used.has(i) && keys.includes(h));
-        if (idx !== -1) {
-          used.add(idx);
-          indices.push(idx);
-        }
-      };
-      EVENT_PREFERRED.forEach((g) => assign(g.keys));
-      EVENT_EXTRA_COLUMNS.forEach((name) => assign([name.toLowerCase()]));
-      /* Any remaining headers (e.g. Materi/Deskripsi wording we didn't list)
-         get appended so data is never silently dropped. */
-      lower.forEach((h, i) => { if (!used.has(i)) indices.push(i); });
-      return indices;
-    }
-
-    function renderJadwal(headers, entries, updated) {
-      const present = mapColumns(headers);
-      activeColCount = Math.max(1, present.length);
-
-      const headRow = document.createElement('tr');
-      present.forEach((idx) => {
-        const th = document.createElement('th');
-        th.setAttribute('scope', 'col');
-        th.textContent = headers[idx].trim();
-        headRow.appendChild(th);
-      });
-      jadwalHead.replaceChildren(headRow);
-
-      jadwalRowsData = entries
-        .filter((cells) => cells.some((cell) => cell && cell.v !== ''))
-        .map((cells) => present.map((idx) => cells[idx] || { v: '', link: null }));
-      jadwalMetaUpdated = updated || new Date().toISOString();
-
-      applyJadwalFilter();
-    }
-
-    function applyJadwalFilter() {
-      const q = (jadwalSearchInput.value || '').trim().toLowerCase();
-
-      if (!q) {
-        jadwalSearchClear.style.display = 'none';
-      } else {
-        jadwalSearchClear.style.display = 'flex';
-      }
-
-      const visible = q
-        ? jadwalRowsData.filter((cells) => cells.some((cell) => cell && cell.v.toLowerCase().includes(q)))
-        : jadwalRowsData;
-
-      jadwalRows.textContent = '';
-
-      if (!visible.length) {
-        if (q) {
-          const tr = document.createElement('tr');
-          tr.className = 'jadwal-status';
-          const td = document.createElement('td');
-          td.setAttribute('colspan', String(activeColCount || EVENT_PREFERRED.length));
-          td.textContent = localized('jadwal.searchEmpty');
-          tr.appendChild(td);
-          jadwalRows.appendChild(tr);
-        }
-        jadwalMeta.textContent = jadwalMetaUpdated ? formatJadwalMeta(jadwalMetaUpdated) : '';
-        return;
-      }
-
-      visible.forEach((cells) => {
-        const tr = document.createElement('tr');
-        cells.forEach((cell, i) => {
-          const td = document.createElement('td');
-
-          const href = cell.link ? safeUrl(cell.link) : null;
-          if (href) {
-            const a = document.createElement('a');
-            a.className = 'jadwal-register';
-            a.href = href;
-            a.setAttribute('target', '_blank');
-            a.setAttribute('rel', 'noopener');
-            a.textContent = localized('jadwal.register');
-            td.appendChild(a);
-          } else if (cell.v.includes('\n')) {
-            td.classList.add('jadwal-multi');
-            td.textContent = cell.v;
-          } else {
-            td.textContent = cell.v;
-          }
-          tr.appendChild(td);
-        });
-        jadwalRows.appendChild(tr);
-      });
-
-      jadwalMeta.textContent = jadwalMetaUpdated ? formatJadwalMeta(jadwalMetaUpdated) : '';
-    }
-
-    const formatJadwalMeta = (updated) => {
-      const date = new Date(updated);
-      if (isNaN(date.getTime())) return '';
-      const locale = document.documentElement.lang === 'id' ? 'id-ID' : 'en-US';
-      const when = new Intl.DateTimeFormat(locale, {
-        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-        hour: '2-digit', minute: '2-digit',
-      }).format(date);
-      return localized('jadwal.updated') + ' ' + when;
-    };
-
-    /* Parse r.jina.ai Markdown of the Event Notion page. Like the Schedule parser:
-       interleaved key/value lines after "Isi tabel", a repeated key starts a
-       new row, and Notion row-number headings (### 001) are skipped. The set
-       of columns is discovered from the page itself, so the layout can be
-       Tanggal / Event / Waktu / Lokasi / Biaya / Registrasi — or any subset. */
-    function parseEventMarkdown(text) {
-      const KEYS = ['tanggal', 'event', 'kegiatan', 'nama', 'judul', 'pelatihan', 'training', 'modul', 'materi', 'waktu', 'jam', 'pukul', 'lokasi', 'tempat', 'biaya', 'harga', 'donasi', 'registrasi', 'link', 'kuota', 'peserta', 'status', 'deskripsi', 'detail'];
-      const lines = String(text).split(/\r?\n/).map((l) => l.trim());
-      const start = lines.findIndex((l) => l.trim().toLowerCase() === 'isi tabel');
-      const rowData = [];
-      const mdLink = new RegExp('\\[([^\\]]*)\\]\\(([^)]+)\\)');
-
-      let row = new Map();
-      let currentKey = null;
-
-      const flush = () => {
-        if (!row.size) return;
-        rowData.push(row);
-        row = new Map();
-      };
-
-      for (let i = (start === -1 ? 0 : start + 1); i < lines.length; i++) {
-        const l = lines[i];
-        if (!l) continue;
-        if (/^#{1,6}\s*[0-9]{1,6}\s*$/.test(l) || /^[0-9]{3}$/.test(l)) continue;
-        const low = l.toLowerCase();
-        if (KEYS.includes(low)) {
-          if (row.has(low)) flush();   /* repeat key → new row */
-          currentKey = low;
-        } else {
-          const m = l.match(mdLink);
-          const value = m ? m[1] : l;
-          const link = m ? m[2] : (/^https?:\/\//i.test(l) ? l : null);
-          if (!currentKey) continue;
-          const existing = row.get(currentKey);
-          if (existing) {
-            existing.v += '\n' + value;
-            if (link) existing.link = link;
-          } else {
-            row.set(currentKey, { v: value, link: link });
-          }
-        }
-      }
-      flush();
-
-      /* Discover columns: the order they appear on the page, author wording. */
-      const headers = [];
-      const seen = new Set();
-      for (let i = (start === -1 ? 0 : start + 1); i < lines.length; i++) {
-        const low = lines[i].toLowerCase();
-        if (KEYS.includes(low) && !seen.has(low) && rowData.some((r) => r.has(low))) {
-          seen.add(low);
-          headers.push(lines[i]); // original casing as authored
-        }
-      }
-
-      const entries = rowData.map((r) => headers.map((h) => r.get(h.toLowerCase()) || { v: '', link: null }));
-      return { headers, entries, updated: new Date().toISOString() };
-    }
-
-    async function fetchJadwal() {
-      jadwalShowProgress();
-
-      /* 1) LIVE Notion page API first (CORS-enabled, no r.jina proxy). */
-      try {
-        const lines = await notionApiLines(EVENT_PAGE_ID);
-        const data = parseEventMarkdown(lines.join('\n'));
-        if (data.entries.length) {
-          renderJadwal(data.headers, data.entries, data.updated);
-          jadwalHideProgress();
-          return;
-        }
-      } catch (err) {
-        /* fall through */
-      }
-
-      /* 2) r.jina.ai proxy fallback. */
-      try {
-        const res = await fetch(EVENT_NOTION_LIVE_URL, { cache: 'no-store' });
-        if (res.ok) {
-          const data = parseEventMarkdown(await res.text());
-          if (data.entries.length) {
-            renderJadwal(data.headers, data.entries, data.updated);
-            jadwalHideProgress();
-            return;
-          }
-        }
-      } catch (err) {
-        /* fall through */
-      }
-
-      /* 3) event.json snapshot (fallback when live is unreachable). */
-      try {
-        const cacheBust = EVENT_API_URL + '?t=' + Date.now();
-        const res = await fetch(cacheBust, { cache: 'no-store' });
-        if (res.ok) {
-          const data = normalizeSchedule(await res.json());
-          renderJadwal(data.headers, data.entries, data.updated);
-          jadwalHideProgress();
-          return;
-        }
-      } catch (err) {
-        /* fall through */
-      }
-
-      /* 3) Embedded snapshot. */
-      const fallback = normalizeSchedule(EVENT_INLINE_DATA);
-      renderJadwal(fallback.headers, fallback.entries, null);
-      jadwalHideProgress();
-    }
-
-    /* Filter the table as the user types; clear button resets it. */
-    if (jadwalSearchInput) {
-      jadwalSearchInput.addEventListener('input', applyJadwalFilter);
-      jadwalSearchInput.addEventListener('search', applyJadwalFilter);
-    }
-    if (jadwalSearchClear) {
-      jadwalSearchClear.addEventListener('click', () => {
-        jadwalSearchInput.value = '';
-        applyJadwalFilter();
-        jadwalSearchInput.focus({ preventScroll: true });
-      });
-    }
-
-    if (EVENT_API_URL) {
-      fetchJadwal();
-      setInterval(fetchJadwal, EVENT_REFRESH_MS);
-    }
-
-    /* Re-check the Event table whenever the tab is focused again, so it never
-       keeps showing previously fetched rows. */
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') fetchJadwal();
-    });
   </script>
   <script src="../assets/modals.js?v=3" defer></script>
 </body>
