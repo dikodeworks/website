@@ -605,32 +605,20 @@
     const i18n = {
       en: {
         'nav.training': 'Training',
-        'nav.schedule': 'Schedule',
         'nav.event': 'Event',
-        'jadwal.loading': 'Loading…',
-        'jadwal.loadingProgress': 'Loading…',
-        'jadwal.empty': 'No events scheduled yet.',
-        'jadwal.error': 'Unable to load the events. Please try again later.',
         'jadwal.updated': 'Last updated at',
         'jadwal.register': 'Register',
         'jadwal.searchPlaceholder': 'Search event, date, location…',
         'jadwal.searchEmpty': 'No matching events found.',
-        'jadwal.notConfigured': 'Event source not configured yet.',
         'footer.rights': 'All rights reserved.',
       },
       id: {
         'nav.training': 'Pelatihan',
-        'nav.schedule': 'Jadwal',
         'nav.event': 'Kegiatan',
-        'jadwal.loading': 'Sedang belading…',
-        'jadwal.loadingProgress': 'Sedang belading…',
-        'jadwal.empty': 'Belum ada kegiatan yang dijadwalkan.',
-        'jadwal.error': 'Gagal memuat daftar kegiatan. Silakan coba lagi nanti.',
         'jadwal.updated': 'Di-update pada',
         'jadwal.register': 'Registrasi',
         'jadwal.searchPlaceholder': 'Cari kegiatan, tanggal, lokasi…',
         'jadwal.searchEmpty': 'Tidak ada kegiatan yang cocok.',
-        'jadwal.notConfigured': 'Source kegiatan belum disetup.',
         'footer.rights': 'Hak cipta dilindungi.',
       },
     };
@@ -776,16 +764,6 @@
     const jadwalMeta = document.getElementById('jadwal-meta');
     const jadwalSearchInput = document.getElementById('jadwal-search-input');
     const jadwalSearchClear = document.getElementById('jadwal-search-clear');
-
-    const jadwalStatus = (message) => {
-      const tr = document.createElement('tr');
-      tr.className = 'jadwal-status';
-      const td = document.createElement('td');
-      td.setAttribute('colspan', String(activeColCount || EVENT_PREFERRED.length));
-      td.textContent = message;
-      tr.appendChild(td);
-      jadwalRows.replaceChildren(tr);
-    };
 
     /* ---------- Loading progress (1-100%) ---------- */
     const jadwalProgress = document.getElementById('jadwal-progress');
