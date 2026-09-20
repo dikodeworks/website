@@ -33,11 +33,29 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
+      # Only publish the actual website. Source files (scripts/, .github/,
+      # *.py, .DS_Store, .gitignore, ...) must never reach the public site.
+      - name: Build public site
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site/event _site/contact _site/dino
+          cp index.html _site/index.html
+          cp event/index.html _site/event/index.html
+          cp schedule.json _site/schedule.json
+          cp event.json _site/event.json
+          cp contact/qr-code.png _site/contact/qr-code.png
+          cp dino/dino.png dino/favicon.gif dino/favicon.png _site/dino/
+          touch _site/.nojekyll
+          echo "Published files:"
+          find _site -type f | sort
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          # Upload only the curated public site
+          path: '_site'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
