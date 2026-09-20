@@ -473,7 +473,7 @@
       .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
     }
   </style>
-  <link rel="stylesheet" href="../assets/modals.css" />
+  <link rel="stylesheet" href="../assets/modals.css?v=3" />
 </head>
 <body>
   <header>
@@ -538,6 +538,57 @@
       <p>&copy; <span id="year"></span> DikodeWorks. <span data-i18n="footer.rights">All rights reserved.</span></p>
     </div>
   </footer>
+
+  <!-- Same popups as index.html: Training + Schedule, driven by assets/modals.js -->
+  <div class="modal" id="training-modal" role="dialog" aria-modal="true" aria-labelledby="training-modal-title">
+    <div class="modal-backdrop" id="training-modal-backdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title" id="training-modal-title" data-modal-title="modal.training"></span>
+        <button class="modal-close" id="training-modal-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="jadwal-progress" id="training-progress" role="status" aria-live="polite">
+          <span class="jadwal-progress-track"><span class="jadwal-progress-fill" id="training-progress-fill"></span></span>
+          <span class="jadwal-progress-label" id="training-progress-label">0%</span>
+        </div>
+        <div class="jadwal-search">
+          <input type="search" id="training-search-input" class="jadwal-search-input" aria-label="Search training">
+          <button type="button" class="jadwal-search-clear" id="training-search-clear" aria-label="Clear search">&times;</button>
+        </div>
+        <div class="training-faq" id="training-faq" aria-live="polite"></div>
+        <p class="jadwal-meta" id="training-meta" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="jadwal-modal" role="dialog" aria-modal="true" aria-labelledby="jadwal-modal-title">
+    <div class="modal-backdrop" id="jadwal-modal-backdrop"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span class="modal-title" id="jadwal-modal-title" data-modal-title="modal.schedule"></span>
+        <button class="modal-close" id="jadwal-modal-close" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="jadwal-progress" id="sched-progress" role="status" aria-live="polite">
+          <span class="jadwal-progress-track"><span class="jadwal-progress-fill" id="sched-progress-fill"></span></span>
+          <span class="jadwal-progress-label" id="sched-progress-label">0%</span>
+        </div>
+        <div class="jadwal-search">
+          <input type="search" id="sched-search-input" class="jadwal-search-input" aria-label="Search schedule">
+          <button type="button" class="jadwal-search-clear" id="sched-search-clear" aria-label="Clear search">&times;</button>
+        </div>
+        <div class="jadwal-scroll">
+          <table class="jadwal-table"><thead id="sched-head"></thead><tbody id="sched-rows"></tbody></table>
+        </div>
+        <p class="jadwal-meta" id="sched-meta" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
@@ -980,6 +1031,6 @@
       setInterval(fetchJadwal, EVENT_REFRESH_MS);
     }
   </script>
-  <script src="../assets/modals.js" defer></script>
+  <script src="../assets/modals.js?v=3" defer></script>
 </body>
 </html>
