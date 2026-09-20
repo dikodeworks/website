@@ -1531,6 +1531,7 @@
         <nav class="nav-links">
           <button type="button" class="nav-link-btn" id="training-open"><span data-i18n="nav.training">Training</span></button>
           <button type="button" class="nav-link-btn" id="jadwal-open"><span data-i18n="nav.schedule">Schedule</span></button>
+          <a href="event.html" class="nav-link-btn"><span data-i18n="nav.event">Event</span></a>
         </nav>
         <div class="socials">
         <a href="https://www.instagram.com/dikodeworks" target="_blank" rel="noopener" aria-label="Instagram">
@@ -1709,6 +1710,7 @@
           <button type="button" class="jadwal-search-clear" id="training-search-clear" aria-label="Clear search">&times;</button>
         </div>
         <div class="training-faq" id="training-faq" aria-live="polite"></div>
+        <p class="jadwal-meta" id="training-meta" aria-live="polite"></p>
       </div>
     </div>
   </div>
@@ -1809,6 +1811,7 @@
       en: {
         'nav.training': 'Training',
         'nav.schedule': 'Schedule',
+        'nav.event': 'Event',
         'hero.title': 'Building resilient <span class="accent">tech talent</span> &amp; secure digital ecosystems<span class="red">.</span>',
         'hero.subtitle': 'IT Professional Training, Delivered by Active Practitioners',
         'hero.about': 'About Us',
@@ -1887,6 +1890,7 @@
       id: {
         'nav.training': 'Pelatihan',
         'nav.schedule': 'Jadwal',
+        'nav.event': 'Kegiatan',
         'hero.title': 'Membangun <span class="accent">bakat teknologi</span> yang tangguh &amp; ekosistem digital yang aman<span class="red">.</span>',
         'hero.subtitle': 'Pelatihan IT Profesional, Dibawakan oleh Praktisi Aktif',
         'hero.about': 'Tentang Kami',
@@ -2099,6 +2103,7 @@
           if (trainingFaq) trainingFaq.textContent = '';
           if (trainingSearchInput && trainingSearchInput.value) trainingSearchInput.value = '';
           if (trainingSearchClear) trainingSearchClear.style.display = 'none';
+          if (trainingMeta) trainingMeta.textContent = '';
           fetchTraining();
         } else if (modal.id === 'jadwal-modal') {
           jadwalRows.innerHTML = '';
@@ -2170,27 +2175,26 @@
     const trainingFaq = document.getElementById('training-faq');
     const trainingSearchInput = document.getElementById('training-search-input');
     const trainingSearchClear = document.getElementById('training-search-clear');
+    const trainingMeta = document.getElementById('training-meta');
 
     /* Fallback snapshot so the list works offline (mirror of Notion content). */
     const TRAINING_INLINE = [
       {
-        id: '001', title: 'Training 1',
+        id: '001', title: 'Training X',
         modules: [
-          { name: 'Module 1 …', items: ['…', '…', '…', '…'] },
-          { name: 'Module 2 …', items: ['…', '…', '…', '…'] },
+          { name: 'Module 1 …', items: ['…', '…', '…'] },
+          { name: 'Module 2 …', items: ['…', '…', '…'] },
+          { name: 'Module 3 …', items: ['…', '…', '…'] },
+          { name: 'Module 4 …', items: ['…', '…', '…'] },
+          { name: 'Module 5 …', items: ['…', '…', '…'] },
+          { name: 'Module 6 …', items: ['…', '…', '…'] },
+          { name: 'Module 7 …', items: ['…', '…', '…'] },
+          { name: 'Module 8 …', items: ['…', '…', '…'] },
+          { name: 'Module 9 …', items: ['…', '…', '…'] },
+          { name: 'Module 10 …', items: ['…', '…', '…'] },
         ],
-        durasi: '3 Hari (Jam Belajar Mulai Pukul 09.00 s.d 17.00 WIB Perharinya)',
-        biaya: 'Rp 2.000.000,-',
-        registrasi: 'https://lynk.id/dikodeworks',
-      },
-      {
-        id: '002', title: 'Training 2',
-        modules: [
-          { name: 'Module 1 …', items: ['…', '…', '…', '…'] },
-          { name: 'Module 2 …', items: ['…', '…', '…', '…'] },
-        ],
-        durasi: '3 Hari (Jam Belajar Mulai Pukul 09.00 s.d 17.00 WIB Perharinya)',
-        biaya: 'Rp 2.000.000,-',
+        durasi: 'X Hari (Jam Belajar Mulai Pukul 00.00 s.d 00.00 WIB Perharinya)',
+        biaya: 'Rp 0.000.000,-',
         registrasi: 'https://lynk.id/dikodeworks',
       },
     ];
@@ -2330,10 +2334,12 @@
     /* Cache the parsed groups so re-renders and refreshes stay instant. */
     let trainingGroupsData = [];
     let trainingLastGood = null;
+    let trainingUpdated = null;
 
     /* Render the FAQ-style accordion list (Judul / Kurikulum / Durasi / Biaya). */
     function renderTraining(groups) {
       trainingGroupsData = groups || [];
+      if (trainingMeta) trainingMeta.textContent = trainingUpdated ? formatJadwalMeta(trainingUpdated) : '';
       if (!trainingFaq) return;
 
       trainingFaq.textContent = '';
@@ -2505,9 +2511,12 @@ const reg = document.createElement('a');
 
     async function fetchTraining() {
       trainingShowProgress();
+      trainingUpdated = new Date().toISOString();
       try {
-        const sep = TRAINING_NOTION_LIVE_URL.includes('?') ? '&' : '?';
-        const liveUrl = TRAINING_NOTION_LIVE_URL + sep + 't=' + Date.now();
+        /* Stable URL — no per-request cache-busting query, because r.jina.ai
+           blocks domains hit with a burst of unique URLs (403 AbuseAlleviation
+           Error), which was silently disabling the live fetch. */
+        const liveUrl = TRAINING_NOTION_LIVE_URL;
         const res = await fetch(liveUrl, { cache: 'no-store' });
         if (res.ok) {
           const groups = parseNotionTraining(await res.text());
@@ -2542,12 +2551,7 @@ const reg = document.createElement('a');
     const JADWAL_INLINE_DATA = {
       "columns": ["Tanggal", "Training", "Waktu", "Lokasi", "Biaya", "Registrasi"],
       "rows": [
-        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 1", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}],
-        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 2", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}],
-        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 3", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}],
-        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 3", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}],
-        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 3", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}],
-        [{"v": "17 Agustus 2026", "link": null}, {"v": "Training 3", "link": null}, {"v": "20:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 200.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}]
+        [{"v": "DD-MM-YYYY", "link": null}, {"v": "Training X", "link": null}, {"v": "00:00", "link": null}, {"v": "Online", "link": null}, {"v": "Rp. 0.000.000", "link": null}, {"v": "https://lynk.id/dikodeworks", "link": "https://lynk.id/dikodeworks"}]
       ]
     };
     /* Public sheet endpoint, loaded as JSONP since it sends no CORS headers.
@@ -2860,27 +2864,11 @@ const reg = document.createElement('a');
 
       let ok = false;
 
-      /* 1) Live Notion via r.jina.ai (renders the page, CORS-enabled).
-         r.jina.ai caches by full URL, so a unique query param per request
-         forces a fresh server-side render of the Notion page. */
-      try {
-        const sep = JADWAL_NOTION_LIVE_URL.includes('?') ? '&' : '?';
-        const liveUrl = JADWAL_NOTION_LIVE_URL + sep + 't=' + Date.now();
-        const res = await fetch(liveUrl, { cache: 'no-store' });
-        if (res.ok) {
-          const data = parseNotionMarkdown(await res.text());
-          if (data.entries.length) {
-            renderJadwal(data.headers, data.entries, data.updated);
-            ok = true;
-            jadwalHideProgress();
-            return;
-          }
-        }
-      } catch (err) {
-        /* fall through */
-      }
-
-      /* 2) schedule.json (Notion snapshot from the GitHub Actions workflow). */
+      /* 1) schedule.json first: it is re-generated from the public Notion page
+         by the GitHub Actions workflow every 5 minutes, so it is both reliable
+         and near-live. The live r.jina.ai render is secondary — hammering it
+         once per click (or every 5 min) with unique cache-busting URLs makes it
+         throttle the whole domain with 403 AbuseAlleviationError. */
       if (JADWAL_API_URL) {
         try {
           const cacheBust = JADWAL_API_URL + '?t=' + Date.now();
@@ -2893,8 +2881,25 @@ const reg = document.createElement('a');
             return;
           }
         } catch (err) {
-          /* fall through to the inline snapshot */
+          /* fall through */
         }
+      }
+
+      /* 2) Live Notion via r.jina.ai (stable URL — no per-request query, which
+         is what triggers r.jina.ai's abuse limiter). */
+      try {
+        const res = await fetch(JADWAL_NOTION_LIVE_URL, { cache: 'no-store' });
+        if (res.ok) {
+          const data = parseNotionMarkdown(await res.text());
+          if (data.entries.length) {
+            renderJadwal(data.headers, data.entries, data.updated);
+            ok = true;
+            jadwalHideProgress();
+            return;
+          }
+        }
+      } catch (err) {
+        /* fall through */
       }
 
       /* 3) Embedded snapshot. */
@@ -2936,6 +2941,7 @@ const reg = document.createElement('a');
           if (trainingFaq) trainingFaq.textContent = '';
           if (trainingSearchInput && trainingSearchInput.value) trainingSearchInput.value = '';
           if (trainingSearchClear) trainingSearchClear.style.display = 'none';
+          if (trainingMeta) trainingMeta.textContent = '';
           fetchTraining();
         }, 50);
       }, { capture: true });
