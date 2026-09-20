@@ -143,9 +143,14 @@
     '<p class="jadwal-meta" id="sched-meta" aria-live="polite"></p>';
 
   function injectModals() {
+    /* Reuse the markup already in the page when present (event/index.html ships
+       it statically so the popups exist even before this script runs). */
+    var html = '';
+    if (!$('training-modal')) html += modalMarkup('training-modal', 'modal.training', TRAINING_BODY);
+    if (!$('jadwal-modal')) html += modalMarkup('jadwal-modal', 'modal.schedule', JADWAL_BODY);
+    if (!html) return;
     var host = document.createElement('div');
-    host.innerHTML = modalMarkup('training-modal', 'modal.training', TRAINING_BODY) +
-      modalMarkup('jadwal-modal', 'modal.schedule', JADWAL_BODY);
+    host.innerHTML = html;
     while (host.firstChild) document.body.appendChild(host.firstChild);
   }
 
