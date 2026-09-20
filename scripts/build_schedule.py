@@ -30,7 +30,6 @@ import json
 import os
 import re
 import sys
-import time
 import urllib.request
 
 PAGE_ID = os.environ.get("NOTION_PAGE_ID", "").strip().replace("-", "")
@@ -39,11 +38,18 @@ OUTPUT = os.environ.get("OUTPUT", "schedule.json").strip()
 
 EXPECTED_COLUMNS = ["Tanggal", "Training", "Materi", "Waktu", "Lokasi", "Biaya", "Registrasi"]
 OUTPUT_COLUMNS = ["Tanggal", "Training", "Waktu", "Lokasi", "Biaya", "Registrasi"]
-_lower = [c.lower() for c in EXPECTED_COLUMNS]
 
 
 def fetch_markdown():
-    url = f"https://r.jina.ai/https://{HOST}/" + PAGE_ID + "?generated=" + str(int(time.time()))
+    """Fetch the public Notion page via r.jina.ai.
+
+    NOTE: deliberately NO unique cache-busting query param. r.jina.ai treats a
+    stream of unique URLs from the same domain as a DDoS and returns 403
+    "AbuseAlleviationError", which blocked the whole pipeline. A stable URL is
+    cached and re-fetched by r.jina.ai, which is good enough for the 5-minute
+    refresh cadence of the GitHub Action.
+    """
+    url = f"https://r.jina.ai/https://{HOST}/" + PAGE_ID
     req = urllib.request.Request(
         url,
         headers={
@@ -52,53 +58,59 @@ def fetch_markdown():
             "X-Timeout": "30",
         },
     )
-    with urllib.request.urlopen(req, timeout=90) as resp:
+    with urllib.request.urlopen(req, timeout=120) as resp:
         return resp.read().decode("utf-8", errors="replace")
 
 
 def parse(text):
-    lines = [l.strip() for l in text.split("\n")]
+    """Mirror of the JS parseNotionMarkdown in index.html so schedule.json and
+    the live browser render always agree. Layout-agnostic: reacts to the field
+    labels (Tanggal / Training / Materi / Waktu / Lokasi / Biaya / Registrasi)
+    wherever they appear, joined as key then value lines. A repeated key starts
+    a new row, and Notion database row-number headings (### 001 / 001) are
+    skipped so they never leak into cell values."""
+    KEYS = [c.lower() for c in EXPECTED_COLUMNS]
+    lines = [l.strip() for l in text.split("\n") if l]
     start = next((i for i, l in enumerate(lines) if l.lower() == "isi tabel"), -1)
     if start == -1:
         return list(OUTPUT_COLUMNS), []
 
     link_re = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
+    row_marker = re.compile(r"^#{0,6}\s*[0-9]{1,6}\s*$")
+    num_marker = re.compile(r"^[0-9]{3}$")
+
     rows = []
     row = {}
-    pending = None
+    current_key = None
 
-    def to_cell(val):
-        m = link_re.match(val)
-        return {"v": m.group(1) if m else val, "link": m.group(2) if m else None}
-
-    def push(val):
-        nonlocal row, pending
-        if pending is None:
+    def flush():
+        nonlocal row
+        if not row:
             return
-        cell = to_cell(val)
-        if pending not in row:
-            row[pending] = dict(cell)
-        else:
-            row[pending]["v"] += "\n" + cell["v"]
-            if cell["link"]:
-                row[pending]["link"] = cell["link"]
-        # Row is complete once every rendered column is filled. Materi is
-        # recognized as a field so its values stay out of the neighbours, but
-        # it is not part of the output.
-        if all(col.lower() in row for col in OUTPUT_COLUMNS):
-            rows.append(row)
-            row = {}
-            pending = None
+        rows.append(dict(row))
+        row = {}
 
-    for i in range(start + 1, len(lines)):
-        l = lines[i]
-        if not l:
+    for line in lines[start + 1:]:
+        if row_marker.match(line) or num_marker.match(line):
             continue
-        low = l.lower()
-        if low in _lower:
-            pending = low
+        low = line.lower()
+        if low in KEYS:
+            if low in row:
+                flush()  # repeated key → new row
+            current_key = low
         else:
-            push(l)
+            if current_key is None:
+                continue
+            m = link_re.match(line)
+            value = m.group(1) if m else line
+            link = m.group(2) if m else None
+            if current_key in row:
+                row[current_key]["v"] += "\n" + value
+                if link:
+                    row[current_key]["link"] = link
+            else:
+                row[current_key] = {"v": value, "link": link}
+    flush()
     return list(OUTPUT_COLUMNS), rows
 
 
