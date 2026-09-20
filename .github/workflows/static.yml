@@ -40,10 +40,9 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf _site
-          mkdir -p _site/event _site/training _site/contact _site/dino _site/assets
+          mkdir -p _site/event _site/contact _site/dino _site/assets
           cp index.html _site/index.html
           cp event/index.html _site/event/index.html
-          cp training/index.html _site/training/index.html
           cp event.html _site/event.html
           cp schedule.json _site/schedule.json
           cp event.json _site/event.json
