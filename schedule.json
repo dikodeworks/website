@@ -11,41 +11,15 @@
   "rows": [
     [
       {
-        "v": "17 Agustus 2026",
+        "v": "DD-MM-YYYY",
         "link": null
       },
       {
-        "v": "Training 1",
+        "v": "Training X",
         "link": null
       },
       {
-        "v": "20:00",
-        "link": null
-      },
-      {
-        "v": "Online",
-        "link": null
-      },
-      {
-        "v": "Rp. 200.000",
-        "link": null
-      },
-      {
-        "v": "https://lynk.id/dikodeworks",
-        "link": "https://lynk.id/dikodeworks"
-      }
-    ],
-    [
-      {
-        "v": "17 Agustus 2026",
-        "link": null
-      },
-      {
-        "v": "Training 2",
-        "link": null
-      },
-      {
-        "v": "20:00",
+        "v": "00:00",
         "link": null
       },
       {
@@ -53,111 +27,7 @@
         "link": null
       },
       {
-        "v": "Rp. 200.000",
-        "link": null
-      },
-      {
-        "v": "https://lynk.id/dikodeworks",
-        "link": "https://lynk.id/dikodeworks"
-      }
-    ],
-    [
-      {
-        "v": "17 Agustus 2026",
-        "link": null
-      },
-      {
-        "v": "Training 3",
-        "link": null
-      },
-      {
-        "v": "20:00",
-        "link": null
-      },
-      {
-        "v": "Online",
-        "link": null
-      },
-      {
-        "v": "Rp. 200.000",
-        "link": null
-      },
-      {
-        "v": "https://lynk.id/dikodeworks",
-        "link": "https://lynk.id/dikodeworks"
-      }
-    ],
-    [
-      {
-        "v": "17 Agustus 2026",
-        "link": null
-      },
-      {
-        "v": "Training 3",
-        "link": null
-      },
-      {
-        "v": "20:00",
-        "link": null
-      },
-      {
-        "v": "Online",
-        "link": null
-      },
-      {
-        "v": "Rp. 200.000",
-        "link": null
-      },
-      {
-        "v": "https://lynk.id/dikodeworks",
-        "link": "https://lynk.id/dikodeworks"
-      }
-    ],
-    [
-      {
-        "v": "17 Agustus 2026",
-        "link": null
-      },
-      {
-        "v": "Training 3",
-        "link": null
-      },
-      {
-        "v": "20:00",
-        "link": null
-      },
-      {
-        "v": "Online",
-        "link": null
-      },
-      {
-        "v": "Rp. 200.000",
-        "link": null
-      },
-      {
-        "v": "https://lynk.id/dikodeworks",
-        "link": "https://lynk.id/dikodeworks"
-      }
-    ],
-    [
-      {
-        "v": "17 Agustus 2026",
-        "link": null
-      },
-      {
-        "v": "Training 3",
-        "link": null
-      },
-      {
-        "v": "20:00",
-        "link": null
-      },
-      {
-        "v": "Online",
-        "link": null
-      },
-      {
-        "v": "Rp. 200.000",
+        "v": "Rp. 0.000.000",
         "link": null
       },
       {
