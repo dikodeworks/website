@@ -1,0 +1,10 @@
+# macOS metadata
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Local Pages build output
+_site/
