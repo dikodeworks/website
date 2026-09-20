@@ -473,6 +473,7 @@
       .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
     }
   </style>
+  <link rel="stylesheet" href="../assets/modals.css" />
 </head>
 <body>
   <header>
@@ -482,8 +483,8 @@
       </a>
       <div class="nav-right">
         <nav class="nav-links" aria-label="Main">
-          <a href="../index.html" data-i18n="nav.training">Training</a>
-          <a href="../index.html" data-i18n="nav.schedule">Schedule</a>
+          <button type="button" class="nav-link-btn" id="training-open" data-i18n="nav.training">Training</button>
+          <button type="button" class="nav-link-btn" id="jadwal-open" data-i18n="nav.schedule">Schedule</button>
           <a href="index.html" class="active" data-i18n="nav.event" aria-current="page">Event</a>
         </nav>
         <div class="socials">
@@ -979,5 +980,6 @@
       setInterval(fetchJadwal, EVENT_REFRESH_MS);
     }
   </script>
+  <script src="../assets/modals.js" defer></script>
 </body>
 </html>
