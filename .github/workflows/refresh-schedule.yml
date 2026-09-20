@@ -1,4 +1,4 @@
-name: Refresh jadwal schedule from Notion
+name: Refresh jadwal schedule and event from Notion
 
 on:
   schedule:
@@ -21,14 +21,21 @@ jobs:
           OUTPUT: "schedule.json"
         run: python3 scripts/build_schedule.py
 
+      - name: Run event builder
+        env:
+          NOTION_PAGE_ID: "3e16fa85-8bba-80cc-9ce1-e72ebbabe516"
+          NOTION_HOST: "teguhpm.notion.site"
+          OUTPUT: "event.json"
+        run: python3 scripts/build_event.py
+
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet schedule.json; then
-            echo "schedule.json unchanged"
+          if git diff --quiet schedule.json && git diff --quiet event.json; then
+            echo "snapshots unchanged"
           else
-            git add schedule.json
-            git commit -m "Update schedule from Notion"
+            git add schedule.json event.json
+            git commit -m "Update schedule and event from Notion"
             git push
           fi
