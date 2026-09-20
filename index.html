@@ -2533,9 +2533,10 @@ const reg = document.createElement('a');
       trainingShowProgress();
       trainingUpdated = new Date().toISOString();
       try {
-        /* Fresh on every open: a short 5-minute cache bucket lets r.jina.ai
-           re-render without spamming it with a unique URL per request. */
-        const liveUrl = TRAINING_NOTION_LIVE_URL + '?t=' + freshToken();
+        /* Stable r.jina.ai URL. Adding unique cache-busting queries makes
+           r.jina.ai block the whole domain (403 AbuseAlleviationError), which
+           broke live loading entirely. r.jina refreshes its own cache. */
+        const liveUrl = TRAINING_NOTION_LIVE_URL;
         const res = await fetch(liveUrl, { cache: 'no-store' });
         if (res.ok) {
           const groups = parseNotionTraining(await res.text());
@@ -2809,10 +2810,6 @@ const reg = document.createElement('a');
       return localized('jadwal.updated') + ' ' + when;
     };
 
-    /* Short cache bucket: a fresh r.jina.ai URL about once a minute keeps the
-       live fetch current without a new URL on every request (abuse limiter). */
-    const freshToken = () => String(Math.floor(Date.now() / 60000));
-
     /* Parse r.jina.ai Markdown of the Notion page.
    Format after "Isi tabel":
      Tanggal / Training / Materi / Waktu / Lokasi / Biaya / Registrasi
@@ -2874,10 +2871,10 @@ const reg = document.createElement('a');
       jadwalShowProgress();
 
       /* 1) LIVE Notion via r.jina.ai first, so the table always reflects the
-         link. A short cache bucket keeps the URL fresh without a unique URL
-         per request (which trips r.jina.ai's abuse limiter). */
+         link. Stable URL: unique cache-busting queries get the domain blocked
+         by r.jina.ai's abuse limiter. */
       try {
-        const res = await fetch(JADWAL_NOTION_LIVE_URL + '?t=' + freshToken(), { cache: 'no-store' });
+        const res = await fetch(JADWAL_NOTION_LIVE_URL, { cache: 'no-store' });
         if (res.ok) {
           const data = parseNotionMarkdown(await res.text());
           if (data.entries.length) {

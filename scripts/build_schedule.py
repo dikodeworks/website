@@ -56,6 +56,9 @@ def fetch_markdown():
             "Accept": "*/*",
             "User-Agent": "Mozilla/5.0 (compatible; dikodeworks-schedule/1.0)",
             "X-Timeout": "30",
+            # Ask r.jina.ai to bypass its own cache (header, not a unique URL,
+            # so it never trips the domain abuse limiter).
+            "X-No-Cache": "true",
         },
     )
     with urllib.request.urlopen(req, timeout=120) as resp:

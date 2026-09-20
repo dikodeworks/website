@@ -238,8 +238,8 @@
     return localized('schedule.updated') + ' ' + when;
   }
 
-  /* Short cache bucket: a fresh r.jina.ai URL about once a minute. */
-  function freshToken() { return String(Math.floor(Date.now() / 60000)); }
+  /* Stable r.jina.ai URLs only: unique cache-busting queries get the domain
+     blocked by r.jina.ai's abuse limiter. */
 
   /* ---------- Training (accordion) ---------- */
   var trainingFaq, trainingSearchInput, trainingSearchClear, trainingMeta;
@@ -501,7 +501,7 @@
   function fetchTraining() {
     trainingProgress.show();
     trainingUpdated = new Date().toISOString();
-    fetch(TRAINING_URL + '?t=' + freshToken(), { cache: 'no-store' })
+    fetch(TRAINING_URL, { cache: 'no-store' })
       .then(function (res) { return res.ok ? res.text() : ''; })
       .then(function (text) {
         var groups = text ? parseNotionTraining(text) : [];
@@ -665,9 +665,9 @@
         renderSchedule(fallback.headers, fallback.entries, stamp);
       }
     };
-    /* 1) LIVE Jadwal Notion page first (short cache bucket) so the popup
-       always reflects the link. 2) schedule.json snapshot as fallback. */
-    fetch(JADWAL_URL + '?t=' + freshToken(), { cache: 'no-store' })
+    /* 1) LIVE Jadwal Notion page first (stable URL) so the popup always
+       reflects the link. 2) schedule.json snapshot as fallback. */
+    fetch(JADWAL_URL, { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.text().then(parseNotionMarkdown) : null; })
       .then(function (data) {
         if (data && data.entries && data.entries.length) { show(data); return; }

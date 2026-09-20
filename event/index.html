@@ -928,10 +928,6 @@
       return localized('jadwal.updated') + ' ' + when;
     };
 
-    /* Short cache bucket: a fresh r.jina.ai URL about once a minute keeps the
-       live fetch current without a unique URL per request (abuse limiter). */
-    const freshToken = () => String(Math.floor(Date.now() / 60000));
-
     /* Parse r.jina.ai Markdown of the Event Notion page. Like the Schedule parser:
        interleaved key/value lines after "Isi tabel", a repeated key starts a
        new row, and Notion row-number headings (### 001) are skipped. The set
@@ -996,9 +992,9 @@
       jadwalShowProgress();
 
       /* 1) LIVE Event Notion page via r.jina.ai first, so the table always
-         reflects the link (short cache bucket keeps it fresh). */
+         reflects the link (stable URL avoids the abuse limiter). */
       try {
-        const res = await fetch(EVENT_NOTION_LIVE_URL + '?t=' + freshToken(), { cache: 'no-store' });
+        const res = await fetch(EVENT_NOTION_LIVE_URL, { cache: 'no-store' });
         if (res.ok) {
           const data = parseEventMarkdown(await res.text());
           if (data.entries.length) {
