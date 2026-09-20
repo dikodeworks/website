@@ -560,8 +560,15 @@
         </button>
       </div>
       <div class="modal-body">
-        <iframe class="sheet-embed" title="Pelatihan" loading="lazy"
-          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQupzYPZjnBr4DHLlp0vtIDr0eVamaMmIttgK7lS1DuYmeslWp_8s59eYaUD7hSWQQpKwRo1PckSuf-/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
+        <div class="sheet-table-wrap" id="training-sheet-wrap">
+          <table class="jadwal-table" id="training-sheet-table">
+            <thead id="training-sheet-head"></thead>
+            <tbody id="training-sheet-rows"></tbody>
+          </table>
+        </div>
+        <iframe class="sheet-embed" id="training-sheet-fallback" hidden title="Pelatihan" loading="lazy"
+          data-src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQupzYPZjnBr4DHLlp0vtIDr0eVamaMmIttgK7lS1DuYmeslWp_8s59eYaUD7hSWQQpKwRo1PckSuf-/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
+        <p class="jadwal-meta" id="training-sheet-meta" aria-live="polite"></p>
       </div>
     </div>
   </div>

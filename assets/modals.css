@@ -126,6 +126,11 @@ body.modal-open { overflow: hidden; }
   border: 0;
 }
 
+.sheet-table-wrap {
+  max-height: min(72vh, 900px);
+  overflow: auto;
+}
+
 /* Training accordion */
 .training-faq {
   display: flex;

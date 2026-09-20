@@ -146,9 +146,17 @@
     '</div>';
   }
 
-  /* Training popup is an embedded Google Sheet. */
+  /* Training popup shows the live published Google Sheet as a table. */
+  var SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQupzYPZjnBr4DHLlp0vtIDr0eVamaMmIttgK7lS1DuYmeslWp_8s59eYaUD7hSWQQpKwRo1PckSuf-/pub?gid=0&single=true&output=csv';
   var SHEET_SRC = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQupzYPZjnBr4DHLlp0vtIDr0eVamaMmIttgK7lS1DuYmeslWp_8s59eYaUD7hSWQQpKwRo1PckSuf-/pubhtml?gid=0&single=true&widget=true&headers=false';
-  var TRAINING_BODY = '<iframe class="sheet-embed" title="Pelatihan" loading="lazy" src="' + SHEET_SRC + '"></iframe>';
+  var TRAINING_BODY =
+    '<div class="sheet-table-wrap" id="training-sheet-wrap">' +
+      '<table class="jadwal-table" id="training-sheet-table">' +
+        '<thead id="training-sheet-head"></thead><tbody id="training-sheet-rows"></tbody>' +
+      '</table>' +
+    '</div>' +
+    '<iframe class="sheet-embed" id="training-sheet-fallback" hidden title="Pelatihan" loading="lazy" data-src="' + SHEET_SRC + '"></iframe>' +
+    '<p class="jadwal-meta" id="training-sheet-meta" aria-live="polite"></p>';
 
   var JADWAL_BODY =
     '<div class="jadwal-progress" id="sched-progress" role="status" aria-live="polite">' +
@@ -265,6 +273,7 @@
 
   /* ---------- Training (accordion) ---------- */
   var trainingFaq, trainingSearchInput, trainingSearchClear, trainingMeta;
+  var trainingSheetHead, trainingSheetRows, trainingSheetMeta, trainingSheetWrap, trainingSheetFallback;
   var trainingProgress;
   var trainingGroupsData = [];
   var trainingLastGood = null;
@@ -520,6 +529,88 @@
     }
   }
 
+  function parseCSV(text) {
+    var rows = [], row = [], field = '', inQuotes = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (text[i + 1] === '"') { field += '"'; i++; }
+          else inQuotes = false;
+        } else {
+          field += c;
+        }
+      } else if (c === '"') {
+        inQuotes = true;
+      } else if (c === ',') {
+        row.push(field); field = '';
+      } else if (c === '\n') {
+        row.push(field); rows.push(row); row = []; field = '';
+      } else if (c !== '\r') {
+        field += c;
+      }
+    }
+    if (field !== '' || row.length) { row.push(field); rows.push(row); }
+    return rows;
+  }
+
+  /* Live published Google Sheet rendered as a table inside the Training popup. */
+  async function fetchTrainingSheet() {
+    if (!trainingSheetRows) return;
+    if (trainingSheetMeta) trainingSheetMeta.textContent = '';
+    try {
+      var res = await fetch(SHEET_CSV, { cache: 'no-store' });
+      if (!res.ok) throw new Error('sheet ' + res.status);
+      var all = parseCSV(await res.text()).filter(function (r) {
+        return r.some(function (c) { return c.trim() !== ''; });
+      });
+      if (!all.length) throw new Error('empty');
+      /* Header = first row with 2+ non-empty cells (skips a title row). */
+      var headerIdx = all.findIndex(function (r) {
+        return r.filter(function (c) { return c.trim() !== ''; }).length >= 2;
+      });
+      if (headerIdx < 0) headerIdx = 0;
+      var header = all[headerIdx];
+      var bodyRows = all.slice(headerIdx + 1);
+      var cols = all.reduce(function (m, r) { return Math.max(m, r.length); }, 0);
+
+      var headRow = document.createElement('tr');
+      for (var c = 0; c < cols; c++) {
+        var th = document.createElement('th');
+        th.setAttribute('scope', 'col');
+        th.textContent = (header[c] || '').trim();
+        headRow.appendChild(th);
+      }
+      trainingSheetHead.replaceChildren(headRow);
+
+      trainingSheetRows.textContent = '';
+      bodyRows.forEach(function (r) {
+        var tr = document.createElement('tr');
+        for (var ci = 0; ci < cols; ci++) {
+          var td = document.createElement('td');
+          var v = (r[ci] || '').trim();
+          if (v.indexOf('\n') !== -1) td.classList.add('jadwal-multi');
+          td.textContent = v;
+          tr.appendChild(td);
+        }
+        trainingSheetRows.appendChild(tr);
+      });
+
+      if (trainingSheetWrap) trainingSheetWrap.hidden = false;
+      if (trainingSheetFallback) trainingSheetFallback.hidden = true;
+      if (trainingSheetMeta) trainingSheetMeta.textContent = formatMeta(new Date().toISOString());
+    } catch (e) {
+      if (trainingSheetWrap) trainingSheetWrap.hidden = true;
+      if (trainingSheetFallback) {
+        if (!trainingSheetFallback.getAttribute('src')) {
+          trainingSheetFallback.setAttribute('src', trainingSheetFallback.dataset.src);
+        }
+        trainingSheetFallback.hidden = false;
+      }
+      if (trainingSheetMeta) trainingSheetMeta.textContent = '';
+    }
+  }
+
   async function fetchTraining() {
     /* Training popup is now an embedded Google Sheet, so skip Notion fetch. */
     if (!trainingFaq) return;
@@ -739,6 +830,11 @@
     trainingSearchClear = $('training-search-clear');
     trainingMeta = $('training-meta');
     trainingProgress = makeProgress('training-progress', 'training-progress-fill', 'training-progress-label');
+    trainingSheetHead = $('training-sheet-head');
+    trainingSheetRows = $('training-sheet-rows');
+    trainingSheetMeta = $('training-sheet-meta');
+    trainingSheetWrap = $('training-sheet-wrap');
+    trainingSheetFallback = $('training-sheet-fallback');
 
     jadwalHead = $('sched-head');
     jadwalRows = $('sched-rows');
@@ -766,11 +862,11 @@
         e.preventDefault();
         openModal(modal, opener);
         if (spec[0] === 'training-modal') {
-          trainingFaq.textContent = '';
-          trainingSearchInput.value = '';
-          trainingSearchClear.style.display = 'none';
+          if (trainingFaq) trainingFaq.textContent = '';
+          if (trainingSearchInput) trainingSearchInput.value = '';
+          if (trainingSearchClear) trainingSearchClear.style.display = 'none';
           if (trainingMeta) trainingMeta.textContent = '';
-          fetchTraining();
+          fetchTrainingSheet();
         } else {
           jadwalRows.textContent = '';
           jadwalHead.textContent = '';
@@ -845,6 +941,7 @@
 
     /* Warm the data. */
     fetchTraining();
+    fetchTrainingSheet();
     fetchSchedule();
     setInterval(fetchTraining, REFRESH_MS);
     setInterval(fetchSchedule, REFRESH_MS);
@@ -854,7 +951,7 @@
       if (document.visibilityState !== 'visible') return;
       var t = $('training-modal');
       var j = $('jadwal-modal');
-      if (t && t.classList.contains('open')) fetchTraining();
+      if (t && t.classList.contains('open')) { fetchTraining(); fetchTrainingSheet(); }
       if (j && j.classList.contains('open')) fetchSchedule();
     });
   }

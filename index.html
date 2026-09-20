@@ -594,6 +594,11 @@
       min-height: 480px;
     }
 
+    .sheet-table-wrap {
+      max-height: min(72vh, 900px);
+      overflow: auto;
+    }
+
     #about-modal .modal-dialog {
       width: min(1200px, 100%);
     }
@@ -1727,8 +1732,15 @@
         </button>
       </div>
       <div class="modal-body">
-        <iframe class="sheet-embed" title="Pelatihan" loading="lazy"
-          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQupzYPZjnBr4DHLlp0vtIDr0eVamaMmIttgK7lS1DuYmeslWp_8s59eYaUD7hSWQQpKwRo1PckSuf-/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
+        <div class="sheet-table-wrap" id="training-sheet-wrap">
+          <table class="jadwal-table" id="training-sheet-table">
+            <thead id="training-sheet-head"></thead>
+            <tbody id="training-sheet-rows"></tbody>
+          </table>
+        </div>
+        <iframe class="sheet-embed" id="training-sheet-fallback" hidden title="Pelatihan" loading="lazy"
+          data-src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQupzYPZjnBr4DHLlp0vtIDr0eVamaMmIttgK7lS1DuYmeslWp_8s59eYaUD7hSWQQpKwRo1PckSuf-/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
+        <p class="jadwal-meta" id="training-sheet-meta" aria-live="polite"></p>
       </div>
     </div>
   </div>
@@ -2123,6 +2135,7 @@
           if (trainingSearchClear) trainingSearchClear.style.display = 'none';
           if (trainingMeta) trainingMeta.textContent = '';
           fetchTraining();
+          fetchTrainingSheet();
         } else if (modal.id === 'jadwal-modal') {
           jadwalRows.innerHTML = '';
           jadwalHead.innerHTML = '';
@@ -2195,6 +2208,14 @@
     const trainingSearchInput = document.getElementById('training-search-input');
     const trainingSearchClear = document.getElementById('training-search-clear');
     const trainingMeta = document.getElementById('training-meta');
+
+    /* Training popup shows the live published Google Sheet as a table. */
+    const TRAINING_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQupzYPZjnBr4DHLlp0vtIDr0eVamaMmIttgK7lS1DuYmeslWp_8s59eYaUD7hSWQQpKwRo1PckSuf-/pub?gid=0&single=true&output=csv';
+    const trainingSheetHead = document.getElementById('training-sheet-head');
+    const trainingSheetRows = document.getElementById('training-sheet-rows');
+    const trainingSheetMeta = document.getElementById('training-sheet-meta');
+    const trainingSheetWrap = document.getElementById('training-sheet-wrap');
+    const trainingSheetFallback = document.getElementById('training-sheet-fallback');
 
     /* Fallback snapshot so the list works offline (mirror of Notion content). */
     const TRAINING_INLINE = [
@@ -2526,6 +2547,86 @@ const reg = document.createElement('a');
         item.classList.toggle('open', willOpen);
         btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
       });
+    }
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [], field = '', inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (inQuotes) {
+          if (c === '"') {
+            if (text[i + 1] === '"') { field += '"'; i++; }
+            else inQuotes = false;
+          } else {
+            field += c;
+          }
+        } else if (c === '"') {
+          inQuotes = true;
+        } else if (c === ',') {
+          row.push(field); field = '';
+        } else if (c === '\n') {
+          row.push(field); rows.push(row); row = []; field = '';
+        } else if (c !== '\r') {
+          field += c;
+        }
+      }
+      if (field !== '' || row.length) { row.push(field); rows.push(row); }
+      return rows;
+    }
+
+    /* Live published Google Sheet rendered as a table inside the Training popup. */
+    async function fetchTrainingSheet() {
+      if (!trainingSheetRows) return;
+      if (trainingSheetMeta) trainingSheetMeta.textContent = '';
+      try {
+        const res = await fetch(TRAINING_SHEET_CSV, { cache: 'no-store' });
+        if (!res.ok) throw new Error('sheet ' + res.status);
+        const data = parseCSV(await res.text()).filter((r) => r.some((c) => c.trim() !== ''));
+        if (!data.length) throw new Error('empty');
+        /* Header = first row with 2+ non-empty cells (skips a title row). */
+        let headerIdx = data.findIndex((r) => r.filter((c) => c.trim() !== '').length >= 2);
+        if (headerIdx < 0) headerIdx = 0;
+        const header = data[headerIdx];
+        const body = data.slice(headerIdx + 1);
+        const cols = data.reduce((m, r) => Math.max(m, r.length), 0);
+
+        const headRow = document.createElement('tr');
+        for (let c = 0; c < cols; c++) {
+          const th = document.createElement('th');
+          th.setAttribute('scope', 'col');
+          th.textContent = (header[c] || '').trim();
+          headRow.appendChild(th);
+        }
+        trainingSheetHead.replaceChildren(headRow);
+
+        trainingSheetRows.textContent = '';
+        body.forEach((r) => {
+          const tr = document.createElement('tr');
+          for (let c = 0; c < cols; c++) {
+            const td = document.createElement('td');
+            const v = (r[c] || '').trim();
+            if (v.includes('\n')) td.classList.add('jadwal-multi');
+            td.textContent = v;
+            tr.appendChild(td);
+          }
+          trainingSheetRows.appendChild(tr);
+        });
+
+        if (trainingSheetWrap) trainingSheetWrap.hidden = false;
+        if (trainingSheetFallback) trainingSheetFallback.hidden = true;
+        if (trainingSheetMeta) trainingSheetMeta.textContent = formatJadwalMeta(new Date().toISOString());
+      } catch (err) {
+        /* Fall back to the embedded sheet view if the CSV cannot be read. */
+        if (trainingSheetWrap) trainingSheetWrap.hidden = true;
+        if (trainingSheetFallback) {
+          if (!trainingSheetFallback.getAttribute('src')) {
+            trainingSheetFallback.setAttribute('src', trainingSheetFallback.dataset.src);
+          }
+          trainingSheetFallback.hidden = false;
+        }
+        if (trainingSheetMeta) trainingSheetMeta.textContent = '';
+      }
     }
 
     async function fetchTraining() {
@@ -2979,6 +3080,7 @@ const reg = document.createElement('a');
           if (trainingSearchClear) trainingSearchClear.style.display = 'none';
           if (trainingMeta) trainingMeta.textContent = '';
           fetchTraining();
+          fetchTrainingSheet();
         }, 50);
       }, { capture: true });
     }
@@ -3031,6 +3133,7 @@ const reg = document.createElement('a');
 
     /* Warm the training table on page load and keep it fresh every 5 min. */
     fetchTraining();
+    fetchTrainingSheet();
     setInterval(fetchTraining, TRAINING_REFRESH_MS);
 
     /* Re-check the data of whichever menu is open when the tab is focused
@@ -3039,7 +3142,7 @@ const reg = document.createElement('a');
       if (document.visibilityState !== 'visible') return;
       const t = document.getElementById('training-modal');
       const j = document.getElementById('jadwal-modal');
-      if (t && t.classList.contains('open')) fetchTraining();
+      if (t && t.classList.contains('open')) { fetchTraining(); fetchTrainingSheet(); }
       if (j && j.classList.contains('open')) fetchJadwal();
     });
   </script>
