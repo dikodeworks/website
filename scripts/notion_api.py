@@ -7,6 +7,7 @@ existing label/value parsers understand.
 """
 
 import json
+import time
 import urllib.request
 
 API = "https://notion-api.splitbee.io/v1/page/"
@@ -19,8 +20,9 @@ def dashed(page_id):
 
 def fetch_text(page_id, timeout=90):
     key = dashed(page_id)
+    # Cache-buster: the API caches by URL and would otherwise serve stale data.
     req = urllib.request.Request(
-        API + key,
+        API + key + "?t=" + str(int(time.time())),
         headers={
             "Accept": "application/json",
             "User-Agent": "Mozilla/5.0 (compatible; dikodeworks/1.0)",

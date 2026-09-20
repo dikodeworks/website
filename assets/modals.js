@@ -105,7 +105,9 @@
   /* Live Notion data via the public page API (CORS-enabled, no r.jina.ai
      proxy and therefore no abuse rate-limits). Returns text blocks in order. */
   async function notionApiLines(pageId) {
-    var res = await fetch('https://notion-api.splitbee.io/v1/page/' + pageId, { cache: 'no-store' });
+    /* Cache-buster required: the Notion API caches by URL and would otherwise
+       serve stale content (e.g. an old Registrasi link). */
+    var res = await fetch('https://notion-api.splitbee.io/v1/page/' + pageId + '?t=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) throw new Error('notion api ' + res.status);
     var data = await res.json();
     var root = (data[pageId] && data[pageId].value && data[pageId].value.value) || null;
@@ -144,17 +146,9 @@
     '</div>';
   }
 
-  var TRAINING_BODY =
-    '<div class="jadwal-progress" id="training-progress" role="status" aria-live="polite">' +
-      '<span class="jadwal-progress-track"><span class="jadwal-progress-fill" id="training-progress-fill"></span></span>' +
-      '<span class="jadwal-progress-label" id="training-progress-label">0%</span>' +
-    '</div>' +
-    '<div class="jadwal-search">' +
-      '<input type="search" id="training-search-input" class="jadwal-search-input" aria-label="Search training">' +
-      '<button type="button" class="jadwal-search-clear" id="training-search-clear" aria-label="Clear search">&times;</button>' +
-    '</div>' +
-    '<div class="training-faq" id="training-faq" aria-live="polite"></div>' +
-    '<p class="jadwal-meta" id="training-meta" aria-live="polite"></p>';
+  /* Training popup is an embedded Google Sheet. */
+  var SHEET_SRC = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQupzYPZjnBr4DHLlp0vtIDr0eVamaMmIttgK7lS1DuYmeslWp_8s59eYaUD7hSWQQpKwRo1PckSuf-/pubhtml?gid=0&single=true&widget=true&headers=false';
+  var TRAINING_BODY = '<iframe class="sheet-embed" title="Pelatihan" loading="lazy" src="' + SHEET_SRC + '"></iframe>';
 
   var JADWAL_BODY =
     '<div class="jadwal-progress" id="sched-progress" role="status" aria-live="polite">' +
@@ -527,6 +521,8 @@
   }
 
   async function fetchTraining() {
+    /* Training popup is now an embedded Google Sheet, so skip Notion fetch. */
+    if (!trainingFaq) return;
     trainingProgress.show();
     trainingUpdated = new Date().toISOString();
     var groups = [];

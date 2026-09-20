@@ -117,6 +117,15 @@ body.modal-open { overflow: hidden; }
 
 #jadwal-modal .jadwal-scroll { max-height: 46vh; overflow: auto; }
 
+/* Embedded Google Sheet used as the Training popup content. */
+.sheet-embed {
+  display: block;
+  width: 100%;
+  height: min(72vh, 900px);
+  min-height: 480px;
+  border: 0;
+}
+
 /* Training accordion */
 .training-faq {
   display: flex;
