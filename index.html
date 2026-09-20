@@ -608,358 +608,12 @@
       transition: width .3s ease;
     }
 
-    /* Widened once the registration form pane is revealed. */
-    #training-modal .modal-dialog.with-form {
-      width: min(1500px, 100%);
-      height: 90vh;
-    }
-
     #training-modal .modal-body {
       display: flex;
       flex-direction: column;
       gap: 16px;
       padding: 20px 24px;
       overflow: auto;
-    }
-
-    /* Two-pane layout: course list on the left, form on the right. */
-    #training-modal .training-body.split {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 24px;
-      align-items: stretch;
-      overflow: hidden;
-    }
-
-    #training-modal .training-body.split .training-groups {
-      min-height: 0;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .training-form {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      min-height: 0;
-      border-left: 1px solid var(--line);
-      padding-left: 24px;
-    }
-
-    .training-form[hidden] {
-      display: none;
-    }
-
-    .training-form-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .training-form-heading {
-      min-width: 0;
-    }
-
-    .training-form-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      color: var(--ink);
-      margin: 0;
-    }
-
-    .training-form-course {
-      margin: 2px 0 0;
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    .training-form-close {
-      flex: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border: none;
-      border-radius: 50%;
-      background: var(--surface);
-      color: var(--muted);
-      cursor: pointer;
-      transition: color .2s ease, background .2s ease;
-    }
-
-    .training-form-close:hover {
-      color: #c02020;
-      background: var(--line);
-    }
-
-    .training-form-close:focus-visible {
-      outline: 2px solid var(--ink);
-      outline-offset: 2px;
-      color: var(--ink);
-    }
-
-    .training-form-body {
-      flex: 1;
-      min-height: 0;
-      overflow: hidden;
-    }
-
-    .training-form-body iframe {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
-
-    /* Highlight the course whose form is currently shown. */
-    .training-group .sub-item[aria-current="true"] {
-      background: var(--line);
-      color: var(--ink);
-      font-weight: 600;
-    }
-
-    /* Not enough room for two columns: stack the form below the list. */
-    @media (max-width: 900px) {
-      #training-modal .modal-dialog.with-form {
-        width: min(1100px, 100%);
-      }
-
-      #training-modal .training-body.split {
-        display: block;
-        overflow: auto;
-      }
-
-      #training-modal .training-body.split .training-groups {
-        overflow: visible;
-        min-height: 0;
-        padding-right: 0;
-      }
-
-      .training-form {
-        border-left: none;
-        border-top: 1px solid var(--line);
-        padding-left: 0;
-        padding-top: 16px;
-        margin-top: 20px;
-      }
-
-      .training-form-body iframe {
-        height: 70vh;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      #training-modal .modal-dialog {
-        transition: none;
-      }
-    }
-
-    .training-groups > .training-group {
-      margin-bottom: 8px;
-    }
-
-    .training-group {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      overflow: hidden;
-    }
-
-    .training-group .group-title {
-      display: block;
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 1.05rem;
-      padding: 12px 16px;
-      background: var(--line);
-    }
-
-    .training-group ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .training-group li {
-      font-size: 0.92rem;
-      color: var(--ink-soft);
-      border-bottom: 1px solid var(--line);
-    }
-
-    .training-group > ul > li:last-child {
-      border-bottom: none;
-    }
-
-    .training-group > ul > li:not(.sub) {
-      padding: 10px 16px;
-    }
-
-    .training-group > ul > li:not(.sub)::before {
-      content: "";
-      display: inline-block;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--muted);
-      margin-right: 10px;
-      vertical-align: middle;
-    }
-
-    .training-group > ul > li:not(.sub):hover {
-      background: var(--line);
-      color: var(--ink);
-    }
-
-    .training-group .sub-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      width: 100%;
-      padding: 10px 16px;
-      border: none;
-      background: none;
-      font-family: inherit;
-      font-size: 0.92rem;
-      line-height: inherit;
-      text-align: left;
-      color: var(--ink-soft);
-      cursor: pointer;
-    }
-
-    .training-group .sub-item::before {
-      content: "";
-      flex: none;
-      display: inline-block;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--muted);
-      margin-right: 10px;
-    }
-
-    .training-group .sub-item:hover {
-      background: var(--line);
-      color: var(--ink);
-    }
-
-    .training-group .sub-item:focus-visible {
-      outline: 2px solid var(--ink);
-      outline-offset: -2px;
-    }
-
-    .training-group .sub-name {
-      margin-right: auto;
-    }
-
-    .training-group .sub-caret {
-      flex: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--line);
-      color: var(--ink);
-      font-size: 1.05rem;
-      line-height: 1;
-      transition: transform .25s ease;
-    }
-
-    .training-group .sub-item[aria-expanded="true"] .sub-caret {
-      transform: rotate(45deg);
-    }
-
-    .training-group .sub-panel {
-      display: grid;
-      grid-template-rows: 0fr;
-      visibility: hidden;
-      transition: grid-template-rows .28s ease, visibility .28s ease;
-      background: var(--white);
-      border-left: 3px solid var(--line-strong);
-      overflow: hidden;
-    }
-
-    .training-group .sub-panel.open {
-      grid-template-rows: 1fr;
-      visibility: visible;
-    }
-
-    .training-group .sub-panel .sub-panel-inner {
-      min-height: 0;
-      overflow: hidden;
-    }
-
-    .training-group .sub-panel .sub-curriculum-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      font-size: 0.92rem;
-      margin: 0;
-      padding: 8px 16px;
-      color: var(--ink);
-    }
-
-    .training-group .sub-panel .sub-curriculum {
-      list-style: none;
-      padding: 0 16px;
-      margin: 0;
-    }
-
-    .training-group .sub-panel .sub-curriculum li {
-      padding: 5px 0;
-      font-size: 0.85rem;
-      color: var(--ink-soft);
-      border: none;
-    }
-
-    .training-group .sub-panel .sub-curriculum li::before {
-      content: "\2022";
-      margin-right: 8px;
-      color: var(--muted);
-    }
-
-    .training-group .sub-panel .sub-cost {
-      padding: 8px 16px;
-      margin: 0;
-      font-size: 0.9rem;
-      color: var(--ink);
-    }
-
-    .training-group .sub-panel .sub-register {
-      display: block;
-      width: 100%;
-      padding: 10px 16px;
-      border: none;
-      border-radius: 8px;
-      background: var(--accent);
-      color: var(--white);
-      font-family: inherit;
-      font-size: 0.9rem;
-      cursor: pointer;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    .training-group .sub-panel .sub-register:hover {
-      background: #c02020;
-    }
-
-    .training-group .sub-panel .sub-register:focus-visible {
-      outline: 2px solid var(--ink);
-      outline-offset: 2px;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .training-group .sub-panel,
-      .training-group .sub-caret {
-        transition: none;
-      }
     }
 
     #about-modal .modal-body {
@@ -1232,117 +886,6 @@
     .faq-answer a:hover,
     .faq-answer .faq-link-btn:hover { color: #c02020; }
 
-    /* Training popup (FAQ-style accordion) */
-    .training-faq {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .training-faq-empty {
-      text-align: center;
-      color: var(--muted);
-      padding: 32px 16px;
-    }
-
-    .training-faq-answer {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height .35s ease, padding .35s ease;
-    }
-
-    .training-faq-item.open .training-faq-answer {
-      max-height: 2200px;
-    }
-
-    .training-faq-inner {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      padding: 4px 24px 24px;
-    }
-
-    .training-faq-label {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: .8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .training-faq-module strong {
-      display: block;
-      color: var(--ink);
-      font-size: .95rem;
-      margin-bottom: 8px;
-    }
-
-    .training-faq-module ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .training-faq-module li {
-      position: relative;
-      padding-left: 16px;
-      color: var(--ink-soft);
-      font-size: .95rem;
-      line-height: 1.7;
-    }
-
-    .training-faq-module li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: .6em;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--line-strong);
-    }
-
-    .training-faq-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      color: var(--ink-soft);
-      font-size: .95rem;
-      line-height: 1.5;
-    }
-
-    .training-faq-info strong {
-      color: var(--ink);
-      font-size: .78rem;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-    }
-
-    .training-faq-register {
-      align-self: flex-start;
-      display: inline-block;
-      padding: 10px 24px;
-      margin-top: 4px;
-      border: none;
-      border-radius: 999px;
-      background: var(--accent);
-      color: var(--white);
-      font-family: inherit;
-      font-size: .85rem;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background .2s ease, color .2s ease;
-    }
-
-    .training-faq-register:hover,
-    .training-faq-register:focus-visible {
-      background: #c02020;
-    }
-
     /* Jadwal schedule modal */
     #jadwal-modal .modal-dialog {
       width: min(1100px, 100%);
@@ -1536,10 +1079,6 @@
 
       .faq-question {
         padding: 16px;
-      }
-
-      .training-faq-inner {
-        padding: 4px 16px 16px;
       }
 
       .faq-answer p {
@@ -1883,27 +1422,6 @@
         'about.why4Title': 'Real-World Ready',
         'about.why4Desc': 'We build resilient tech talent, not just certificates.',
         'contact.title': 'We Love To Talk, Ask Anything',
-        'training.network': 'Network Infrastructure',
-        'training.course1': 'Network Fundamentals',
-        'training.course2': 'Switching &amp; Routing (CCNA)',
-        'training.course3': 'MikroTik Administration',
-        'training.course4': 'Wireless &amp; Wi-Fi Engineering',
-        'training.course5': 'Network Monitoring &amp; Troubleshooting',
-        'training.curriculum': 'Curriculum',
-        'training.fee': 'Fee',
-        'training.register': 'Register Now',
-        'training.formTitle': 'Registration',
-        'training.duration': 'Duration',
-        'training.investment': 'Investment',
-        'training.none': 'No trainings available yet.',
-        'training.defaultTitle': 'Training',
-        'training.searchEmpty': 'No matching training found.',
-        'training.registerShort': 'Register',
-        'training.judul': 'Judul',
-        'training.kurikulum': 'Kurikulum',
-        'training.durasi': 'Durasi',
-        'training.biaya': 'Biaya',
-        'training.searchPlaceholder': 'Search training…',
         'jadwal.loading': 'Loading…',
         'jadwal.loadingProgress': 'Loading…',
         'jadwal.empty': 'No trainings scheduled yet.',
@@ -1962,27 +1480,6 @@
         'about.why4Title': 'Siap Dunia Nyata',
         'about.why4Desc': 'Kami membangun bakat teknologi yang tangguh, bukan sekadar sertifikat.',
         'contact.title': 'Kami Senang Bercerita, Tanyakan Apa Saja',
-        'training.network': 'Infrastruktur Jaringan',
-        'training.course1': 'Dasar-Dasar Jaringan',
-        'training.course2': 'Switching &amp; Routing (CCNA)',
-        'training.course3': 'Administrasi MikroTik',
-        'training.course4': 'Teknik Nirkabel &amp; Wi-Fi',
-        'training.course5': 'Pemantauan &amp; Pemecahan Masalah Jaringan',
-        'training.curriculum': 'Kurikulum',
-        'training.fee': 'Biaya',
-        'training.register': 'Registrasi',
-        'training.formTitle': 'Pendaftaran',
-        'training.duration': 'Durasi Training',
-        'training.investment': 'Biaya Investasi',
-        'training.none': 'Belum ada pelatihan.',
-        'training.defaultTitle': 'Pelatihan',
-        'training.searchEmpty': 'Tidak ada pelatihan yang cocok.',
-        'training.registerShort': 'Registrasi',
-        'training.judul': 'Judul',
-        'training.kurikulum': 'Kurikulum',
-        'training.durasi': 'Durasi',
-        'training.biaya': 'Biaya',
-        'training.searchPlaceholder': 'Cari pelatihan…',
         'jadwal.loading': 'Sedang belading…',
         'jadwal.loadingProgress': 'Sedang belading…',
         'jadwal.empty': 'Belum ada pelatihan daprograman.',
@@ -2018,11 +1515,6 @@
         const searchPh = document.getElementById('jadwal-search-input');
         if (searchPh && dict['jadwal.searchPlaceholder'] !== undefined) {
           searchPh.placeholder = dict['jadwal.searchPlaceholder'];
-        }
-
-        const trainingSearchPh = document.getElementById('training-search-input');
-        if (trainingSearchPh && dict['training.searchPlaceholder'] !== undefined) {
-          trainingSearchPh.placeholder = dict['training.searchPlaceholder'];
         }
 
         document.querySelectorAll('.lang-btn').forEach((btn) => {
@@ -2129,11 +1621,6 @@
       openModal(modal, trigger);
       setTimeout(() => {
         if (modal.id === 'training-modal') {
-          if (trainingFaq) trainingFaq.textContent = '';
-          if (trainingSearchInput && trainingSearchInput.value) trainingSearchInput.value = '';
-          if (trainingSearchClear) trainingSearchClear.style.display = 'none';
-          if (trainingMeta) trainingMeta.textContent = '';
-          fetchTraining();
           fetchTrainingSheet();
         } else if (modal.id === 'jadwal-modal') {
           jadwalRows.innerHTML = '';
@@ -2193,21 +1680,6 @@
       });
     });
 
-    /* ---------- Training: live content from Notion (Pelatihan) ---------- */
-    const TRAINING_NOTION_URL = 'https://teguhpm.notion.site/Pelatihan-3d86fa858bba80129507c7eecc79b5de';
-    const TRAINING_PAGE_ID = '3d86fa858bba80129507c7eecc79b5de';
-    const TRAINING_NOTION_LIVE_URL = 'https://r.jina.ai/' + TRAINING_NOTION_URL;
-    const TRAINING_REFRESH_MS = 5 * 60 * 1000;
-    const TRAINING_KEYS = ['judul', 'kurikulum', 'durasi', 'biaya', 'registrasi'];
-    /* Default lynk.id registration link used per category until a per-training
-       "Registrasi" link is filled in Notion. Matches the Notion value. */
-    const TRAINING_DEFAULT_REGISTER = 'https://lynk.id/dikodeworks';
-
-    const trainingFaq = document.getElementById('training-faq');
-    const trainingSearchInput = document.getElementById('training-search-input');
-    const trainingSearchClear = document.getElementById('training-search-clear');
-    const trainingMeta = document.getElementById('training-meta');
-
     /* Training popup shows the live published Google Sheet as a table. */
     const TRAINING_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQupzYPZjnBr4DHLlp0vtIDr0eVamaMmIttgK7lS1DuYmeslWp_8s59eYaUD7hSWQQpKwRo1PckSuf-/pub?gid=0&single=true&output=csv';
     const trainingSheetHead = document.getElementById('training-sheet-head');
@@ -2215,338 +1687,6 @@
     const trainingSheetMeta = document.getElementById('training-sheet-meta');
     const trainingSheetWrap = document.getElementById('training-sheet-wrap');
     const trainingSheetFallback = document.getElementById('training-sheet-fallback');
-
-    /* Fallback snapshot so the list works offline (mirror of Notion content). */
-    const TRAINING_INLINE = [
-      {
-        id: '001', title: 'Training X',
-        modules: [
-          { name: 'Module 1 …', items: ['…', '…', '…'] },
-          { name: 'Module 2 …', items: ['…', '…', '…'] },
-          { name: 'Module 3 …', items: ['…', '…', '…'] },
-          { name: 'Module 4 …', items: ['…', '…', '…'] },
-          { name: 'Module 5 …', items: ['…', '…', '…'] },
-          { name: 'Module 6 …', items: ['…', '…', '…'] },
-          { name: 'Module 7 …', items: ['…', '…', '…'] },
-          { name: 'Module 8 …', items: ['…', '…', '…'] },
-          { name: 'Module 9 …', items: ['…', '…', '…'] },
-          { name: 'Module 10 …', items: ['…', '…', '…'] },
-        ],
-        durasi: 'X Hari (Jam Belajar Mulai Pukul 00.00 s.d 00.00 WIB Perharinya)',
-        biaya: 'Rp 0.000.000,-',
-        registrasi: 'https://lynk.id/dikodeworks',
-      },
-    ];
-
-/* Parse the r.jina.ai Markdown of the Pelatihan page.
-   Layout-agnostic key/value parser. Skips the page header (jina meta + the
-   "Tabel dan Kolom" column description) and then reacts to the field labels
-   (Judul / Kurikulum / Durasi / Biaya / Link Registrasi) wherever they appear
-   — as headings (####), bulleted lists, or plain text. A group is complete
-   once it has a Biaya value; a new Judul/Kurikulum (or numeric marker) then
-   starts the next group.
-
-     Judul
-     Training 1              <- judul value
-     Kurikulum
-     Module 1 …              <- module header
-     … … … …                 <- module items
-     Durasi
-     3 Hari (...)            <- durasi
-     Biaya
-     Rp 2.000.000,-          <- biaya
-     Registrasi
-     - https://lynk.id/...    <- registrasi URL (list bullet stripped) */
-    function parseNotionTraining(text) {
-      const lines = String(text).split(/\r?\n/).map((l) => l.trim());
-      const groups = [];
-      const mdLink = new RegExp('\\[([^\\]]*)\\]\\(([^)]+)\\)');
-
-      /* Skip jina's front-matter and the page's own column description. */
-      let i = 0;
-      for (; i < lines.length; i++) {
-        const low = lines[i].toLowerCase();
-        if (low.indexOf('markdown content:') !== -1) { i++; break; }
-      }
-      for (; i < lines.length; i++) {
-        const low = lines[i].replace(/^#{1,6}\s*/, '').trim().toLowerCase();
-        if (low === 'isi tabel' || low === '—' || low === '-' || /^#{1,6}\s*$/.test(lines[i])) { i++; break; }
-      }
-
-      const labelOf = (text) => {
-        const low = text.toLowerCase();
-        /* Values that happen to mention a field name (e.g. a "Registrasi"
-           markdown link or a bare URL) are never labels. */
-        if (/\[\S+\]\([^)]+\)/.test(low) || /^https?:\/\//.test(low)) return null;
-        if (low === 'judul' || low === 'kurikulum' || low === 'durasi' || low === 'biaya') return low;
-        if (low === 'durasi training') return 'durasi';
-        if (low === 'biaya investasi') return 'biaya';
-        if (low === 'link registrasi' || low === 'registrasi') return 'registrasi';
-        if (low.indexOf('kurikulum') !== -1) return 'kurikulum';
-        if (low.indexOf('durasi') !== -1) return 'durasi';
-        if (low.indexOf('biaya') !== -1) return 'biaya';
-        if (low.indexOf('judul') !== -1) return 'judul';
-        if (low.indexOf('registrasi') !== -1) return 'registrasi';
-        return null;
-      };
-
-      let cur = null;
-      let section = null;   // 'judul' | 'kurikulum' | 'durasi' | 'biaya' | 'registrasi'
-      let module = null;
-
-      const startGroup = (id) => {
-        if (cur && cur.title) groups.push(cur);
-        cur = { id: id || '', title: '', modules: [], durasi: '', biaya: '', registrasi: '' };
-        section = 'judul';
-        module = null;
-      };
-      const flushModule = () => {
-        if (cur && module && module.name) cur.modules.push(module);
-        module = null;
-      };
-
-      for (; i < lines.length; i++) {
-        const l = lines[i];
-        if (!l) continue;
-
-        const clean = l.replace(/^#{1,6}\s*/, '').trim();
-        const label = labelOf(clean);
-        const numMark = clean.match(/^(\d{3})\s*$/);
-
-        if (numMark) {
-          /* Group marker (e.g. "001"): start a fresh group if the previous one
-             is complete (has a title & body), or there is no group yet. */
-          if (!cur || (cur.title && cur.biaya)) startGroup(numMark[1]);
-          else if (!cur.id) cur.id = numMark[1];
-          continue;
-        }
-
-        if (label) {
-          /* Flush any open module before switching out of Kurikulum. */
-          if (section === 'kurikulum') flushModule();
-          if (label === 'judul' || label === 'kurikulum') {
-            /* A group is complete after Biaya; a new Judul/Kurikulum begins
-               the next one. */
-            if (cur && cur.biaya) startGroup('');
-          } else if (label !== 'registrasi') {
-            if (cur && cur.biaya) startGroup('');
-          }
-          section = label;
-          module = null;
-          continue;
-        }
-
-        if (!cur) startGroup('');
-
-        if (section === 'judul') {
-          if (!cur.title) cur.title = l;
-          section = null;
-        } else if (section === 'kurikulum') {
-          if (/^module\b/i.test(l) || /^mod\b/i.test(l) || /^day\b/i.test(l)) {
-            flushModule();
-            module = { name: l, items: [] };
-          } else if (module) {
-            module.items.push(l);
-          }
-        } else if (section === 'durasi') {
-          cur.durasi = (cur.durasi ? cur.durasi + '\n' : '') + l;
-        } else if (section === 'biaya') {
-          cur.biaya = (cur.biaya ? cur.biaya + '\n' : '') + l;
-        } else if (section === 'registrasi') {
-          const val = l.replace(/^[-*+]\s+/, '');
-          const m = val.match(mdLink);
-          const link = m ? (m[2] || '') : val;
-          if (!cur.registrasi) cur.registrasi = link;
-        }
-      }
-      flushModule();
-      if (cur && cur.title) groups.push(cur);
-
-      /* Derive fallback titles and ids. */
-      groups.forEach((g, k) => {
-        if (!g.title.trim()) g.title = localized('training.defaultTitle') + ' ' + (k + 1);
-        if (!g.id) g.id = String(k + 1).padStart(3, '0');
-      });
-      return groups;
-    }
-
-    /* Cache the parsed groups so re-renders and refreshes stay instant. */
-    let trainingGroupsData = [];
-    let trainingLastGood = null;
-    let trainingUpdated = null;
-
-    /* Render the FAQ-style accordion list (Judul / Kurikulum / Durasi / Biaya). */
-    function renderTraining(groups) {
-      trainingGroupsData = groups || [];
-      if (trainingMeta) trainingMeta.textContent = trainingUpdated ? formatJadwalMeta(trainingUpdated) : '';
-      if (!trainingFaq) return;
-
-      trainingFaq.textContent = '';
-
-      if (!trainingGroupsData.length) {
-        const empty = document.createElement('p');
-        empty.className = 'training-faq-empty';
-        empty.textContent = localized('training.none');
-        trainingFaq.appendChild(empty);
-        return;
-      }
-
-      trainingGroupsData.forEach((g, k) => {
-        const item = document.createElement('div');
-        item.className = 'faq-item training-faq-item';
-
-        const btn = document.createElement('button');
-        btn.className = 'faq-question';
-        btn.type = 'button';
-        btn.id = 'training-panel-btn-' + k;
-        btn.setAttribute('aria-expanded', 'false');
-        btn.setAttribute('aria-controls', 'training-panel-' + k);
-
-        const label = document.createElement('span');
-        label.textContent = g.title;
-        const icon = document.createElement('span');
-        icon.className = 'faq-icon';
-        icon.setAttribute('aria-hidden', 'true');
-        icon.textContent = '+';
-        btn.appendChild(label);
-        btn.appendChild(icon);
-
-        const panel = document.createElement('div');
-        panel.className = 'training-faq-answer';
-        panel.id = 'training-panel-' + k;
-        panel.setAttribute('role', 'region');
-        panel.setAttribute('aria-labelledby', 'training-panel-btn-' + k);
-
-        const inner = document.createElement('div');
-        inner.className = 'training-faq-inner';
-
-        if (g.modules && g.modules.length) {
-          const labelCur = document.createElement('h5');
-          labelCur.className = 'training-faq-label';
-          labelCur.textContent = localized('training.curriculum');
-          inner.appendChild(labelCur);
-          g.modules.forEach((m) => {
-            const moduleEl = document.createElement('div');
-            moduleEl.className = 'training-faq-module';
-            const nameEl = document.createElement('strong');
-            nameEl.textContent = m.name || '';
-            moduleEl.appendChild(nameEl);
-            const items = (m.items || []).filter(Boolean);
-            if (items.length) {
-              const ul = document.createElement('ul');
-              items.forEach((it) => {
-                const li = document.createElement('li');
-                li.textContent = it;
-                ul.appendChild(li);
-              });
-              moduleEl.appendChild(ul);
-            }
-            inner.appendChild(moduleEl);
-          });
-        }
-
-        if (g.durasi) {
-          const dur = document.createElement('p');
-          dur.className = 'training-faq-info';
-          const durLabel = document.createElement('strong');
-          durLabel.textContent = localized('training.duration');
-          const durText = document.createElement('span');
-          durText.textContent = g.durasi;
-          dur.appendChild(durLabel);
-          dur.appendChild(durText);
-          inner.appendChild(dur);
-        }
-
-        if (g.biaya) {
-          const cost = document.createElement('p');
-          cost.className = 'training-faq-info';
-          const costLabel = document.createElement('strong');
-          costLabel.textContent = localized('training.investment');
-          const costText = document.createElement('span');
-          costText.textContent = g.biaya;
-          cost.appendChild(costLabel);
-          cost.appendChild(costText);
-          inner.appendChild(cost);
-        }
-
-const reg = document.createElement('a');
-          reg.className = 'training-faq-register';
-          reg.href = safeUrl(g.registrasi) || TRAINING_DEFAULT_REGISTER;
-          reg.setAttribute('target', '_blank');
-          reg.setAttribute('rel', 'noopener');
-          reg.textContent = localized('training.register');
-          inner.appendChild(reg);
-
-          panel.appendChild(inner);
-        item.appendChild(btn);
-        item.appendChild(panel);
-        trainingFaq.appendChild(item);
-      });
-
-      applyTrainingSearch();
-    }
-
-    /* Filter the accordion items as the user types (like the schedule menu).
-       On a non-empty query the matching items are also auto-expanded. */
-    function applyTrainingSearch() {
-      if (!trainingSearchInput || !trainingFaq) return;
-      const q = trainingSearchInput.value.trim().toLowerCase();
-      if (trainingSearchClear) trainingSearchClear.style.display = q ? 'flex' : 'none';
-
-      const items = Array.from(trainingFaq.querySelectorAll('.training-faq-item'));
-      if (!items.length) return;
-      let visible = 0;
-
-      items.forEach((item, k) => {
-        const g = trainingGroupsData[k];
-        const hay = [
-          g ? g.title : '',
-          (g && g.modules || []).map((m) => m.name + ' ' + (m.items || []).join(' ')).join(' '),
-          g ? g.durasi : '',
-          g ? g.biaya : '',
-          g ? g.registrasi : '',
-        ].join(' ').toLowerCase();
-        const match = !q || hay.indexOf(q) !== -1;
-        item.style.display = match ? '' : 'none';
-        const btn = item.querySelector('.faq-question');
-        if (q && match) {
-          if (!item.classList.contains('open')) {
-            item.classList.add('open');
-            if (btn) btn.setAttribute('aria-expanded', 'true');
-          }
-          visible++;
-        } else if (!q && item.classList.contains('open')) {
-          item.classList.remove('open');
-          if (btn) btn.setAttribute('aria-expanded', 'false');
-        }
-      });
-
-      let emptyEl = trainingFaq.querySelector('.training-faq-empty');
-      if (q && visible === 0) {
-        if (!emptyEl) {
-          emptyEl = document.createElement('p');
-          emptyEl.className = 'training-faq-empty';
-          trainingFaq.appendChild(emptyEl);
-        }
-        emptyEl.textContent = localized('training.searchEmpty');
-      } else if (emptyEl) {
-        emptyEl.remove();
-      }
-    }
-
-    /* Open/close one accordion item at a time (FAQ style). */
-    if (trainingFaq) {
-      trainingFaq.addEventListener('click', (e) => {
-        const btn = e.target.closest('.faq-question');
-        if (!btn || !trainingFaq.contains(btn)) return;
-        const item = btn.closest('.training-faq-item');
-        if (!item) return;
-        const willOpen = !item.classList.contains('open');
-        trainingFaq.querySelectorAll('.training-faq-item.open').forEach((i) => i.classList.remove('open'));
-        item.classList.toggle('open', willOpen);
-        btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-      });
-    }
 
     function parseCSV(text) {
       const rows = [];
@@ -2626,46 +1766,6 @@ const reg = document.createElement('a');
         }
         if (trainingSheetMeta) trainingSheetMeta.textContent = '';
       }
-    }
-
-    async function fetchTraining() {
-      /* Training popup is now an embedded Google Sheet, so skip Notion fetch. */
-      if (!trainingFaq) return;
-      trainingShowProgress();
-      trainingUpdated = new Date().toISOString();
-
-      /* 1) LIVE Notion page API (CORS-enabled, no r.jina proxy / no limits). */
-      try {
-        const lines = await notionApiLines(TRAINING_PAGE_ID);
-        const groups = parseNotionTraining('Markdown Content:\n' + lines.join('\n'));
-        if (groups.length) {
-          trainingLastGood = groups;
-          renderTraining(groups);
-          trainingHideProgress();
-          return;
-        }
-      } catch (err) {
-        /* fall through */
-      }
-
-      /* 2) r.jina.ai proxy fallback. */
-      try {
-        const res = await fetch(TRAINING_NOTION_LIVE_URL, { cache: 'no-store' });
-        if (res.ok) {
-          const groups = parseNotionTraining(await res.text());
-          if (groups.length) {
-            trainingLastGood = groups;
-            renderTraining(groups);
-            trainingHideProgress();
-            return;
-          }
-        }
-      } catch (err) {
-        /* fall through */
-      }
-
-      renderTraining(trainingLastGood || TRAINING_INLINE);
-      trainingHideProgress();
     }
 
     /* ---------- Jadwal: live schedule table ---------- */
@@ -2794,48 +1894,6 @@ const reg = document.createElement('a');
       jadwalProgressLabel.textContent = '100%';
       setTimeout(() => {
         jadwalProgress.classList.remove('active');
-      }, 250);
-    };
-
-    /* ---------- Training loading progress (reuses .jadwal-progress styles) ---------- */
-    const trainingProgress = document.getElementById('training-progress');
-    const trainingProgressFill = document.getElementById('training-progress-fill');
-    const trainingProgressLabel = document.getElementById('training-progress-label');
-
-    let trainingProgressTimer = null;
-    let trainingProgressTick = 0;
-    let trainingProgressValue = 0;
-
-    const trainingShowProgress = () => {
-      if (!trainingProgress) return;
-      trainingProgressValue = 0;
-      trainingProgressTick = 0;
-      trainingProgress.classList.add('active');
-      trainingProgressFill.style.width = '0%';
-      trainingProgressLabel.textContent = '0%';
-      if (trainingProgressTimer) clearInterval(trainingProgressTimer);
-      trainingProgressTimer = setInterval(() => {
-        trainingProgressTick++;
-        if (trainingProgressValue < 90) {
-          const step = Math.max(1, Math.ceil((90 - trainingProgressValue) * 0.12 * (1 + Math.sin(trainingProgressTick * 0.5))));
-          trainingProgressValue = Math.min(90, trainingProgressValue + step);
-        } else {
-          trainingProgressValue = Math.min(99, trainingProgressValue + 1);
-        }
-        trainingProgressFill.style.width = trainingProgressValue + '%';
-        trainingProgressLabel.textContent = Math.round(trainingProgressValue) + '%';
-      }, 90);
-    };
-
-    const trainingHideProgress = () => {
-      if (trainingProgressTimer) clearInterval(trainingProgressTimer);
-      trainingProgressTimer = null;
-      if (!trainingProgress) return;
-      trainingProgressValue = 100;
-      trainingProgressFill.style.width = '100%';
-      trainingProgressLabel.textContent = '100%';
-      setTimeout(() => {
-        trainingProgress.classList.remove('active');
       }, 250);
     };
 
@@ -3068,22 +2126,6 @@ const reg = document.createElement('a');
       jadwalHideProgress();
     }
 
-    const trainingOpenBtn = document.getElementById('training-open');
-    if (trainingOpenBtn) {
-      /* Every click re-fetches the LIVE Pelatihan page and re-renders the
-         FAQ-style list with a fresh (uncached) render. */
-      trainingOpenBtn.addEventListener('click', () => {
-        setTimeout(() => {
-          if (trainingFaq) trainingFaq.textContent = '';
-          if (trainingSearchInput && trainingSearchInput.value) trainingSearchInput.value = '';
-          if (trainingSearchClear) trainingSearchClear.style.display = 'none';
-          if (trainingMeta) trainingMeta.textContent = '';
-          fetchTraining();
-          fetchTrainingSheet();
-        }, 50);
-      }, { capture: true });
-    }
-
     const jadwalOpenBtn = document.getElementById('jadwal-open');
     if (jadwalOpenBtn) {
       /* Every click re-fetches the LIVE Notion page and re-renders the table
@@ -3112,28 +2154,13 @@ const reg = document.createElement('a');
       });
     }
 
-    /* Filter the training accordion as the user types; clear button resets it. */
-    if (trainingSearchInput) {
-      trainingSearchInput.addEventListener('input', applyTrainingSearch);
-      trainingSearchInput.addEventListener('search', applyTrainingSearch);
-    }
-    if (trainingSearchClear) {
-      trainingSearchClear.addEventListener('click', () => {
-        trainingSearchInput.value = '';
-        applyTrainingSearch();
-        trainingSearchInput.focus({ preventScroll: true });
-      });
-    }
-
     if (JADWAL_API_URL) {
       fetchJadwal();
       setInterval(fetchJadwal, JADWAL_REFRESH_MS);
     }
 
-    /* Warm the training table on page load and keep it fresh every 5 min. */
-    fetchTraining();
+    /* Warm the Training sheet on page load. */
     fetchTrainingSheet();
-    setInterval(fetchTraining, TRAINING_REFRESH_MS);
 
     /* Re-check the data of whichever menu is open when the tab is focused
        again, so it never keeps showing previously fetched rows. */
@@ -3141,7 +2168,7 @@ const reg = document.createElement('a');
       if (document.visibilityState !== 'visible') return;
       const t = document.getElementById('training-modal');
       const j = document.getElementById('jadwal-modal');
-      if (t && t.classList.contains('open')) { fetchTraining(); fetchTrainingSheet(); }
+      if (t && t.classList.contains('open')) fetchTrainingSheet();
       if (j && j.classList.contains('open')) fetchJadwal();
     });
   </script>
