@@ -43,6 +43,7 @@ jobs:
           mkdir -p _site/event _site/contact _site/dino
           cp index.html _site/index.html
           cp event/index.html _site/event/index.html
+          cp event.html _site/event.html
           cp schedule.json _site/schedule.json
           cp event.json _site/event.json
           cp contact/qr-code.png _site/contact/qr-code.png
