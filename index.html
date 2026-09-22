@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1101,6 +1101,7 @@
         <nav class="nav-links">
           <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?usp=sharing" target="_blank" rel="noopener" class="nav-link-btn"><span data-i18n="nav.training">Training</span></a>
           <a href="https://docs.google.com/spreadsheets/d/1EoGAf0PCD-7qYnpgnJNr8p8NXJYCbuBX3I2WQo9w5hE/edit?usp=sharing" target="_blank" rel="noopener" class="nav-link-btn"><span data-i18n="nav.event">Event</span></a>
+          <a href="https://lynk.id/dikodeworks" target="_blank" rel="noopener" class="nav-link-btn"><span data-i18n="nav.book">Registration</span></a>
         </nav>
         <div class="socials">
         <a href="https://www.instagram.com/dikodeworks" target="_blank" rel="noopener" aria-label="Instagram">
@@ -1381,6 +1382,7 @@
         'nav.training': 'Training',
         'nav.schedule': 'Schedule',
         'nav.event': 'Event',
+        'nav.book': 'Registration',
         'hero.title': 'Building resilient <span class="accent">tech talent</span> &amp; secure digital ecosystems<span class="red">.</span>',
         'hero.subtitle': 'IT Professional Training, Delivered by Active Practitioners',
         'hero.about': 'About Us',
@@ -1434,6 +1436,7 @@
         'nav.training': 'Pelatihan',
         'nav.schedule': 'Jadwal',
         'nav.event': 'Kegiatan',
+        'nav.book': 'Registrasi',
         'hero.title': 'Membangun <span class="accent">bakat teknologi</span> yang tangguh &amp; ekosistem digital yang aman<span class="red">.</span>',
         'hero.subtitle': 'Pelatihan IT Profesional, Dibawakan oleh Praktisi Aktif',
         'hero.about': 'Tentang Kami',
@@ -1533,7 +1536,7 @@
       btn.addEventListener('click', () => switchLanguage(btn.dataset.lang));
     });
 
-    switchLanguage(localStorage.getItem('dikodeworks-lang') || 'id', false);
+    switchLanguage(localStorage.getItem('dikodeworks-lang') || 'en', false);
 
     /* ---------- Shared modal controller ---------- */
     const modals = Array.from(document.querySelectorAll('.modal'));
