@@ -1022,32 +1022,6 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* Floating contact button (bottom-right) */
-    .contact-fab {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      z-index: 90;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 48px;
-      height: 48px;
-      border: none;
-      border-radius: 999px;
-      background: #4a4a4a;
-      color: var(--white);
-      cursor: pointer;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
-      transition: background .2s ease, transform .2s ease;
-    }
-
-    .contact-fab:hover,
-    .contact-fab:focus-visible {
-      background: #333333;
-      transform: translateY(-2px);
-    }
-
     /* Small screens: tighten modal/FAQ/table spacing. Placed last so these
        overrides win over the base rules regardless of specificity. */
     @media (max-width: 640px) {
@@ -1297,10 +1271,6 @@
     </div>
   </div>
 
-  <button type="button" class="contact-fab" id="contact-float" aria-label="Contact">
-    <span class="material-symbols-outlined" aria-hidden="true">support_agent</span>
-  </button>
-
   <div class="modal" id="contact-modal" role="dialog" aria-modal="true" aria-label="Contact">
     <div class="modal-backdrop" id="contact-backdrop"></div>
     <div class="modal-dialog">
@@ -1322,7 +1292,7 @@
     <div class="modal-backdrop" id="about-backdrop"></div>
     <div class="modal-dialog">
       <div class="modal-header">
-        <span class="modal-title" data-i18n="modal.about">About Us</span>
+        <span class="modal-title" data-i18n="modal.about">About</span>
         <button class="modal-close" id="about-close" aria-label="Close">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
@@ -1414,7 +1384,7 @@
         'faq.a8': 'For the Linux server training, you should have knowledge of basic Linux commands.',
         'modal.training': 'Training',
         'modal.contact': 'Contact',
-        'modal.about': 'About Us',
+        'modal.about': 'About',
         'about.title': 'About Us',
         'about.desc': 'DikodeWorks is an IT training provider founded by active enterprise practitioners. We specialize in Network Infrastructure, Systems Administration, DevOps, Software Engineering, and Cyber Security — blending community collaboration with enterprise-grade standards.',
         'about.whyTitle': 'Why Us',
@@ -1467,7 +1437,7 @@
         'faq.a8': 'Untuk pelatihan server Linux, Anda sebaiknya memiliki pengetahuan dasar perintah Linux.',
         'modal.training': 'Pelatihan',
         'modal.contact': 'Kontak',
-        'modal.about': 'Tentang Kami',
+        'modal.about': 'Tentang',
         'about.title': 'Tentang Kami',
         'about.desc': 'DikodeWorks adalah penyedia pelatihan IT yang didirikan oleh praktisi enterprise aktif. Kami fokus pada Infrastruktur Jaringan, Administrasi Sistem, DevOps, Rekayasa Perangkat Lunak, dan Keamanan Siber — menggabungkan kolaborasi komunitas dengan standar enterprise.',
         'about.whyTitle': 'Mengapa Kami',
@@ -1604,12 +1574,6 @@
       if (closeBtn) closeBtn.addEventListener('click', () => closeModal(modal));
       if (backdrop) backdrop.addEventListener('click', () => closeModal(modal));
     });
-
-    const contactFloat = document.getElementById('contact-float');
-    const contactModalEl = document.getElementById('contact-modal');
-    if (contactFloat && contactModalEl) {
-      contactFloat.addEventListener('click', () => openModal(contactModalEl, contactFloat));
-    }
 
     /* Escape closes the topmost modal; Tab is trapped inside it. */
     document.addEventListener('keydown', (e) => {
