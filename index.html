@@ -37,11 +37,11 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; background: var(--bg); }
 
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: var(--bg);
+      background: transparent;
       color: var(--ink);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
@@ -51,6 +51,46 @@
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
+    }
+
+    /* Minimalist animated background: a faint panning dot grid plus two slowly
+       drifting light auras. Kept very low-contrast so it reads as texture, not
+       decoration, and disabled for reduced-motion users. */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.05) 1px, transparent 0);
+      background-size: 28px 28px;
+      animation: gridDrift 60s linear infinite;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -15%;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(closest-side, rgba(0, 0, 0, 0.045), transparent) 18% 22% / 42vw 42vw no-repeat,
+        radial-gradient(closest-side, rgba(0, 0, 0, 0.035), transparent) 82% 72% / 48vw 48vw no-repeat;
+      animation: auraDrift 26s ease-in-out infinite alternate;
+    }
+
+    @keyframes gridDrift {
+      from { background-position: 0 0; }
+      to { background-position: 28px 28px; }
+    }
+
+    @keyframes auraDrift {
+      from { transform: translate3d(-2%, -1%, 0) scale(1); }
+      to { transform: translate3d(2%, 2%, 0) scale(1.08); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body::before, body::after { animation: none; }
     }
 
     /* Sticky footer: main grows to fill the viewport so the copyright bar is
