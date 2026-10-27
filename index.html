@@ -222,6 +222,91 @@
     .nav-links a:hover::after,
     .nav-links .nav-link-btn:hover::after { transform: scaleX(1); }
 
+    /* Nav dropdown */
+    .nav-dropdown {
+      position: relative;
+    }
+
+    .nav-dropdown-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .nav-caret {
+      width: 7px;
+      height: 7px;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg) translate(-1px, -1px);
+      transition: transform .2s ease;
+    }
+
+    .nav-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 16px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      min-width: 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 8px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.10);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
+    }
+
+    .nav-dropdown-menu a {
+      display: block;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--muted);
+      white-space: nowrap;
+      transition: background .2s ease, color .2s ease;
+    }
+
+    .nav-dropdown-menu a::after { display: none; }
+
+    .nav-dropdown-menu a:hover {
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    /* Invisible bridge so the menu stays open while the cursor crosses the gap */
+    .nav-dropdown-menu::before {
+      content: "";
+      position: absolute;
+      top: -18px;
+      left: 0;
+      right: 0;
+      height: 18px;
+    }
+
+    @media (min-width: 769px) {
+      .nav-dropdown:hover .nav-dropdown-menu,
+      .nav-dropdown.open .nav-dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .nav-dropdown:hover .nav-caret,
+      .nav-dropdown.open .nav-caret {
+        transform: rotate(-135deg) translate(-1px, 1px);
+      }
+    }
+
     .nav-toggle {
       display: none;
       flex-direction: column;
@@ -310,20 +395,11 @@
     .hero-left h1 {
       margin-left: auto;
       margin-right: auto;
-    }
-
-    .hero-sub {
-      position: relative;
-      margin-top: 24px;
       display: inline-block;
-      padding: 12px 20px;
+      padding: clamp(20px, 4vw, 36px) clamp(20px, 5vw, 44px);
       border: 2.5px solid var(--ink);
-      border-radius: 12px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1.05rem, 2vw, 1.3rem);
-      font-weight: 500;
-      letter-spacing: -0.01em;
-      color: var(--ink);
+      border-radius: 20px;
+      background: var(--surface);
     }
 
     .hero-grid {
@@ -641,9 +717,12 @@
 
     #about-modal .contact-body {
       padding: 0;
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: auto auto;
+      justify-content: start;
+      align-items: center;
       text-align: left;
-      gap: 8px;
+      gap: 10px 32px;
     }
 
     #about-modal .contact-email {
@@ -722,6 +801,38 @@
       .nav-links a::after,
       .nav-links .nav-link-btn::after { display: none; }
 
+      .nav-dropdown { width: 100%; }
+
+      .nav-dropdown-toggle {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .nav-dropdown-menu {
+        position: static;
+        transform: none;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        min-width: 0;
+        max-height: 0;
+        overflow: hidden;
+        padding: 0 0 0 16px;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        transition: max-height .25s ease;
+      }
+
+      .nav-dropdown.open .nav-dropdown-menu { max-height: 240px; }
+
+      .nav-dropdown-menu a {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .nav-dropdown-menu a:last-child { border-bottom: none; }
+
       .socials { justify-content: center; padding-top: 16px; gap: 14px; }
 
       .lang-switch { align-self: center; margin-top: 16px; }
@@ -731,121 +842,10 @@
       .hero { padding: 56px 0 48px; }
       .hero-grid { gap: 48px; }
       .socials { gap: 12px; }
-      .hero-sub { font-size: 1rem; }
       h2 { margin-bottom: 24px; }
       .modal { padding: 12px; }
       .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
-      .faq-item { padding: 16px; }
     }
-
-    /* FAQ */
-    .faq {
-      padding: clamp(72px, 9vw, 96px) 0;
-      border-top: 1px solid var(--line);
-    }
-
-    .faq h2 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      text-align: center;
-      margin-bottom: 48px;
-    }
-
-    .faq-cols {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px 24px;
-      max-width: 1000px;
-      margin: 0 auto;
-      align-items: start;
-    }
-
-    .faq-col {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    @media (max-width: 768px) {
-      .faq-cols { grid-template-columns: 1fr; }
-    }
-
-    .faq-item {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: border-color .2s ease;
-    }
-
-    .faq-item:hover { border-color: var(--line-strong); }
-
-    .faq-question {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 20px 24px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 600;
-      text-align: left;
-      color: var(--ink);
-      transition: background .2s ease;
-    }
-
-    .faq-question:hover { background: var(--surface); }
-
-    .faq-question .faq-icon {
-      flex-shrink: 0;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      color: var(--muted);
-      transition: transform .25s ease, background .2s ease, color .2s ease;
-    }
-
-    .faq-item.open .faq-question .faq-icon {
-      transform: rotate(45deg);
-      background: var(--ink);
-      color: var(--white);
-      border-color: var(--ink);
-    }
-
-    .faq-answer {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height .3s ease, padding .3s ease;
-    }
-
-    .faq-item.open .faq-answer {
-      max-height: 300px;
-    }
-
-    .faq-answer p {
-      padding: 0 24px 20px;
-      color: var(--ink-soft);
-      line-height: 1.7;
-    }
-
-    .faq-answer a {
-      color: var(--ink);
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-
-    .faq-answer a:hover { color: #c02020; }
 
     /* Jadwal schedule modal */
     #jadwal-modal .modal-dialog {
@@ -1022,7 +1022,7 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* Small screens: tighten modal/FAQ/table spacing. Placed last so these
+    /* Small screens: tighten modal/table spacing. Placed last so these
        overrides win over the base rules regardless of specificity. */
     @media (max-width: 640px) {
       #training-modal .modal-body,
@@ -1038,15 +1038,11 @@
         min-width: 640px;
       }
 
-      .faq-question {
-        padding: 16px;
-      }
-
-      .faq-answer p {
-        padding: 0 16px 16px;
-      }
-
       .about-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #about-modal .contact-body {
         grid-template-columns: 1fr;
       }
     }
@@ -1055,26 +1051,24 @@
 <body>
   <header>
     <div class="wrap nav">
-      <a class="brand" href="https://drive.google.com/drive/folders/1oi0c3RwLALt2hYGUmoo4zXUc42rU64lQ?usp=sharing" target="_blank" rel="noopener">
+      <a class="brand" href="https://dikodeworks.id/">
         <span class="brand-name">DikodeWorks<span class="dot">.</span></span>
       </a>
       <div class="nav-right">
         <nav class="nav-links">
+          <a href="https://drive.google.com/drive/folders/1oi0c3RwLALt2hYGUmoo4zXUc42rU64lQ" target="_blank" rel="noopener" class="nav-link-btn"><span data-i18n="nav.product">Product</span></a>
+          <div class="nav-dropdown">
+            <button type="button" class="nav-link-btn nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+              <span data-i18n="nav.services">Services</span>
+              <span class="nav-caret" aria-hidden="true"></span>
+            </button>
+            <div class="nav-dropdown-menu">
+              <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?usp=sharing" target="_blank" rel="noopener"><span data-i18n="nav.training">Training</span></a>
+              <a href="https://lynk.id/dikodeworks/page/event" target="_blank" rel="noopener"><span data-i18n="nav.event">Event</span></a>
+            </div>
+          </div>
           <a href="#" class="nav-link-btn" id="about-open"><span data-i18n="hero.about">About</span></a>
-          <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?usp=sharing" target="_blank" rel="noopener" class="nav-link-btn"><span data-i18n="nav.training">Training</span></a>
-          <a href="https://lynk.id/dikodeworks/page/event" target="_blank" rel="noopener" class="nav-link-btn"><span data-i18n="nav.event">Event</span></a>
         </nav>
-        <div class="socials">
-        <a href="https://www.instagram.com/dikodeworks" target="_blank" rel="noopener" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        </a>
-        <a href="https://www.youtube.com/@dikodeworks" target="_blank" rel="noopener" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-2C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.41 19c1.71.42 8.59.42 8.59.42s6.88 0 8.59-.42a2.78 2.78 0 0 0 1.95-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
-        </a>
-        <a href="https://wa.me/6285167777963" target="_blank" rel="noopener" aria-label="WhatsApp">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-        </a>
-        </div>
         <div class="lang-switch" id="lang-switch" role="group" aria-label="Language">
           <button class="lang-btn active" data-lang="en">EN</button>
           <button class="lang-btn" data-lang="id">ID</button>
@@ -1090,8 +1084,7 @@
     <section class="hero" id="home" style="border-top: none;">
       <div class="wrap hero-grid">
         <div class="hero-left">
-          <h1 data-i18n-html="hero.title">Building resilient <span class="accent">tech talent</span> &amp; secure digital ecosystems<span class="red">.</span></h1>
-          <p class="hero-sub" data-i18n="hero.subtitle">IT Professional Training, Delivered by Active Practitioners</p>
+          <h1 data-i18n-html="hero.title">Resilient <span class="accent">tech talent</span> for secure infrastructure and digital ecosystems<span class="red">.</span></h1>
         </div>
         <div class="hero-right" id="specialties">
           <h2 data-i18n-html="expertise.title">Our Expertise<span class="red">.</span></h2>
@@ -1133,89 +1126,6 @@
       </div>
     </section>
 
-    <section class="faq" id="faq">
-      <div class="wrap">
-        <h2 data-i18n-html="faq.title">Frequently Asked Questions<span class="red">.</span></h2>
-        <div class="faq-cols">
-          <div class="faq-col">
-            <div class="faq-item">
-            <button class="faq-question" aria-expanded="false">
-              <span data-i18n="faq.q1">How do I register for training?</span>
-              <span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-answer" role="region">
-              <p data-i18n-html="faq.a1">You can register for training by visiting <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Schedule</a></p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question" aria-expanded="false">
-              <span data-i18n="faq.q2">How much does the training cost?</span>
-              <span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-answer" role="region">
-              <p data-i18n-html="faq.a2">Training fees are listed on each course detail page on <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Training</a></p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question" aria-expanded="false">
-              <span data-i18n="faq.q3">What will I learn in training?</span>
-              <span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-answer" role="region">
-              <p data-i18n="faq.a3">The materials covered in each training can be found in the detail section of each course</p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question" aria-expanded="false">
-              <span data-i18n="faq.q4">Where is the training location?</span>
-              <span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-answer" role="region">
-              <p data-i18n="faq.a4">Online or offline at 1m1 Akses UI, Depok</p>
-            </div>
-          </div>
-          </div>
-          <div class="faq-col">
-          <div class="faq-item">
-            <button class="faq-question" aria-expanded="false">
-              <span data-i18n="faq.q5">Where can I view the training schedule?</span>
-              <span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-answer" role="region">
-              <p data-i18n-html="faq.a5">The training schedule is available at <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Schedule</a></p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question" aria-expanded="false">
-              <span data-i18n="faq.q6">Prerequisites for networking training?</span>
-              <span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-answer" role="region">
-              <p data-i18n="faq.a6">You should be proficient in operating a computer and understand what an IP Address is</p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question" aria-expanded="false">
-              <span data-i18n="faq.q7">Prerequisites for programming training?</span>
-              <span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-answer" role="region">
-              <p data-i18n="faq.a7">You should have basic programming knowledge.</p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question" aria-expanded="false">
-              <span data-i18n="faq.q8">Prerequisites for sysadmin training?</span>
-              <span class="faq-icon" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-answer" role="region">
-              <p data-i18n="faq.a8">For the Linux server training, you should have knowledge of basic Linux commands.</p>
-            </div>
-          </div>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <div class="modal" id="training-modal" role="dialog" aria-modal="true" aria-label="Training">
@@ -1299,7 +1209,7 @@
       </div>
       <div class="modal-body about-body">
         <h2 class="about-section-title" data-i18n="about.title">About Us</h2>
-        <p data-i18n="about.desc">DikodeWorks is an IT training provider founded by active enterprise practitioners. We specialize in Network Infrastructure, Systems Administration, DevOps, Software Engineering, and Cyber Security — blending community collaboration with enterprise-grade standards.</p>
+        <p data-i18n="about.desc">DikodeWorks is an founded by tech active enterprise practitioners. We specialize in Network Infrastructure, Systems Administration, DevOps, Software Engineering, and Cyber Security - blending community collaboration with enterprise-grade standards.</p>
 
         <h2 class="about-section-title" data-i18n="about.whyTitle">Why Us</h2>
         <div class="about-grid">
@@ -1321,18 +1231,25 @@
           </div>
         </div>
 
-        <h2 class="about-section-title" data-i18n="about.contactTitle">Contact Us</h2>
+        <h2 class="about-section-title" data-i18n="about.contactTitle">We Love To Talk, Ask Anything!</h2>
         <div class="about-contact">
           <div class="about-contact-info">
-            <p class="contact-lead" data-i18n="contact.title">We Love To Talk, Ask Anything!</p>
             <div class="contact-body">
               <a href="mailto:contact@dikodeworks.id" class="contact-email">
                 <span class="material-symbols-outlined" aria-hidden="true">mail</span>
                 <span>contact@dikodeworks.id</span>
               </a>
+              <a href="https://www.instagram.com/dikodeworks" target="_blank" rel="noopener" class="contact-email">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                <span>DikodeWorks</span>
+              </a>
               <a href="https://wa.me/6285167777963" target="_blank" rel="noopener" class="contact-email">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
                 <span>+62 851-6777-7963</span>
+              </a>
+              <a href="https://www.youtube.com/@dikodeworks" target="_blank" rel="noopener" class="contact-email">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-2C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.41 19c1.71.42 8.59.42 8.59.42s6.88 0 8.59-.42a2.78 2.78 0 0 0 1.95-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+                <span>DikodeWorks</span>
               </a>
             </div>
           </div>
@@ -1355,9 +1272,10 @@
       en: {
         'nav.training': 'Training',
         'nav.event': 'Event',
+        'nav.product': 'Product',
         'nav.schedule': 'Schedule',
-        'hero.title': 'Building resilient <span class="accent">tech talent</span> &amp; secure digital ecosystems<span class="red">.</span>',
-        'hero.subtitle': 'IT Professional Training, Delivered by Active Practitioners',
+        'nav.services': 'Services',
+        'hero.title': 'Resilient <span class="accent">tech talent</span> for secure infrastructure and digital ecosystems<span class="red">.</span>',
         'hero.about': 'About',
         'expertise.title': 'Our Expertise<span class="red">.</span>',
         'expertise.network': 'Network Infrastructure',
@@ -1365,28 +1283,11 @@
         'expertise.devops': 'IT Development Operation',
         'expertise.software': 'Software Engineering',
         'expertise.security': 'Cyber Security',
-        'faq.title': 'Frequently Asked Questions<span class="red">.</span>',
-        'faq.q1': 'How do I register for training?',
-        'faq.a1': 'You can register for training by visiting <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Schedule</a>',
-        'faq.q2': 'How much does the training cost?',
-        'faq.a2': 'Training fees are listed on each course detail page on <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Training</a>',
-        'faq.q3': 'What will I learn in training?',
-        'faq.a3': 'The materials covered in each training can be found in the detail section of each course',
-        'faq.q4': 'Where is the training location?',
-        'faq.a4': 'Online or offline at 1m1 Akses UI, Depok',
-        'faq.q5': 'Where can I view the training schedule?',
-        'faq.a5': 'The training schedule is available at <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Schedule</a>',
-        'faq.q6': 'Prerequisites for networking training?',
-        'faq.a6': 'You should be proficient in operating a computer and understand what an IP Address is',
-        'faq.q7': 'Prerequisites for programming training?',
-        'faq.a7': 'You should have basic programming knowledge.',
-        'faq.q8': 'Prerequisites for sysadmin training?',
-        'faq.a8': 'For the Linux server training, you should have knowledge of basic Linux commands.',
         'modal.training': 'Training',
         'modal.contact': 'Contact',
         'modal.about': 'About',
         'about.title': 'About Us',
-        'about.desc': 'DikodeWorks is an IT training provider founded by active enterprise practitioners. We specialize in Network Infrastructure, Systems Administration, DevOps, Software Engineering, and Cyber Security — blending community collaboration with enterprise-grade standards.',
+        'about.desc': 'DikodeWorks is an founded by tech active enterprise practitioners. We specialize in Network Infrastructure, Systems Administration, DevOps, Software Engineering, and Cyber Security - blending community collaboration with enterprise-grade standards.',
         'about.whyTitle': 'Why Us',
         'about.why1Title': 'Active Practitioners',
         'about.why1Desc': 'Learn from instructors who are still hands-on in the industry.',
@@ -1396,7 +1297,7 @@
         'about.why3Desc': 'The full stack of modern IT careers, from Network to Security.',
         'about.why4Title': 'Real-World Ready',
         'about.why4Desc': 'We build resilient tech talent, not just certificates.',
-        'about.contactTitle': 'Contact Us',
+        'about.contactTitle': 'We Love To Talk, Ask Anything!',
         'contact.title': 'We Love To Talk, Ask Anything!',
         'jadwal.empty': 'No trainings scheduled yet.',
         'jadwal.updated': 'Last updated at',
@@ -1408,9 +1309,10 @@
       id: {
         'nav.training': 'Pelatihan',
         'nav.event': 'Event',
+        'nav.product': 'Produk',
         'nav.schedule': 'Jadwal',
-        'hero.title': 'Membangun <span class="accent">bakat teknologi</span> yang tangguh &amp; ekosistem digital yang aman<span class="red">.</span>',
-        'hero.subtitle': 'Pelatihan IT Profesional, Dibawakan oleh Praktisi Aktif',
+        'nav.services': 'Layanan',
+        'hero.title': 'Bakat <span class="accent">teknologi</span> yang tangguh untuk infrastruktur dan ekosistem digital yang aman<span class="red">.</span>',
         'hero.about': 'Tentang',
         'expertise.title': 'Keahlian Kami<span class="red">.</span>',
         'expertise.network': 'Infrastruktur Jaringan',
@@ -1418,23 +1320,6 @@
         'expertise.devops': 'Development Operation IT',
         'expertise.software': 'Rekayasa Perangkat Lunak',
         'expertise.security': 'Keamanan Siber',
-        'faq.title': 'Pertanyaan yang Sering Diajukan<span class="red">.</span>',
-        'faq.q1': 'Bagaimana cara mendaftar pelatihan?',
-        'faq.a1': 'Anda dapat mendaftar pelatihan dengan mengunjungi <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Jadwal</a>',
-        'faq.q2': 'Berapa biaya pelatihan?',
-        'faq.a2': 'Biaya pelatihan tercantum pada halaman detail setiap kursus di <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Pelatihan</a>',
-        'faq.q3': 'Apa yang akan saya pelajari?',
-        'faq.a3': 'Materi yang dibahas pada setiap pelatihan dapat ditemukan di bagian detail setiap kursus',
-        'faq.q4': 'Di mana lokasi pelatihan?',
-        'faq.a4': 'Daring atau tatap muka di 1m1 Akses UI, Depok',
-        'faq.q5': 'Di mana saya dapat melihat jadwal pelatihan?',
-        'faq.a5': 'Jadwal pelatihan tersedia di <a href="https://docs.google.com/spreadsheets/d/12_NdJOM3DxXqEP1RzNxxdeOXu_BMPQOGytjdMi3jYXQ/edit?gid=0#gid=0" target="_blank" rel="noopener">Jadwal</a>',
-        'faq.q6': 'Prasyarat untuk pelatihan jaringan?',
-        'faq.a6': 'Anda sebaiknya mahir mengoperasikan komputer dan memahami apa itu Alamat IP',
-        'faq.q7': 'Prasyarat untuk pelatihan pemrograman?',
-        'faq.a7': 'Anda sebaiknya memiliki pengetahuan dasar pemrograman.',
-        'faq.q8': 'Prasyarat untuk pelatihan sysadmin?',
-        'faq.a8': 'Untuk pelatihan server Linux, Anda sebaiknya memiliki pengetahuan dasar perintah Linux.',
         'modal.training': 'Pelatihan',
         'modal.contact': 'Kontak',
         'modal.about': 'Tentang',
@@ -1449,7 +1334,7 @@
         'about.why3Desc': 'Seluruh spektrum karir IT modern, dari Jaringan hingga Keamanan.',
         'about.why4Title': 'Siap Dunia Nyata',
         'about.why4Desc': 'Kami membangun bakat teknologi yang tangguh, bukan sekadar sertifikat.',
-        'about.contactTitle': 'Hubungi Kami',
+        'about.contactTitle': 'Kami Senang Bercerita, Tanyakan Apa Saja!',
         'contact.title': 'Kami Senang Bercerita, Tanyakan Apa Saja!',
         'jadwal.empty': 'Belum ada pelatihan daprograman.',
         'jadwal.updated': 'Di-update pada',
@@ -1609,14 +1494,36 @@
       navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
 
-    /* FAQ accordion */
-    document.querySelectorAll('.faq-question').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const item = btn.closest('.faq-item');
-        const isOpen = item.classList.contains('open');
-        document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
-        if (!isOpen) item.classList.add('open');
-        btn.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
+    /* Nav dropdown (Services) */
+    document.querySelectorAll('.nav-dropdown-toggle').forEach(btn => {
+      const dropdown = btn.closest('.nav-dropdown');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const open = dropdown.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      document.querySelectorAll('.nav-dropdown.open').forEach(dropdown => {
+        if (!dropdown.contains(e.target)) {
+          dropdown.classList.remove('open');
+          const btn = dropdown.querySelector('.nav-dropdown-toggle');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+    document.querySelectorAll('.nav-dropdown-menu a').forEach(link => {
+      link.addEventListener('click', () => {
+        nav.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+        const dropdown = link.closest('.nav-dropdown');
+        if (dropdown) {
+          dropdown.classList.remove('open');
+          const btn = dropdown.querySelector('.nav-dropdown-toggle');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
       });
     });
 
