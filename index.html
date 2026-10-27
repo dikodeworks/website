@@ -423,6 +423,9 @@
       background-clip: text;
     }
 
+    /* Mobile-only hard breaks for the hero headline */
+    .mobile-break { display: none; }
+
     .red {
       color: #c02020;
       text-shadow: 0 0 8px rgba(192, 32, 32, 0.75), 0 0 20px rgba(192, 32, 32, 0.45);
@@ -882,6 +885,12 @@
       .hero { padding: 56px 0 48px; }
       .hero-grid { gap: 48px; }
       .socials { gap: 12px; }
+      h1 {
+        font-size: clamp(1.3rem, 5.6vw, 1.9rem);
+        letter-spacing: -0.03em;
+        max-width: 100%;
+      }
+      .mobile-break { display: inline; }
       h2 { margin-bottom: 24px; }
       .modal { padding: 12px; }
       .footer-inner { flex-direction: column; gap: 8px; text-align: center; }
@@ -1124,7 +1133,7 @@
     <section class="hero" id="home" style="border-top: none;">
       <div class="wrap hero-grid">
         <div class="hero-left">
-          <h1 data-i18n-html="hero.title">Resilient <span class="accent">tech talent</span> for secure infrastructure and digital ecosystems<span class="red">.</span></h1>
+          <h1 data-i18n-html="hero.title">Resilient <span class="accent">tech talent</span><br class="mobile-break"> for secure infrastructure<br class="mobile-break"> and digital ecosystems<span class="red">.</span></h1>
         </div>
         <div class="hero-right" id="specialties">
           <h2 data-i18n-html="expertise.title">Our Expertise<span class="red">.</span></h2>
@@ -1315,7 +1324,7 @@
         'nav.product': 'Product',
         'nav.schedule': 'Schedule',
         'nav.services': 'Services',
-        'hero.title': 'Resilient <span class="accent">tech talent</span> for secure infrastructure and digital ecosystems<span class="red">.</span>',
+        'hero.title': 'Resilient <span class="accent">tech talent</span><br class="mobile-break"> for secure infrastructure<br class="mobile-break"> and digital ecosystems<span class="red">.</span>',
         'hero.about': 'About',
         'expertise.title': 'Our Expertise<span class="red">.</span>',
         'expertise.network': 'Network Infrastructure',
@@ -1352,7 +1361,7 @@
         'nav.product': 'Produk',
         'nav.schedule': 'Jadwal',
         'nav.services': 'Layanan',
-        'hero.title': 'Bakat <span class="accent">teknologi</span> yang tangguh untuk infrastruktur dan ekosistem digital yang aman<span class="red">.</span>',
+        'hero.title': 'Bakat <span class="accent">teknologi</span><br class="mobile-break"> yang tangguh untuk<br class="mobile-break"> infrastruktur dan ekosistem digital yang aman<span class="red">.</span>',
         'hero.about': 'Tentang',
         'expertise.title': 'Keahlian Kami<span class="red">.</span>',
         'expertise.network': 'Infrastruktur Jaringan',
